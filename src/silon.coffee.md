@@ -5,7 +5,9 @@
 [src](http://github.com/timm/silon/blob/master/src) | 
 [issues](http://tiny.cc/silon)  
 
-<img align=right width=200 src="http://yuml.me/diagram/scruffy/class/[Col]^-[Sym],[Col|n=1;pos=0;txt=''|mid()❶;mvar();norm(x);add(x)]^-[Num],[Col]^-[Some]-cuts[Bins]">
+<img align=right src="http://yuml.me/diagram/scruffy;dir:lr;scale:200/class/[Num|mu;sd;lo;hi|var()],[Row|id;cells],[Table]-rows*[Row],[Table]-cols*[Col],[Table]-x*[Col],[Table]-y*[Col],[Table]<-from[note:CSV{bg:cornsilk}]<-usedby[lines(){bg:cornsilk}],[the (global)|data='.../etc/data';seed=1;ch=➋{bg:orange}],[Col]^-[Sym|mode;most|ent()],[Col|n=0;pos=0;txt=''|mid()➊;var();norm(x);add(x)]^-➌[Num],[Some|max=256;magic=2.56;small=0.147;_all=()|all();iqr()],[Col]^-[Some],[Some]-cuts[Bins{bg:cornsilk}]">
+
+
 
 # SILON
 
