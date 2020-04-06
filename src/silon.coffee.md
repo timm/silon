@@ -5,6 +5,7 @@
 [src](http://github.com/timm/silon/blob/master/src) | 
 [issues](http://tiny.cc/silon)  
 
+<img src="http://yuml.me/diagram/scruffy/class/[Customer]->[Address]" >
 
 # SILON
 
