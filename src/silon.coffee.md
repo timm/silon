@@ -5,7 +5,7 @@
 [src](http://github.com/timm/silon/blob/master/src) | 
 [issues](http://tiny.cc/silon)  
 
-<img width=200 src="http://yuml.me/diagram/scruffy/class/[Col]^-[Sym],[Col|n=1;pos=0;txt=''|❶mid();var();norm(x);add(x)]^-[Num], [Col]^-[Some]-cuts[Bins]" >
+<img align=right width=200 src="http://yuml.me/diagram/scruffy/class/[Col]^-[Sym],[Col|n=1;pos=0;txt=''|mid()❶;mvar();norm(x);add(x)]^-[Num],[Col]^-[Some]-cuts[Bins]">
 
 # SILON
 
@@ -13,11 +13,22 @@
 
 SILON is a technology demonstrator: epsilon domination
 
-SILON is a teaching tool. DUO, RE-code it, look at the options for each part, implement those options, eval results.
+SILON is a teaching tool:
+
+-  DUO
+- multi-objective optimization
+-  RE-code it, look at the options for each part, implement those options, eval results.
 
 
 SILON is an experiment: optimization for all. V&V for ai is increasingly about optimization. Traditional optimization is all numeric. Here, 
 we explore problems spaces with numbers _and_ symbols.
+
+SILON is a reverse engineering of a decade of research in my lab on ethical AI.
+
+SILON is a response
+
+- Need to simpler AI. need for more folks to undersarnd what is going on, under the hood
+- Deep learning. no exploration of structure. people need explicable AI.
 
 ## Install
 
