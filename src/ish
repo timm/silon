@@ -262,7 +262,7 @@ bashrc() { cat<<-'EOF'
 AFTER=1
 #brew install bsdgames-osx
 
-for c in gawk git tmux vim mc tree cmatrix rain npm coffee; do
+for c in gawk git tmux vim mc tree cmatrix rain npm coffee ; do
   if [ -z "$(which $c)" ]; then
     AFTER=""
     echo "#E> missing: $c"
