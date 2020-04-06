@@ -9,6 +9,16 @@
 
 # SILON
 
+## What is SILON?
+
+SILON is a technology demonstrator: epsilon domination
+
+SILON is a teaching tool. DUO, RE-code it, look at the options for each part, implement those options, eval results.
+
+
+SILON is an experiment: optimization for all. V&V for ai is increasingly about optimization. Traditional optimization is all numeric. Here, 
+we explore problems spaces with numbers _and_ symbols.
+
 ## Install
 
 ```
