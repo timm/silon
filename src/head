@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+q='"'
+r='https://github.com/timm/silon/raw/master'
+s='http://tiny.cc/silon'
+cat<<EOF
+<a name=top>&nbsp;<p> </a>
+[home](${s}#top) | 
+[copyright]($r/LICENSE.md#top) &copy;2020,
+<a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>
+<br> [<img width=900 src=${q}${r}/etc/img/banner.jpg${q}>](${s})<br>
+[src](${r}/src) | 
+[issues]($s)
+EOF
+

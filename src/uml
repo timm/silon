@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+uml() { cat<<EOF
+ [the (global)|data='.../etc/data';
+              seed=1;
+              ch=num,more,less,klass,ignore
+              {bg:orange}]
+[Table]
+[Col|n=0;
+     pos=0;
+     txt=''
+     |
+     mid();
+     var();
+     norm(x);
+     add(x)
+     ]
+[Some|max=256;
+      magic=2.56;
+      small=0.147;
+      _all=()
+      |
+      all();
+      iqr()
+      ]
+[Num|mu;
+     sd;
+     lo;
+     hi
+    |
+     var()]
+[Row|id;
+     cells
+    ]
+[Sym|mode;
+     most
+    |
+    ent()
+    ]
+[Bins{bg:cornsilk}]
+[Table]<-from[note:CSV{bg:cornsilk}]
+[Col]^-[Sym]
+[Col]^-[Num]
+[Col]^-[Some]
+[Table]-rows*[Row]
+[Table]-cols*[Col]
+[Table]-x*[Col]
+[Table]-y*[Col]
+[Some]-cuts[Bins]
+[Table]-usedby[lines(){bg:cornsilk}]
+EOF
+}
+
+UML=`uml  | gawk '    /^\[/ { $0 = ","$0 }
+                            {gsub(/[\t\r\n ]*/,"")
+                             out=out $0} 
+                       END {print out} '`
+
+U="http://yuml.me/diagram/scruffy;dir:lr;scale:200/class/"
+echo "<img width=700 src=\"$U$UML\">"
+
