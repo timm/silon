@@ -72,20 +72,6 @@ Misc
 
     same   = (x) -> x 
     today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
-    assert = (f,t) -> throw new Error t or "" if not f
-
-    o= (f) ->
-      a = ++the.test.tries
-      b = the.test.fails
-      try
-          await (f(); console.log "::: tried #{a} fails #{b} 
-                              %Passed #{Math.round(100*(a-b)/a)}")
-      catch error
-          say "\nFAILURE!!"
-          b = ++the.test.fails
-          console.log error.stack.split('\n')[0..5].join("\n")
-          console.log "::: tried #{a} fails #{b}
-                       %Passed #{Math.round(100*(a-b)/a)}"
 
 Lists
 
@@ -125,10 +111,24 @@ Maths
      d2= (n,f=2) ->  n.toFixed(f)
      p2= (n,f=2) ->  Math.round(100*d2(n,f))
 
+Unit tests
 
-## Files
+    assert = (f,t) -> throw new Error t or "" if not f
 
-### For each line do ...
+    o= (f) ->
+      a = ++the.test.tries
+      b = the.test.fails
+      try
+          await (f(); console.log "::: tried #{a} fails #{b} 
+                              %Passed #{Math.round(100*(a-b)/a)}")
+      catch error
+          say "\nFAILURE!!"
+          b = ++the.test.fails
+          console.log error.stack.split('\n')[0..5].join("\n")
+          console.log "::: tried #{a} fails #{b}
+                       %Passed #{Math.round(100*(a-b)/a)}"
+
+For each line do ...
 
     lines = ( file, action, done = (-> ) ) ->  
       stream = readline.createInterface
@@ -139,7 +139,7 @@ Maths
       stream.on 'error', ( error ) -> action error
       stream.on 'line',  ( line  ) -> action line 
 
-### CSV files
+Csv files
 
     class Csv
       constructor: (file, action, over) ->
