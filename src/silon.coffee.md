@@ -17,7 +17,7 @@ sudo -H npm -g install coffee-script
 To test the install::
 
 ```
-coffee silon.coffee.md -tests
+coffee silon.coffee.md --test
 ```
 
 ## Challenges
@@ -45,9 +45,12 @@ Much of V&V is "optimize", especially for AI systems.
 
     the =
       id: 0
-      data: "../data/"
+      data: "../etc/data/"
       conf: 95
       seed: 1
+      test:
+        tries: 0
+        fails: 0
       ch:
         num: '$'
         more: '>'
@@ -68,13 +71,23 @@ Much of V&V is "optimize", especially for AI systems.
 Misc
 
     same   = (x) -> x 
-    ok     = (f,t) -> throw new Error t or "" if not f
     today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
+    assert = (f,t) -> throw new Error t or "" if not f
+
+    o= (f) ->
+      a = ++the.test.tries
+      b = the.test.fails
+      try
+          await (f(); console.log "::: tried #{a} fails #{b} 
+                              %Passed #{Math.round(100*(a-b)/a)}")
+      catch error
+          say "\nFAILURE!!"
+          b = ++the.test.fails
+          console.log error.stack.split('\n')[0..5].join("\n")
+          console.log "::: tried #{a} fails #{b}
+                       %Passed #{Math.round(100*(a-b)/a)}"
 
 Lists
-
-    Array::first = -> @[0]
-    Array::last  = -> @[@length - 1]
 
     sorter = (x,y) -> switch
       when x <  y then -1
@@ -190,12 +203,12 @@ Storing info about symbolic  columns.
       #-------------------------
       add1: (x) ->
         @_ent = null
-        @counts[x] = 0 unless @counts[x]
+        @counts[x] = 0 unless x of @counts
         n = ++@counts[x]
         [ @most,@mode ] = [ n,x ] if n > @most
       #-------------------------
       ent: (e=0)->
-        if @_ent==null
+        unless @_ent?
           @_ent = 0
           for x,y of @counts
             p      = y/@n
@@ -283,7 +296,6 @@ Unsupervised discretization.
         @min      = Math.floor(s._all.length**@min)
         @e        = s.var() * @cohen
         @entropy  = 0
-        say "min #{@min} e #{@e} v #{s.var()}"
       #-----------------------------------------------------
       cuts: (s, lo=0, hi=s._all.length-1, lvl=0, out=[]) ->
         if lvl < @maxDepth 
@@ -371,90 +383,106 @@ Unsupervised discretization.
 
 ## Tests
 
-    okLines = (f= the.data + 'weather3.csv') -> lines f,say 
+    okLines = (f= the.data + 'weather2.csv',n=0) -> 
+      lines f,(-> ++n),(-> assert n==20) 
     
-    okCsv1 = (f = the.data + 'weather3.csv',n=0) ->
-      new Csv f, (-> ++n), (->  say "rows: " + n)
-    
-    okCsv2 = (f = the.data + 'weather3.csv',n=0) ->
-      new Csv f, ((row)-> say row)
+    okCsv1 = (f = the.data + 'weather2.csv',n=0) ->
+      new Csv f, (-> ++n), (-> assert n ==15)
     
     okNum1 = ->
       n = new Num
       (n.add x for x in [9,2,5,4,12,7,8,11,9,
                           3,7,4,12,5,4,10,9,6,9,4])
-      say n
-      ok n.mu==7
+      assert n.mu==7
      
     okNum2 = ->
-      say 1
       n = new Num
-      say 2
-      n.adds [9,2,5,4,12,7,8,11,9,3,
-              7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x
-      say  "eg1",n.mu,n.sd,n.sd.toFixed(3)
-      ok n.mu==0.7
+      n.adds([9,2,5,4,12,7,8,11,9,3,
+              7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
+      assert n.mu==0.7
+      assert .30 <= n.sd <=.31
     
     okSym = ->
       s= new Sym
       s.adds ['a','b','b','c','c','c','c']
-      console.log "egSym:",s.n, s.counts, s.ent().toFixed(3)
-      ok s.ent().toFixed(3) == '1.379'
+      assert 1.3785 < s.var()<  1.379
 
     okSort = ->
       x = [10000,-100,3,1,2,-10,30,15]
       y = x.sort(sorter)
-      say x,y
+      assert x[0]  == -100
+      assert x[x.length-1]  ==   10000
 
     okRandom = ->
+      the.seed = 1
       l= (p2 rand() for _ in [1..100])
-      say l.sort(sorter)
+      l= l.sort(sorter)
+      assert  2 == l[0]
+      assert 98 == l[ l.length - 1 ]
     
     okBsearch = ->
       l= (d2(rand(),2) for _ in [1..100])
       l.sort(sorter)
-      for i in [0.. l.length - 1] by 10
-         say i, l[i], bsearch(l,l[i])
+      for i in [0.. l.length - 1] by 20
+         j = bsearch(l,l[i])
+         assert Math.abs( j - i ) <= 3
 
     okSome1 = ->
+      the.seed==1
       s = new Some
       n = 100000
       for x in (d2(rand(),2) for _ in [1..n])
         s.add x
-      say s.all()
       for x in [0..99] by 10
         m = x/100
-        say  s.per(m) ,s.all()[Math.floor(s.max *m)]
-      say s.cuts(true)
+        x = s.all()[Math.floor(s.max *m)]
+        y = s.per(m)
+        assert  y-0.01 <= x <= y+0.01
+      c= s.cuts()
+      assert c.length == 7
+      assert 0.375 <= c[2] <= 0.385
+      assert 0.815 <= c[5] <= 0.825
 
     okSome2 = ->
+      the.seed==1
       s = new Some
       for i in [1..10]
         for j in [1..4]
           s.add j
-      say "cuts", s.cuts(true)
+      c= s.cuts()
+      assert  c[0]==1 and c[3]==4 and c.length==4
 
     #--------------------------------------------------
+    okLib= ->
+      o -> okSort()
+      o -> okRandom()
+      o -> okBsearch()
+
+    okCols= ->
+      o -> okNum1()
+      o -> okNum2()
+      o -> okSym()
+      the.seed=1
+      o -> okSome1()
+      o -> okSome2()
+
+    okFiles= ->
+      o -> okLines()
+      o -> okCsv1()
+
+    okTables= ->
+      t= new Table
+      t.from(the.data+'auto93.csv',(-> new KOD(t)))
+
     demos= ->
       say ("^".n())+"\n"+today()
-      okSort()
-      okNum1() 
-      okNum2()
-      okSym()
-      okLines() 
-      okLines the.data+'weather2.csv'
-      okCsv1()
-      okCsv1 the.data+'weather3.csv'
-      okCsv2 the.data+'weather3.csv'
-      the.seed=1
-      okRandom()
-      the.seed=1
-      okRandom()
-      okBsearch()
-      okSome1()
-      #okSome2()
-      t= new Table
-  #    t.from(the.data+'auto93.csv',(-> new KOD(t)))
+      okLib()
+      okCols()
+      okFiles()
+      #okTables()
 
-    demos()
+    #--------------------------------------------------
+    if "--test" in process.argv
+       demos()
+
   
