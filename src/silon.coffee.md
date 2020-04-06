@@ -1,11 +1,11 @@
 <a name=top>&nbsp;<p> </a>
 [home](http://tiny.cc/silon#top) | 
 [copyright](https://github.com/timm/silon/blob/master/LICENSE.md#top) &copy;2020, <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
-<br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.png">](http://tiny.cc/silon)<br> 
+<br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.pdf">](http://tiny.cc/silon)<br> 
 [src](http://github.com/timm/silon/blob/master/src) | 
 [issues](http://tiny.cc/silon)  
 
-<img src="http://yuml.me/diagram/scruffy/class/[Col]^-[Sym],[Col|n=1;pos=0;txt=''|❶mid();var();norm(x);add(x)]^-[Num], [Col]^-[Some]-cuts[Bins]" >
+<img width=200 src="http://yuml.me/diagram/scruffy/class/[Col]^-[Sym],[Col|n=1;pos=0;txt=''|❶mid();var();norm(x);add(x)]^-[Num], [Col]^-[Some]-cuts[Bins]" >
 
 # SILON
 
