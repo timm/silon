@@ -1,6 +1,6 @@
 <a name=top>&nbsp;<p> </a>
 [home](http://tiny.cc/silon#top) | 
-[@copy; 2020](https://github.com/timm/silon/blob/master/LICENSE.md#top) <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
+[&copy; 2020](https://github.com/timm/silon/blob/master/LICENSE.md#top) <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon#top)<br> 
 [src](http://github.com/timm/silon/blob/master/src) | 
 [issues](https://github.com/timm/silon/issues) |
