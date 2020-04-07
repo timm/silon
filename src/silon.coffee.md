@@ -1,9 +1,10 @@
 <a name=top>&nbsp;<p> </a>
 [home](http://tiny.cc/silon#top) | 
-[copyright](https://github.com/timm/silon/blob/master/LICENSE.md#top) &copy;2020, <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
-<br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon)<br> 
+[@copy; 2020](https://github.com/timm/silon/blob/master/LICENSE.md#top) <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
+<br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon#top)<br> 
 [src](http://github.com/timm/silon/blob/master/src) | 
-[issues](http://tiny.cc/silon)  
+[issues](https://github.com/timm/silon/issues) |
+[news](https://github.com/timm/silon/docs/news.md#top) 
 
 <img align=right src="http://yuml.me/diagram/scruffy;dir:lr;scale:200/class/[Num|mu;sd;lo;hi|var()],[Row|id;cells],[Table]-rows*[Row],[Table]-cols*[Col],[Table]-x*[Col],[Table]-y*[Col],[Table]<-from[note:CSV{bg:cornsilk}]<-usedby[lines(){bg:cornsilk}],[the (global)|data='.../etc/data';seed=1;ch=➋{bg:orange}],[Col]^-[Sym|mode;most|ent()],[Col|n=0;pos=0;txt=''|mid()➊;var();norm(x);add(x)]^-➌[Num],[Some|max=256;magic=2.56;small=0.147;_all=()|all();iqr()],[Col]^-[Some],[Some]-cuts[Bins{bg:cornsilk}]">
 
