@@ -394,7 +394,7 @@ Unsupervised discretization.
                  the.ch.more  in txt
 ## Silo
 
-    class KOD # k-object-dimensional tree
+    class @KOD # k-object-dimensional tree
       constructor: (t) ->
         @t = t
         @top = t.cols
@@ -409,51 +409,52 @@ Unsupervised discretization.
 
 ## Tests
 
-    okLines = (f= the.data + 'weather2.csv',n=0) -> 
+    ok={}
+    ok.Lines = (f= the.data + 'weather2.csv',n=0) -> 
       lines f,(-> ++n),(-> assert n==20) 
     
-    okCsv1 = (f = the.data + 'weather2.csv',n=0) ->
+    ok.csv1 = (f = the.data + 'weather2.csv',n=0) ->
       new Csv f, (-> ++n), (-> assert n ==15)
     
-    okNum1 = ->
+    ok.nm1 = ->
       n = new Num
       (n.add x for x in [9,2,5,4,12,7,8,11,9,
                           3,7,4,12,5,4,10,9,6,9,4])
       assert n.mu==7
      
-    okNum2 = ->
+    ok.num2 = ->
       n = new Num
       n.adds([9,2,5,4,12,7,8,11,9,3,
               7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
       assert n.mu==0.7
       assert .30 <= n.sd <=.31
     
-    okSym = ->
+    ok.sym = ->
       s= new Sym
       s.adds ['a','b','b','c','c','c','c']
       assert 1.3785 < s.var()<  1.379
 
-    okSort = ->
+    ok.sort = ->
       x = [10000,-100,3,1,2,-10,30,15]
       y = x.sort(sorter)
       assert x[0]  == -100
       assert x[x.length-1]  ==   10000
 
-    okRandom = ->
+    ok.random = ->
       the.seed = 1
       l= (p2 rand() for _ in [1..100])
       l= l.sort(sorter)
       assert  2 == l[0]
       assert 98 == l[ l.length - 1 ]
     
-    okBsearch = ->
+    ok.bsearch = ->
       l= (d2(rand(),2) for _ in [1..100])
       l.sort(sorter)
       for i in [0.. l.length - 1] by 20
          j = bsearch(l,l[i])
          assert Math.abs( j - i ) <= 3
 
-    okSome1 = ->
+    ok.some1 = ->
       the.seed==1
       s = new Some
       n = 100000
@@ -469,7 +470,7 @@ Unsupervised discretization.
       assert 0.375 <= c[2] <= 0.385
       assert 0.815 <= c[5] <= 0.825
 
-    okSome2 = ->
+    ok.some2 = ->
       the.seed==1
       s = new Some
       for i in [1..10]
@@ -479,7 +480,12 @@ Unsupervised discretization.
       assert  c[0]==1 and c[3]==4 and c.length==4
 
     #--------------------------------------------------
-    okLib= ->
+    oks = ->
+      for k,v of ok
+        say k
+        await (-> o v())
+
+    Lib= ->
       o -> okSort()
       o -> okRandom()
       o -> okBsearch()
@@ -508,7 +514,6 @@ Unsupervised discretization.
       #okTables()
 
     #--------------------------------------------------
-    if "--test" in process.argv
-       demos()
+    if "--test" in process.argv then demos()
 
-  
+    exports.silon = {demos, okTables}
