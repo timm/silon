@@ -9,7 +9,7 @@
 
 <hr>
 
-<img width=700 src="http://yuml.me/diagram/scruffy;dir:lr;scale:200/class/[the(global)|data='.../etc/data';seed=1;ch=num,more,less,klass,ignore{bg:orange}],[Table]<-from[note:CSV{bg:cornsilk}],[Col|n=0;pos=0;txt=''|mid();var();norm(x);add(x)],[Some|max=256;magic=2.56;small=0.147;_all=()|all();iqr()],[Num|mu;sd;lo;hi|var()],[Row|id;cells],[Sym|mode;most|ent()],[Bins{bg:cornsilk}],[Col]^-[Sym],[Col]^-[Num],[Col]^-[Some],[Table]-rows*[Row],[Table]-cols*[Col],[Table]-x*[Col],[Table]-y*[Col],[Some]-cuts[Bins],[Table]-usedby[lines(){bg:cornsilk}]">
+<img width=700 src="http://yuml.me/diagram/scruffy;dir:lr;scale:200/class/[the(global)|data='.../etc/data';seed=1;ch=num,more,less,klass,ignore{bg:orange}],[Table],[Col|n=0;pos=0;txt=''|mid();var();norm(x);add(x)],[Some|max=256;magic=2.56;small=0.147;_all=()|all();iqr()],[Num|mu;sd;lo;hi|var()],[Row|id;cells],[Sym|mode;most|ent()],[Bins|puny=1.05;min=0.5;cohen=0.3{bg:cornsilk}],[Table]-from[note:CSV{bg:cornsilk}],[Col]^-[Sym],[Col]^-[Num],[Col]^-[Some],[Table]-rows*[Row],[Table]-cols*[Col],[Table]-x*[Col],[Table]-y*[Col],[Some]-cuts[Bins],[Table]-usedby[lines(){bg:cornsilk}]">
 
 # SILON
 
@@ -101,11 +101,20 @@ Misc
 
 Lists
 
+    first = (a) -> a[0]
+    last  = (a) -> a[ a.length - 1 ]
+
+    keysort = (key) ->
+      (x,y) -> funsort (z) -> z[key]
+
+    funsort = (f) ->
+      (x,y) -> sorter f(x), f(y)
+
     sorter = (x,y) -> switch
       when x <  y then -1
       when x == y then  0
       else 1
-
+      
     bsearch = (lst,val,f=((z) -> z)) ->
       [lo,hi] = [0, lst.length - 1]
       while lo <= hi
@@ -136,23 +145,15 @@ Maths
 
      d2= (n,f=2) ->  n.toFixed(f)
      p2= (n,f=2) ->  Math.round(100*d2(n,f))
+     s4= (n,f=4) ->
+       s = n.toString()
+       l = s.length
+       pre = if l < f then " ".n(f - l) else ""
+       pre + s
 
 Unit tests
 
     assert = (f,t) -> throw new Error t or "" if not f
-
-    o= (f) ->
-      a = ++the.test.tries
-      b = the.test.fails
-      try
-          await (f(); console.log "::: tried #{a} fails #{b} 
-                              %Passed #{Math.round(100*(a-b)/a)}")
-      catch error
-          say "\nFAILURE!!"
-          b = ++the.test.fails
-          console.log error.stack.split('\n')[0..5].join("\n")
-          console.log "::: tried #{a} fails #{b}
-                       %Passed #{Math.round(100*(a-b)/a)}"
 
 For each line do ...
 
@@ -369,7 +370,8 @@ Unsupervised discretization.
       from:(f,after=->) -> new Csv f,((row) => @add row),after
       add:          (l) -> @cols.length and @row(l) or @top(l)
       top:   (l, pos=0) -> @cols = (@col(txt,pos++) for txt in l)
-      #-------------------------------------------
+      clone:         () -> t=new Table; t.add (c.txt for c in @cols); t
+      #----------------------------------------------------------------
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
         @rows.push(new Row(l))
@@ -407,16 +409,66 @@ Unsupervised discretization.
         for col in @rank(@t.y)
           say col.txt, col.cuts()
 
-## Tests
+## Test Engine
+
+    oks = (lst = ok) ->
+      okWorker = (name,f) ->
+        fyi= () -> 
+          a= the.test.tries
+          b= the.test.fails
+          c= Math.round(100*(a-b)/a)
+          "#{s4(a)} #{s4(name,12)} #{s4(b,3)} 
+           failed #{s4(c,3)} %passed"
+        try
+            the.test.tries++
+            the.seed = 1
+            await (f(); say fyi())
+        catch error
+            the.test.fails++
+            l = error.stack.split('\n')
+            say l[0]
+            say l[2..5].join("\n")
+            say fyi()
+      (await okWorker name,f for name,f of lst)
+ 
+Tests
 
     ok={}
-    ok.Lines = (f= the.data + 'weather2.csv',n=0) -> 
+
+    ok.bad= -> assert 1 is 2,"deliberate error to check test engine"
+
+    ok.sort = ->
+      x = [10000,-100,3,1,2,-10,30,15]
+      y = x.sort(sorter)
+      assert x[0]  == -100
+      assert x[x.length-1]  ==   10000
+
+    ok.keysort = ->
+      l = ({a: n,b: -1*n} for n in [20..1])
+      l.sort(keysort "b")
+      assert first(l).b == -20
+      assert last(l).a  == 1
+
+    ok.random = ->
+      l= (p2 rand() for _ in [1..100])
+      l= l.sort(sorter)
+      assert  2 == l[0]
+      assert 98 == l[ l.length - 1 ]
+    
+    ok.bsearch = ->
+      l= (d2(rand(),2) for _ in [1..100])
+      l.sort(sorter)
+      for i in [0.. l.length - 1] by 20
+         j = bsearch(l,l[i])
+         assert Math.abs( j - i ) <= 3
+
+    ok.lines = (f= the.data + 'weather2.csv',n=0) -> 
       lines f,(-> ++n),(-> assert n==20) 
     
-    ok.csv1 = (f = the.data + 'weather2.csv',n=0) ->
+    ok.csv = (f = the.data + 'weather2.csv',n=0) ->
       new Csv f, (-> ++n), (-> assert n ==15)
-    
-    ok.nm1 = ->
+   
+    ok.num1 = ->
       n = new Num
       (n.add x for x in [9,2,5,4,12,7,8,11,9,
                           3,7,4,12,5,4,10,9,6,9,4])
@@ -434,28 +486,7 @@ Unsupervised discretization.
       s.adds ['a','b','b','c','c','c','c']
       assert 1.3785 < s.var()<  1.379
 
-    ok.sort = ->
-      x = [10000,-100,3,1,2,-10,30,15]
-      y = x.sort(sorter)
-      assert x[0]  == -100
-      assert x[x.length-1]  ==   10000
-
-    ok.random = ->
-      the.seed = 1
-      l= (p2 rand() for _ in [1..100])
-      l= l.sort(sorter)
-      assert  2 == l[0]
-      assert 98 == l[ l.length - 1 ]
-    
-    ok.bsearch = ->
-      l= (d2(rand(),2) for _ in [1..100])
-      l.sort(sorter)
-      for i in [0.. l.length - 1] by 20
-         j = bsearch(l,l[i])
-         assert Math.abs( j - i ) <= 3
-
-    ok.some1 = ->
-      the.seed==1
+     ok.some1 = ->
       s = new Some
       n = 100000
       for x in (d2(rand(),2) for _ in [1..n])
@@ -471,7 +502,6 @@ Unsupervised discretization.
       assert 0.815 <= c[5] <= 0.825
 
     ok.some2 = ->
-      the.seed==1
       s = new Some
       for i in [1..10]
         for j in [1..4]
@@ -479,41 +509,14 @@ Unsupervised discretization.
       c= s.cuts()
       assert  c[0]==1 and c[3]==4 and c.length==4
 
+    ok.table = (f= the.data + 'weather2.csv',n=0) ->
+      pos=0
+
+      worker=(u) ->
+        for c in u.cols
+          say c.pos, c.txt
+      t=new Table
+      t.from(f,same,-> worker t)
     #--------------------------------------------------
-    oks = ->
-      for k,v of ok
-        say k
-        await (-> o v())
-
-    Lib= ->
-      o -> okSort()
-      o -> okRandom()
-      o -> okBsearch()
-
-    okCols= ->
-      o -> okNum1()
-      o -> okNum2()
-      o -> okSym()
-      the.seed=1
-      o -> okSome1()
-      o -> okSome2()
-
-    okFiles= ->
-      o -> okLines()
-      o -> okCsv1()
-
-    okTables= ->
-      t= new Table
-      t.from(the.data+'auto93.csv',(-> new KOD(t)))
-
-    demos= ->
-      say ("^".n())+"\n"+today()
-      okLib()
-      okCols()
-      okFiles()
-      #okTables()
-
-    #--------------------------------------------------
-    if "--test" in process.argv then demos()
-
-    exports.silon = {demos, okTables}
+    #if "--test" in process.argv then oks()
+    ok.table()

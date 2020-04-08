@@ -288,8 +288,8 @@ if [ "$AFTER" == "1" ]; then
   cat<<-"EOF"
 
 	   (\____/)         
-	     (_oo_)         timm/misc/coffee
-	       (O)          Roger roger ...        
+	     (_oo_)         timm/silon
+	       (O)          By your command ...
 	     __||__    \)  
 	  []/______\[] /    
 	  / \______/ \/     

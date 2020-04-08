@@ -37,8 +37,10 @@ uml() { cat<<EOF
     |
     ent()
     ]
-[Bins{bg:cornsilk}]
-[Table]<-from[note:CSV{bg:cornsilk}]
+[Bins|puny=1.05;
+      min=0.5;
+     cohen=0.3{bg:cornsilk}]
+[Table]-from[note:CSV{bg:cornsilk}]
 [Col]^-[Sym]
 [Col]^-[Num]
 [Col]^-[Some]
