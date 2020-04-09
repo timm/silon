@@ -111,34 +111,29 @@ Maths
 
 Lists
 
-    first = (a) -> a[0]
-    last  = (a) -> a[ a.length - 1 ]
+    last = (a) -> a[ a.length - 1 ]
 
-    sorter = (x,y) -> switch
-      when x <  y then -1
-      when x == y then  0
-      else 1
-
-    funsort = (f) ->
-      (x,y) -> sorter f(x), f(y)
-
-    keysort = (key) ->
-      (x,y) -> funsort (z) -> z[key]
- 
-    bsearch = (lst,val,f=((z) -> z)) ->
-      [lo,hi] = [0, lst.length - 1]
-      while lo <= hi
-        mid = int((lo+hi)/2)
-        if f( lst[mid] ) >= val
-          hi = mid - 1
-        else
-          lo = mid + 1
-      Math.min(lo,lst.length-1) 
-
+    class Order
+      @fun = (f)   -> ((x,y) -> Order.it  f(x), f(y))
+      @key = (key) -> ((x,y) -> Order.fun (z) -> z[key])
+      @it  = (x,y) -> switch
+        when x <  y then -1
+        when x == y then  0
+        else 1
+      @search = (lst,val,f=((z) -> z)) ->
+        [lo,hi] = [0, lst.length - 1]
+        while lo <= hi
+          mid = int((lo+hi)/2)
+          if f( lst[mid] ) >= val
+            hi = mid - 1
+          else
+            lo = mid + 1
+        Math.min(lo,lst.length-1) 
+  
 Strings
 
-    String::last = -> this[ this.length - 1]
-    String::n    = (m=40) -> Array(m+1).join(this)
+    String::last = @[ @.length - 1 ]
+    String::n    = (m=40) -> Array(m+1).join(@)
 
     say = (l...) ->
       sep=""
@@ -177,7 +172,7 @@ Csv files
           @merge s if s.length
       merge: (s) ->
         @lines.push s
-        if s.last() isnt ','
+        if last(s) isnt ','
           @act @lines.join("").split ','
           @lines = []
       act: (cells) ->
@@ -206,7 +201,7 @@ Storing info about a column.
       #---------------------
       adds: (a,f=same) ->
          (@add f(x) for x in a)
-         this
+         @
       #---------------------
       xpect: (that) ->
         n = this.n + that.n
@@ -283,7 +278,7 @@ Storing info about numeric  columns (resevoir style):
       iqr: (j,l) -> @per(.75,j,k) - @per(.25,j,k)
       toString:  -> "Some{#{@txt}:#{@mid()}}"
       norm1: (x) -> @all(); (x -  @_all[0])/
-                            (@_all.last() - @_all[0]+10**(-32)) 
+                            (last(@_all) - @_all[0]+10**(-32)) 
       ent: ->  
       #--------------------
       per: (p=0.5,j=0,k=(@_all.length)) ->
@@ -291,7 +286,7 @@ Storing info about numeric  columns (resevoir style):
          n
       #----------------------
       all: ->
-        @_all.sort(sorter) if not @good
+        @_all.sort(Order.it) if not @good
         @good = true
         @_all
       #--------------------
@@ -299,9 +294,9 @@ Storing info about numeric  columns (resevoir style):
         if @_cuts? 
           @_cuts
         else
-          b = new Bins(this)
+          b = new Bins(@)
           b.debug = debug
-          @_cuts = b.cuts(this)
+          @_cuts = b.cuts(@)
       #----------------------
       add1: (x) ->
         if @_all.length  <= @max
@@ -312,7 +307,7 @@ Storing info about numeric  columns (resevoir style):
           @all()
           if rand() < @max/@n
             @_cuts = null
-            @_all[ bsearch(@_all,x) ] = x
+            @_all[ Order.search(@_all,x) ] = x
 
 Unsupervised discretization.
 
@@ -404,7 +399,7 @@ Unsupervised discretization.
         @split(@rank())
       rank: (l) ->
         l1 = ([c.var(),c] for c in l)
-        l2 = l1.sort(sorter).reverse()
+        l2 = l1.sort(Order.it).reverse()
         (one[1] for one in l2)
       tree: () ->
         for col in @rank(@t.y)
@@ -412,91 +407,91 @@ Unsupervised discretization.
 
 ## Test Engine
 
-    ok={}
-    ok.tries = 0
-    ok.fails = 0
-
-    oks = (lst = ok) ->
-      okWorker = (name,f) ->
-        fyi= () -> 
-          a= ok.tries
-          b= ok.fails
+    class Ok
+      @tries = 0
+      @fails = 0
+      @all   = {}
+      @go:  ->
+        say "\n# " + "-".n() + "\n# " + today() + "\n"
+        await (Ok.worker name,f for name,f of Ok.all)
+      @fyi: (name) -> 
+          a= Ok.tries
+          b= Ok.fails
           c= int(0.5 + 100*(a-b)/a)
-          "#{s4(a)} #{s4(name,12)} #{s4(c,3)} %passed after failures= #{b}" 
-        try
-            ok.tries++
-            the.seed = 1
-            await (f(); say fyi())
-        catch error
-            ok.fails++
-            l = error.stack.split('\n')
-            say l[0]
-            say l[2..5].join("\n")
-            say fyi()
-      say "\n# " + "-".n() + "\n# " + today() + "\n"
-      (await okWorker name,f for name,f of lst when typeof(f) is 'function')
- 
+          say "#{s4(a)} #{s4(name,12)} #{s4(c,3)} %passed after failures= #{b}" 
+      @worker: (name,f) ->
+         try
+           Ok.tries++
+           the.seed = 1
+           await (f(); Ok.fyi(name))
+         catch error
+           Ok.fails++
+           l = error.stack.split('\n')
+           say l[0]
+           say l[2..5].join("\n")
+           Ok.fyi(name)
+
 Tests
 
-    ok.bad= -> assert 1 is 2,"deliberate error to check test engine"
+    Ok.all.bad= -> assert 1 is 2,"deliberate error to check test engine"
 
-    ok.sort = ->
-      x = [10000,-100,3,1,2,-10,30,15]
-      y = x.sort(sorter)
-      assert x[0]  == -100
-      assert x[x.length-1]  ==   10000
+    Ok.all.sort= ->
+         x = [10000,-100,3,1,2,-10,30,15]
+         y = x.sort(Order.it)
+         assert x[0]  == -100
+         assert x[x.length-1]  ==   10000
 
-    ok.keysort = ->
+    Ok.all.keysort = ->
       l = ({a: n,b: -1*n} for n in [20..1])
-      l.sort(keysort "b")
-      assert first(l).b == -20
+      l.sort(Order.key "b")
+      assert l[0].b == -20
       assert last(l).a  == 1
 
-    ok.random = ->
+    Ok.all.random = ->
       l= (p2 rand() for _ in [1..100])
-      l= l.sort(sorter)
+      l= l.sort(Order.it)
       assert  2 == l[0]
       assert 98 == l[ l.length - 1 ]
     
-    ok.bsearch = ->
+    Ok.all.bsearch = ->
       l= (d2(rand(),2) for _ in [1..100])
-      l.sort(sorter)
+      l.sort(Order.it)
       for i in [0.. l.length - 1] by 20
-         j = bsearch(l,l[i])
+         j = Order.search(l,l[i])
          assert Math.abs( j - i ) <= 3
 
-    ok.lines = (f= the.data + 'weather2.csv',n=0) -> 
+    Ok.all.lines = (f= the.data + 'weather2.csv',n=0) -> 
       lines f,(-> ++n),(-> assert n==20) 
     
-    ok.csv = (f = the.data + 'weather2.csv',n=0) ->
+    Ok.all.csv = (f = the.data + 'weather2.csv',n=0) ->
       new Csv f, (-> ++n), (-> assert n ==15,"bad rows length")
    
-    ok.num1 = ->
+    Ok.all.num1 = ->
       n = new Num
       (n.add x for x in [9,2,5,4,12,7,8,11,9,
                           3,7,4,12,5,4,10,9,6,9,4])
       assert n.mu==7
      
-    ok.num2 = ->
+    Ok.all.num2 = ->
       n = new Num
       n.adds([9,2,5,4,12,7,8,11,9,3,
               7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
       assert n.mu==0.7
       assert .30 <= n.sd <=.31
     
-    ok.sym = ->
+    Ok.all.sym = ->
       s= new Sym
       s.adds ['a','b','b','c','c','c','c']
       assert 1.3785 < s.var()<  1.379
 
-     ok.some1 = ->
+     Ok.all.some1 = ->
       s = new Some
       n = 100000
-      for x in (d2(rand(),2) for _ in [1..n])
+      for x in (d2(rand(),2) for _ in [1..n]) 
         s.add x
       for x in [0..99] by 10
         m = x/100
-        x = s.all()[ int(s.max *m) ]
+        x = s.all()[ int(s.max *m) ] 
         y = s.per(m)
         assert  y-0.01 <= x <= y+0.01
       c= s.cuts()
@@ -504,7 +499,7 @@ Tests
       assert 0.375 <= c[2] <= 0.385
       assert 0.815 <= c[5] <= 0.825
 
-    ok.some2 = ->
+    Ok.all.some2 = ->
       s = new Some
       for i in [1..10]
         for j in [1..4]
@@ -512,12 +507,12 @@ Tests
       c= s.cuts()
       assert  c[0]==1 and c[3]==4 and c.length==4
 
-    ok.table = (f= the.data + 'weather2.csv',n=0) ->
+    Ok.all.table = (f= the.data + 'weather2.csv',n=0) ->
       worker=(t) ->
         for c in t.cols
           say c.txt, c.pos, c.var()
       t=new Table
       t.from(f,worker)
+
     #--------------------------------------------------
-    #if "--test" in process.argv then oks()
-    oks()
+    if "--test" in process.argv then Ok.go()
