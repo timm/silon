@@ -169,11 +169,11 @@ For each line do ...
 Csv files
 
     class Csv
-      constructor: (file, action, over) ->
+      constructor: (file, action, done) ->
         @use     = null
         @lines    = []
         @action  = action
-        lines file, @line, over or ->
+        lines file, @line, (done or ->)
       line: (s) =>
         if s
           s = s.replace /\s/g,''
@@ -182,7 +182,7 @@ Csv files
       merge: (s) ->
         @lines.push s
         if s.last() isnt ','
-          @act @lines.join().split ','
+          @act @lines.join("").split ','
           @lines = []
       act: (cells) ->
         if cells.length
@@ -365,12 +365,13 @@ Unsupervised discretization.
 ## Table
 
     class Table
-      constructor:      -> [ @cols,@x,@y,@rows ] = [[],[],[],[]]
-      klass:            -> @y[0]
-      from:(f,after=->) -> new Csv f,((row) => @add row),after
-      add:          (l) -> @cols.length and @row(l) or @top(l)
-      top:   (l, pos=0) -> @cols = (@col(txt,pos++) for txt in l)
-      clone:         () -> t=new Table; t.add (c.txt for c in @cols); t
+      constructor:       -> [ @cols,@x,@y,@rows ] = [[],[],[],[]]
+      klass:             -> @y[0]
+      from:(f,after=same)-> new Csv f,((row) => @add row), (=> after(@))
+      add:          (l)  -> @cols.length and @row(l) or @top(l)
+      top:   (l, pos=0)  -> @cols = (@col(txt,++pos) for txt in l);  l
+      clone:         ()  -> t=new Table; t.add (c.txt for c in @cols); t
+      names:             -> (col.txt for col in @cols)
       #----------------------------------------------------------------
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
@@ -383,9 +384,6 @@ Unsupervised discretization.
         c.w  = -1   if the.ch.less  in txt
         also.push(c)
         c
-      #---------------
-      xnums: -> (c for c in @x when     nump(c.txt))
-      xsyms: -> (c for c in @x when not nump(c.txt))
 
     nump= (txt) -> the.ch.num  in txt or
                    the.ch.less in txt or
@@ -466,7 +464,7 @@ Tests
       lines f,(-> ++n),(-> assert n==20) 
     
     ok.csv = (f = the.data + 'weather2.csv',n=0) ->
-      new Csv f, (-> ++n), (-> assert n ==15)
+      new Csv f, (-> ++n), (-> assert n ==15,"bad rows length")
    
     ok.num1 = ->
       n = new Num
@@ -510,13 +508,11 @@ Tests
       assert  c[0]==1 and c[3]==4 and c.length==4
 
     ok.table = (f= the.data + 'weather2.csv',n=0) ->
-      pos=0
-
       worker=(u) ->
         for c in u.cols
-          say c.pos, c.txt
+          say c.pos, c.var()
       t=new Table
-      t.from(f,same,-> worker t)
+      t.from(f,worker)
     #--------------------------------------------------
     #if "--test" in process.argv then oks()
     ok.table()
