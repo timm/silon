@@ -282,7 +282,7 @@ Storing info about numeric  columns (resevoir style):
                        # since 90th z-curve percentile= 1.282
       #----------------------
       mid: (j,k) -> @per(.5,j,k)
-      var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
+      var: (j,k) -> say 21; (@per(.9,j,k) - @per(.1,j,k)) / @magic
       iqr: (j,l) -> @per(.75,j,k) - @per(.25,j,k)
       toString:  -> "Some{#{@txt}:#{@mid()}}"
       norm1: (x) -> @all(); (x -  @_all[0])/
