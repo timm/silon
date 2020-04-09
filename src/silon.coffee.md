@@ -274,22 +274,23 @@ Storing info about numeric  columns (resevoir style):
     class Some extends Col
       constructor: (args...) ->
         super args...
-        @good  = false # is @_all sorted?
-        @_all  = []    # where to keep things
-        @max   = 256   # keep no more than @max items
-        @small = 0.147 # used in cliff's delta
-        @magic = 2.564 # sd = (90th-10th)/@magic
-                       # since 90th z-curve percentile= 1.282
+        @good  = false   # is @_all sorted?
+        @_all  = []      # where to keep things
+        @max   = 256     # keep no more than @max items
+        @small =   0.147 # used in cliff's delta
+        @magic =   2.564 # sd = (90th-10th)/@magic
+                         # since 90th z-curve percentile= 1.282
       #----------------------
       mid: (j,k) -> @per(.5,j,k)
-      var: (j,k) -> say 21; (@per(.9,j,k) - @per(.1,j,k)) / @magic
+      var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
       iqr: (j,l) -> @per(.75,j,k) - @per(.25,j,k)
       toString:  -> "Some{#{@txt}:#{@mid()}}"
       norm1: (x) -> @all(); (x -  @_all[0])/
                             (@_all.last() - @_all[0]+10**(-32)) 
       #--------------------
       per: (p=0.5,j=0,k=(@_all.length)) ->
-         @all()[ Math.floor(j+p*(k-j)) ]
+         n= @all()[ Math.floor(j+p*(k-j)) ]
+         n
       #----------------------
       all: ->
         @_all.sort(sorter) if not @good
@@ -369,7 +370,7 @@ Unsupervised discretization.
       klass:             -> @y[0]
       from:(f,after=same)-> new Csv f,((row) => @add row), (=> after(@))
       add:          (l)  -> @cols.length and @row(l) or @top(l)
-      top:   (l, pos=0)  -> @cols = (@col(txt,++pos) for txt in l);  l
+      top:   (l, pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
       clone:         ()  -> t=new Table; t.add (c.txt for c in @cols); t
       names:             -> (col.txt for col in @cols)
       #----------------------------------------------------------------
@@ -508,9 +509,9 @@ Tests
       assert  c[0]==1 and c[3]==4 and c.length==4
 
     ok.table = (f= the.data + 'weather2.csv',n=0) ->
-      worker=(u) ->
-        for c in u.cols
-          say c.pos, c.var()
+      worker=(t) ->
+        for c in t.cols
+          say c.txt, c.pos, c.var()
       t=new Table
       t.from(f,worker)
     #--------------------------------------------------
