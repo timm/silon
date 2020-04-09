@@ -74,23 +74,17 @@ Much of V&V is "optimize", especially for AI systems.
       data: "../etc/data/"
       conf: 95
       seed: 1
-      test:
-        tries: 0
-        fails: 0
       ch:
         num: '$'
         more: '>'
         less: '<'
         klass: '!'
         ignore: '?'
+      ninf: -1 * (Number.MAX_SAFE_INTEGER - 1)
+      inf:  Number.MAX_SAFE_INTEGER
+      tiny: 10 ** (-32)
     
 ## Standard Stuff
-
-### Standard Constants
-
-    ninf   = -1 * (Number.MAX_SAFE_INTEGER - 1)
-    inf    = Number.MAX_SAFE_INTEGER
-    tiny   = 10 ** (-32)
 
 ### Standard functions.
 
@@ -99,26 +93,42 @@ Misc
     same   = (x) -> x 
     today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
 
+Maths
+
+    int =  Math.floor
+
+    rand=  ->
+        x = Math.sin(the.seed++) * 10000
+        x - int(x)
+
+     d2= (n,f=2) ->  n.toFixed(f)
+     p2= (n,f=2) ->  Math.round(100*d2(n,f))
+     s4= (n,f=4) ->
+       s = n.toString()
+       l = s.length
+       pre = if l < f then " ".n(f - l) else ""
+       pre + s
+
 Lists
 
     first = (a) -> a[0]
     last  = (a) -> a[ a.length - 1 ]
 
-    keysort = (key) ->
-      (x,y) -> funsort (z) -> z[key]
-
-    funsort = (f) ->
-      (x,y) -> sorter f(x), f(y)
-
     sorter = (x,y) -> switch
       when x <  y then -1
       when x == y then  0
       else 1
-      
+
+    funsort = (f) ->
+      (x,y) -> sorter f(x), f(y)
+
+    keysort = (key) ->
+      (x,y) -> funsort (z) -> z[key]
+ 
     bsearch = (lst,val,f=((z) -> z)) ->
       [lo,hi] = [0, lst.length - 1]
       while lo <= hi
-        mid = Math.floor((lo+hi)/2)
+        mid = int((lo+hi)/2)
         if f( lst[mid] ) >= val
           hi = mid - 1
         else
@@ -136,20 +146,6 @@ Strings
         process.stdout.write sep+x
         sep=", "
       process.stdout.write "\n" 
-
-Maths
-
-    rand=  ->
-        x = Math.sin(the.seed++) * 10000
-        x - Math.floor(x)
-
-     d2= (n,f=2) ->  n.toFixed(f)
-     p2= (n,f=2) ->  Math.round(100*d2(n,f))
-     s4= (n,f=4) ->
-       s = n.toString()
-       l = s.length
-       pre = if l < f then " ".n(f - l) else ""
-       pre + s
 
 Unit tests
 
@@ -249,11 +245,11 @@ Storing info about numeric columns.
       constructor: (args...) ->
         super args...
         [ @mu,@m2,@sd ] = [ 0,0,0,0 ]
-        [ @hi, @lo ]    = [ ninf, inf ]
+        [ @hi, @lo ]    = [ the.ninf, the.inf ]
       #-------------------------
       mid:    () -> @mu
       var:    () -> @sd
-      norm1: (x) -> (x - @lo) / (@hi - @lo +  _.tiny)
+      norm1: (x) -> (x - @lo) / (@hi - @lo + the.tiny)
       toString:  -> "Num{#{@txt}:#{@lo}..#{@hi}}"
       #-------------------------
       add1: (x) ->
@@ -291,7 +287,7 @@ Storing info about numeric  columns (resevoir style):
       ent: ->  
       #--------------------
       per: (p=0.5,j=0,k=(@_all.length)) ->
-         n= @all()[ Math.floor(j+p*(k-j)) ]
+         n= @all()[ int(j+p*(k-j)) ]
          n
       #----------------------
       all: ->
@@ -328,7 +324,7 @@ Unsupervised discretization.
         @min      =  0.5  # usually, divide into sqrt(n) size bins
         @cohen    =  0.3  # epsilon = @var()*@cohem
         @maxDepth = 15
-        @min      = Math.floor(s._all.length**@min)
+        @min      = int(s._all.length**@min)
         @e        = s.var() * @cohen
         @_ent     = 0
       #-----------------------------------------------------
@@ -346,24 +342,25 @@ Unsupervised discretization.
             out.push s._all[hi] 
         out
       #------------------------------
-      argmin: (s,lo,hi,cut=null) ->
-        if hi - lo > 2*@min 
-          best = s.var(lo,hi)
-          for j in [lo+@min .. hi-@min]
+      argmin: (s,lo,hi) ->
+        cut =  null                     # default result. null==no break found
+        if hi - lo > 2*@min             # is there enough here to cut in two?
+          best = s.var(lo,hi)           # the status quo that we want to beat
+          for j in [lo+@min .. hi-@min] # (start,end) needs at least @min
             x     = s._all[j]
             after = s._all[j+1]
-            if x isnt after
+            if x isnt after             # only break between different values
               below = s.mid(lo,j)
               above = s.mid(j+1,hi)
-              if (above - below) > @e
+              if (above - below) > @e   # ignore breaks with small median diff
                 now = @xpect(s,lo,j,hi)
-                if now * @puny < best
+                if now * @puny < best   # ignore puny small improvements
                   best = now
-                  cut  = j
-        cut
+                  cut  = j              # update the best cut found so far
+        cut # return the best cut found
       #-------------------------------------------------------
       xpect: (s,j, m, k) ->
-        (tiny + (m-j)*s.var(j,m) + (k-m-1)*s.var(m+1,k))/(k-j+1)
+        (the.tiny + (m-j)*s.var(j,m) + (k-m-1)*s.var(m+1,k))/(k-j+1)
             
 ## Rows
 
@@ -386,18 +383,16 @@ Unsupervised discretization.
         @rows.push(new Row(l))
       #----------------
       col: (txt,pos) ->
-        what = if nump(txt) then Some else Sym
-        also = if yp(txt)   then @y   else @x
-        c    = new what(txt,pos)
-        c.w  = -1   if the.ch.less  in txt
-        also.push(c)
+        w = if the.ch.less in txt then -1 else 1
+        c = new (if Table.isnum(txt) then Some else Sym)(txt,pos,w)
+        (if Table.isy(txt)   then @y   else @x).push(c)
         c
-
-    nump= (txt) -> the.ch.num  in txt or
+      #----------------
+      @isnum= (txt) -> the.ch.num  in txt or
                    the.ch.less in txt or
                    the.ch.more in txt
-
-    yp= (txt) -> the.ch.klass in txt or
+      #----------------
+      @isy= (txt) -> the.ch.klass in txt or
                  the.ch.less  in txt or
                  the.ch.more  in txt
 ## Silo
@@ -417,29 +412,31 @@ Unsupervised discretization.
 
 ## Test Engine
 
+    ok={}
+    ok.tries = 0
+    ok.fails = 0
+
     oks = (lst = ok) ->
       okWorker = (name,f) ->
         fyi= () -> 
-          a= the.test.tries
-          b= the.test.fails
-          c= Math.round(100*(a-b)/a)
-          "#{s4(a)} #{s4(name,12)} #{s4(b,3)} 
-           failed #{s4(c,3)} %passed"
+          a= ok.tries
+          b= ok.fails
+          c= int(0.5 + 100*(a-b)/a)
+          "#{s4(a)} #{s4(name,12)} #{s4(c,3)} %passed after failures= #{b}" 
         try
-            the.test.tries++
+            ok.tries++
             the.seed = 1
             await (f(); say fyi())
         catch error
-            the.test.fails++
+            ok.fails++
             l = error.stack.split('\n')
             say l[0]
             say l[2..5].join("\n")
             say fyi()
-      (await okWorker name,f for name,f of lst)
+      say "\n# " + "-".n() + "\n# " + today() + "\n"
+      (await okWorker name,f for name,f of lst when typeof(f) is 'function')
  
 Tests
-
-    ok={}
 
     ok.bad= -> assert 1 is 2,"deliberate error to check test engine"
 
@@ -499,7 +496,7 @@ Tests
         s.add x
       for x in [0..99] by 10
         m = x/100
-        x = s.all()[Math.floor(s.max *m)]
+        x = s.all()[ int(s.max *m) ]
         y = s.per(m)
         assert  y-0.01 <= x <= y+0.01
       c= s.cuts()
@@ -523,4 +520,4 @@ Tests
       t.from(f,worker)
     #--------------------------------------------------
     #if "--test" in process.argv then oks()
-    ok.table()
+    oks()
