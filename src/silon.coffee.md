@@ -330,7 +330,7 @@ Unsupervised discretization.
         @maxDepth = 15
         @min      = Math.floor(s._all.length**@min)
         @e        = s.var() * @cohen
-        @entropy  = 0
+        @_ent     = 0
       #-----------------------------------------------------
       cuts: (s, lo=0, hi=s._all.length-1, lvl=0, out=[]) ->
         if lvl < @maxDepth 
@@ -342,7 +342,7 @@ Unsupervised discretization.
             @cuts(s, cut+1, hi, lvl+1, out)
           else
             p = (hi - lo)/s._all.length
-            @entropy -= p*Math.log2(p)
+            @_ent -= p*Math.log2(p)
             out.push s._all[hi] 
         out
       #------------------------------
