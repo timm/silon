@@ -280,6 +280,7 @@ Storing info about numeric  columns (resevoir style):
         @small =   0.147 # used in cliff's delta
         @magic =   2.564 # sd = (90th-10th)/@magic
                          # since 90th z-curve percentile= 1.282
+        @_cuts = null
       #----------------------
       mid: (j,k) -> @per(.5,j,k)
       var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
@@ -287,6 +288,7 @@ Storing info about numeric  columns (resevoir style):
       toString:  -> "Some{#{@txt}:#{@mid()}}"
       norm1: (x) -> @all(); (x -  @_all[0])/
                             (@_all.last() - @_all[0]+10**(-32)) 
+      ent: ->  
       #--------------------
       per: (p=0.5,j=0,k=(@_all.length)) ->
          n= @all()[ Math.floor(j+p*(k-j)) ]
@@ -298,17 +300,22 @@ Storing info about numeric  columns (resevoir style):
         @_all
       #--------------------
       cuts: (debug=false) -> 
-        b = new Bins(this)
-        b.debug = debug
-        b.cuts(this)
+        if @_cuts? 
+          @_cuts
+        else
+          b = new Bins(this)
+          b.debug = debug
+          @_cuts = b.cuts(this)
       #----------------------
       add1: (x) ->
         if @_all.length  <= @max
+          @_cuts = null
           @good = false
           @_all.push(x)
         else
           @all()
           if rand() < @max/@n
+            @_cuts = null
             @_all[ bsearch(@_all,x) ] = x
 
 Unsupervised discretization.
