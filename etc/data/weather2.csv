@@ -1,6 +1,6 @@
-?outlook,        
+?:outlook,        
 <temp,  $humid,      
-wind,     
+:wind,     
 !play        
 sunny, 85, 85,  
 FALSE, no 

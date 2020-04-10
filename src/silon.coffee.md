@@ -76,6 +76,7 @@ Much of V&V is "optimize", especially for AI systems.
       seed: 1
       ch:
         num: '$'
+        sym: ':'
         more: '>'
         less: '<'
         klass: '!'
@@ -128,8 +129,12 @@ Lists
             hi = mid - 1
           else
             lo = mid + 1
-        Math.min(lo,lst.length-1) 
-  
+        Math.min(lo,lst.length-1)
+      @before = (x,lst, y=lst[0]) ->
+        for z in lst
+          if z>x then break else y=z
+        y
+
 Strings
 
     String::last = @[ @.length - 1 ]
@@ -146,25 +151,14 @@ Unit tests
 
     assert = (f,t) -> throw new Error t or "" if not f
 
-For each line do ...
-
-    lines = ( file, action, done = (-> ) ) ->  
-      stream = readline.createInterface
-        input:    fs.createReadStream file
-        output:   process.stdout
-        terminal: false
-      stream.on 'close',           -> done()
-      stream.on 'error', ( error ) -> action error
-      stream.on 'line',  ( line  ) -> action line 
-
-Csv files
+Csv
 
     class Csv
       constructor: (file, action, done) ->
         @use     = null
         @lines    = []
         @action  = action
-        lines file, @line, (done or ->)
+        Csv.linesDo file, @line, (done or ->)
       line: (s) =>
         if s
           s = s.replace /\s/g,''
@@ -182,6 +176,15 @@ Csv files
       prep: (s) ->
         t = +s
         if Number.isNaN(t) then s else t
+      @linesDo: ( file, action, done = (-> ) ) ->  
+        stream = readline.createInterface
+          input:    fs.createReadStream file
+          output:   process.stdout
+          terminal: false
+        stream.on 'close',           -> done()
+        stream.on 'error', ( error ) -> action error
+        stream.on 'line',  ( line  ) -> action line 
+
 
 ## Tables
 
@@ -192,17 +195,17 @@ Storing info about a column.
     class Col
       constructor:(txt,pos,w=1) -> [@n,@w,@pos,@txt]=[0,w,pos,txt]
       norm: (x) -> if x isnt the.ch.ignore then @norm1 x else x
-      #---------------------
+      # ---------  ---------
       add: (x) ->
          if x isnt the.ch.ignore
            @n++
            @add1 x
          x
-      #---------------------
+      # ---------  ---------
       adds: (a,f=same) ->
          (@add f(x) for x in a)
          @
-      #---------------------
+      # ---------  ---------
       xpect: (that) ->
         n = this.n + that.n
         this.n/n * this.var() + that.n/n * that.var()
@@ -213,18 +216,18 @@ Storing info about symbolic  columns.
       constructor: (args...) ->
         super args...
         [ @counts,@most,@mode,@_ent ] = [ [],0,null,null ]
-      #------------------------
+      # ---------   -----------
       mid:    () -> @mode
       var:    () -> @ent()
       norm1: (x) -> x
       toString:  -> "Sym{#{@txt}:#{@mode}}"
-      #-------------------------
+      # ---------   ------------
       add1: (x) ->
         @_ent = null
         @counts[x] = 0 unless x of @counts
         n = ++@counts[x]
         [ @most,@mode ] = [ n,x ] if n > @most
-      #-------------------------
+      # ---------   ------------
       ent: (e=0)->
         unless @_ent?
           @_ent = 0
@@ -241,12 +244,12 @@ Storing info about numeric columns.
         super args...
         [ @mu,@m2,@sd ] = [ 0,0,0,0 ]
         [ @hi, @lo ]    = [ the.ninf, the.inf ]
-      #-------------------------
+      # ---------   ------------
       mid:    () -> @mu
       var:    () -> @sd
       norm1: (x) -> (x - @lo) / (@hi - @lo + the.tiny)
       toString:  -> "Num{#{@txt}:#{@lo}..#{@hi}}"
-      #-------------------------
+      # ---------   ------------
       add1: (x) ->
         @lo   = if x < @lo then x else @lo
         @hi   = if x > @hi then x else @hi
@@ -254,7 +257,7 @@ Storing info about numeric columns.
         @mu  += delta / @n
         @m2  += delta * (x - @mu)
         @sd   = @sd0()
-      #-------------------------
+      # ---------   ------------
       sd0: () -> switch
         when  @n < 2  then 0
         when  @m2 < 0 then 0
@@ -271,33 +274,31 @@ Storing info about numeric  columns (resevoir style):
         @small =   0.147 # used in cliff's delta
         @magic =   2.564 # sd = (90th-10th)/@magic
                          # since 90th z-curve percentile= 1.282
-        @_cuts = null
-      #----------------------
+        @_cuts =  null
+      # ---------   ---------
       mid: (j,k) -> @per(.5,j,k)
       var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
       iqr: (j,l) -> @per(.75,j,k) - @per(.25,j,k)
       toString:  -> "Some{#{@txt}:#{@mid()}}"
       norm1: (x) -> @all(); (x -  @_all[0])/
                             (last(@_all) - @_all[0]+10**(-32)) 
-      ent: ->  
-      #--------------------
+      # --------- --------- --------- -----------------
       per: (p=0.5,j=0,k=(@_all.length)) ->
          n= @all()[ int(j+p*(k-j)) ]
          n
-      #----------------------
+      # --------- --------- --------- -----------------
       all: ->
         @_all.sort(Order.it) if not @good
         @good = true
         @_all
-      #--------------------
+      # --------- --------- --------- -----------------
       cuts: (debug=false) -> 
-        if @_cuts? 
-          @_cuts
-        else
-          b = new Bins(@)
-          b.debug = debug
-          @_cuts = b.cuts(@)
-      #----------------------
+        if not @_cuts?
+           b = new Bins(@)
+           b.debug = debug
+           @_cuts = b.cuts(@)
+        @_cuts
+      # --------- --------- --------- -----------------
       add1: (x) ->
         if @_all.length  <= @max
           @_cuts = null
@@ -322,7 +323,7 @@ Unsupervised discretization.
         @min      = int(s._all.length**@min)
         @e        = s.var() * @cohen
         @_ent     = 0
-      #-----------------------------------------------------
+      # --------- --------- --------- ---------   ----------
       cuts: (s, lo=0, hi=s._all.length-1, lvl=0, out=[]) ->
         if lvl < @maxDepth 
           if @debug
@@ -336,7 +337,7 @@ Unsupervised discretization.
             @_ent -= p*Math.log2(p)
             out.push s._all[hi] 
         out
-      #------------------------------
+      # --------- --------- ---------
       argmin: (s,lo,hi) ->
         cut =  null                     # default result. null==no break found
         if hi - lo > 2*@min             # is there enough here to cut in two?
@@ -353,7 +354,7 @@ Unsupervised discretization.
                   best = now
                   cut  = j              # update the best cut found so far
         cut # return the best cut found
-      #-------------------------------------------------------
+      # --------- --------- --------- ---------   ------------
       xpect: (s,j, m, k) ->
         (the.tiny + (m-j)*s.var(j,m) + (k-m-1)*s.var(m+1,k))/(k-j+1)
             
@@ -372,22 +373,28 @@ Unsupervised discretization.
       top:   (l, pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
       clone:         ()  -> t=new Table; t.add (c.txt for c in @cols); t
       names:             -> (col.txt for col in @cols)
-      #----------------------------------------------------------------
+      dump:              -> say @names(); (say row.cells for row in @rows)
+      # --------- --------- --------- --------- ---------   -----------
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
         @rows.push(new Row(l))
-      #----------------
+      # --------- --------- --------- ---------
       col: (txt,pos) ->
-        w = if the.ch.less in txt then -1 else 1
-        c = new (if Table.isnum(txt) then Some else Sym)(txt,pos,w)
-        (if Table.isy(txt)   then @y   else @x).push(c)
+        what   = if Table.isNum(txt)   then Some else Sym
+        where  = if Table.isY(txt)     then @y   else @x
+        weight = if the.ch.less in txt then -1   else 1
+        c      = new what(txt,pos,weight)
+        where.push(c)
         c
-      #----------------
-      @isnum= (txt) -> the.ch.num  in txt or
-                   the.ch.less in txt or
-                   the.ch.more in txt
-      #----------------
-      @isy= (txt) -> the.ch.klass in txt or
+      # --------- --------- --------- ---------
+      @isNum= (txt) -> switch
+           when the.ch.sym  in txt then false
+           when the.ch.num  in txt then true
+           when the.ch.less in txt then true
+           when the.ch.more in txt then true
+           else false
+      # --------- --------- --------- ---------
+      @isY= (txt) -> the.ch.klass in txt or
                  the.ch.less  in txt or
                  the.ch.more  in txt
 ## Silo
@@ -413,13 +420,13 @@ Unsupervised discretization.
       @all   = {}
       @go:  ->
         say "\n# " + "-".n() + "\n# " + today() + "\n"
-        await (Ok.worker name,f for name,f of Ok.all)
+        await (Ok.run name,f for name,f of Ok.all)
       @fyi: (name) -> 
           a= Ok.tries
           b= Ok.fails
           c= int(0.5 + 100*(a-b)/a)
           say "#{s4(a)} #{s4(name,12)} #{s4(c,3)} %passed after failures= #{b}" 
-      @worker: (name,f) ->
+      @run: (name,f) ->
          try
            Ok.tries++
            the.seed = 1
@@ -428,7 +435,7 @@ Unsupervised discretization.
            Ok.fails++
            l = error.stack.split('\n')
            say l[0]
-           say l[2..5].join("\n")
+           say l[2]
            Ok.fyi(name)
 
 Tests
@@ -460,12 +467,17 @@ Tests
          j = Order.search(l,l[i])
          assert Math.abs( j - i ) <= 3
 
-    Ok.all.lines = (f= the.data + 'weather2.csv',n=0) -> 
-      lines f,(-> ++n),(-> assert n==20) 
-    
+    Ok.all.before = ->
+      assert  2 == Order.before  0,[2,4,8,12]
+      assert  8 == Order.before 10,[2,4,8,12]
+      assert 12 == Order.before 99,[2,4,8,12]
+
+    Ok.all.linesDo = (f= the.data + 'weather2.csv',n=0) -> 
+      Csv.linesDo f,(-> ++n),(-> assert n==20) 
+
     Ok.all.csv = (f = the.data + 'weather2.csv',n=0) ->
       new Csv f, (-> ++n), (-> assert n ==15,"bad rows length")
-   
+
     Ok.all.num1 = ->
       n = new Num
       (n.add x for x in [9,2,5,4,12,7,8,11,9,
@@ -507,12 +519,17 @@ Tests
       c= s.cuts()
       assert  c[0]==1 and c[3]==4 and c.length==4
 
-    Ok.all.table = (f= the.data + 'weather2.csv',n=0) ->
-      worker=(t) ->
-        for c in t.cols
-          say c.txt, c.pos, c.var()
+    Ok.all.table1 = (f= the.data + 'weather2.csv',n=0) ->
+      worker=(u) ->
+        say u.clone().cols
+        for c in u.cols
+          say c.txt, c.pos, c.var() 
+        #u.dump()
       t=new Table
       t.from(f,worker)
 
-    #--------------------------------------------------
+    Ok.all.table2 = ->
+      Ok.all.table1 the.data + 'auto93.csv'
+
+    # --------- --------- --------- --------- ---------
     if "--test" in process.argv then Ok.go()
