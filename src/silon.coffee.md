@@ -97,6 +97,9 @@ Misc
 Maths
 
     int =  Math.floor
+    id  = (x) ->  
+      x.__id = the.id++ unless x.__id?
+      x.__id
 
     rand=  ->
         x = Math.sin(the.seed++) * 10000
@@ -184,19 +187,15 @@ Storing info about a column.
 
     class Col
       constructor:(txt,pos,w=1) -> [@n,@w,@pos,@txt]=[0,w,pos,txt]
-      norm: (x)                 -> x isnt the.ch.ignore and @norm1 x or x
-      bin:  (x)                 -> x isnt the.ch.ignore and @bin1  x or x
-      # ---------  ---------
-      add: (x) ->
-         if x isnt the.ch.ignore
-           @n++
-           @add1 x
-         x
-      # ---------  ---------
+      # ---------  --------- --------- ---------
+      norm: (x) ->  if x is   the.ch.ignore then x else @norm1 x
+      bin:  (x) ->  if x is   the.ch.ignore then x else @bin1  x
+      add:  (x) -> (if x isnt the.ch.ignore then (@n++; @add1 x)); x
+      # ---------  --------- --------- ---------
       adds: (a,f=same) ->
          (@add f(x) for x in a)
          @
-      # ---------  ---------
+      # ---------  --------- --------- ---------
       xpect: (that) ->
         n = this.n + that.n
         this.n/n * this.var() + that.n/n * that.var()
@@ -207,27 +206,26 @@ Storing info about symbolic  columns.
       constructor: (args...) ->
         super args...
         [ @counts,@most,@mode,@_ent ] = [ [],0,null,null ]
-      # ---------   -----------
+      # ---------  --------- --------- ---------
       mid:    () -> @mode
       var:    () -> @ent()
       norm1: (x) -> x
       toString:  -> "Sym{#{@txt}:#{@mode}}"
       bin1: (x)  -> x
-      # ---------   ------------
+      # ---------  --------- --------- ---------
       add1: (x) ->
         @_ent = null
         @counts[x] = 0 unless x of @counts
         n = ++@counts[x]
         [ @most,@mode ] = [ n,x ] if n > @most
-      # ---------   ------------
+      # ---------  --------- --------- ---------
       ent: (e=0)->
-        unless @_ent?
+        if  not @_ent?
           @_ent = 0
           for x,y of @counts
             p      = y/@n
             @_ent -= p*Math.log2(p)
         @_ent
-
 
 Storing info about numeric columns.
 
@@ -236,18 +234,17 @@ Storing info about numeric columns.
         super args...
         [ @mu,@m2,@sd ] = [ 0,0,0,0 ]
         [ @hi, @lo ]    = [ the.ninf, the.inf ]
-      # ---------   ------------
+      # ---------  --------- --------- ---------
       mid:    () -> @mu
       var:    () -> @sd
       norm1: (x) -> (x - @lo) / (@hi - @lo + the.tiny)
       toString:  -> "Num{#{@txt}:#{@lo}..#{@hi}}"
-      # ---------   ------------
-      bin1: (x) -> 
-        s = @sd0()
-        z = (x - @mu)/ (the.tiny + s)
+      # ---------  --------- --------- ---------
+      bin1: (x) ->
+        z = (x - @mu)/ (the.tiny + @sd0())
         z = Order.before(z,[-1.28,-.84,-.52,-.25,0,.25,.52,.84,1.28])
-        @mu + z*s
-      # ---------   ------------
+        @mu + z * @sd0()
+      # ---------  --------- --------- ---------
       add1: (x) ->
         @lo   = if x < @lo then x else @lo
         @hi   = if x > @hi then x else @hi
@@ -255,7 +252,7 @@ Storing info about numeric columns.
         @mu  += delta / @n
         @m2  += delta * (x - @mu)
         @sd   = @sd0()
-      # ---------   ------------
+      # ---------  --------- --------- ---------
       sd0: () -> switch
         when  @n < 2  then 0
         when  @m2 < 0 then 0
@@ -292,7 +289,7 @@ Storing info about numeric  columns (resevoir style):
       # --------- --------- --------- -----------------
       bin1: (x,debug=false) -> 
         if  @bins?
-          Order.before(x, @bins.breaks())
+          Order.before(x, @bins.breaks)
         else
           @bins = new Bins(@,debug)
           @bins.cuts(@)
@@ -323,6 +320,8 @@ Unsupervised discretization.
         @e        = s.var() * @cohen
         @breaks   = []
       # --------- --------- --------- ---------   ----------
+      bin: (x) -> Order.before(x,@breaks)
+      # --------- --------- --------- ---------   ----------
       cuts: (s, lo=0, hi=s._all.length-1, lvl=0) ->
         if lvl < @maxDepth 
           if @debug
@@ -332,7 +331,8 @@ Unsupervised discretization.
             @cuts(s, lo,   cut, lvl+1)
             @cuts(s, cut+1, hi, lvl+1)
           else
-            @breaks.push s._all[hi] 
+            # ignore cutting on last value (no point)
+            @breaks.push s._all[hi] if hi < s._all.length - 1
       # --------- --------- ---------
       argmin: (s,lo,hi) ->
         cut =  null                     # default result. null==no break found
@@ -393,6 +393,13 @@ Unsupervised discretization.
       @isY= (txt) -> the.ch.klass in txt or
                  the.ch.less  in txt or
                  the.ch.more  in txt
+      bins: () ->
+        t = new Table
+        t.add ((the.ch.sym + name) for name in @names())
+        for row in @rows
+          t.add ( col.bin(row.cells[col.pos]) for col in @cols )
+        t
+
 ## Silo
 
     class @KOD # k-object-dimensional tree
@@ -417,16 +424,19 @@ Unsupervised discretization.
       @if    = (f,t) -> throw new Error t or "" if not f
       @go:  ->
         say "\n# " + "-".n() + "\n# " + today() + "\n"
-        await (Ok.run name,f for name,f of Ok.all)
+        (Ok.run name,f for name,f of Ok.all)
       @fyi: (name) -> 
           a= Ok.tries
           b= Ok.fails
           c= int(0.5 + 100*(a-b)/a)
-          say "#{s4(a)} #{s4(name,12)} #{s4(c,3)} %passed after failures= #{b}" 
+          process.stdout.write "#{s4(a)}) #{s4(c,3)} 
+                               %passed after failures= #{b} "
+          process.stdout.write console.timeEnd(name)
       @run: (name,f) ->
          try
            Ok.tries++
            the.seed = 1
+           console.time(name)
            await (f(); Ok.fyi(name))
          catch error
            Ok.fails++
@@ -438,6 +448,20 @@ Unsupervised discretization.
 Tests
 
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
+
+    Ok.all.timing = ->
+      j=0
+      n=0.25*10**9
+      for i in [1 .. n]
+        j++
+      Ok.if j == n
+
+    Ok.all.id= ->
+      [a,b] = [{},{}]
+      a1id = id(a)
+      b1id = id(b)
+      a2id = id(a)
+      Ok.if a1id is a2id and a1id isnt b1id
 
     Ok.all.sort= ->
          x = [10000,-100,3,1,2,-10,30,15]
@@ -500,40 +524,42 @@ Tests
       s.adds ['a','b','b','c','c','c','c']
       Ok.if 1.3785 < s.var()<  1.379
 
-     Ok.all.some1 = ->
+    Ok.all.some1 = ->
       s = new Some
       n = 100000
       for x in (d2(rand(),2) for _ in [1..n]) 
         s.add x
       for x in [0..99] by 10
         m = x/100
-        x = s.all()[ int(s.max *m) ] 
+        x = s.all()[ int(s.max *m) ]  
         y = s.per(m)
         Ok.if  y-0.01 <= x <= y+0.01
-      c= s.cuts()
-      Ok.if c.length == 7
-      Ok.if 0.375 <= c[2] <= 0.385
-      Ok.if 0.815 <= c[5] <= 0.825
+      b = new Bins(s)
+      b.cuts(s)
+      Ok.if b.breaks.length == 6
+      Ok.if  0.55 <= b.bin(0.6)                 <= 0.56, .6
+      Ok.if 0.82  <= Order.before(200,b.breaks) <=  .825, 200
+      Ok.if 0     <= Order.before(-1, b.breaks) <= 1.131, -1
 
     Ok.all.some2 = ->
       s = new Some
       for i in [1..10]
         for j in [1..4]
           s.add j
-      c= s.cuts()
-      Ok.if  c[0]==1 and c[3]==4 and c.length==4
+      b = new Bins(s)
+      b.cuts(s)
+      c=  b.breaks
+      Ok.if  c[0]==1 and c[2]==3 and c.length==3
 
-    Ok.all.table1 = (f= the.data + 'weather2.csv',n=0) ->
+    Ok.all.table1 = (f= the.data + 'weather2.csv',dump=true,n=0) ->
       worker=(u) ->
-        say u.clone().cols
-        for c in u.cols
-          say c.txt, c.pos, c.var() 
-        #u.dump()
-      t=new Table
-      t.from(f,worker)
+        v = u.bins()
+        (Ok.if "Sym"==c.constructor.name for c in v.cols)
+        v.dump() if dump
+      t=(new Table).from(f,worker)
 
-    Ok.all.table2 = ->
-      Ok.all.table1 the.data + 'auto93.csv'
-
+    Ok.all.table2 = -> Ok.all.table1 the.data + 'auto93.csv',false
+    Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv',false
+     
     # --------- --------- --------- --------- ---------
     if "--test" in process.argv then Ok.go()
