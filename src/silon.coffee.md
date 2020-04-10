@@ -110,6 +110,13 @@ Maths
        pre = if l < f then " ".n(f - l) else ""
        pre + s
 
+Strings
+
+    String::last = @[ @.length - 1 ]
+    String::n    = (m=40) -> Array(m+1).join(@)
+
+    say = (l...) -> process.stdout.write l.join(", ") + "\n"
+
 Lists
 
     last = (a) -> a[ a.length - 1 ]
@@ -134,22 +141,6 @@ Lists
         for z in lst
           if z>x then break else y=z
         y
-
-Strings
-
-    String::last = @[ @.length - 1 ]
-    String::n    = (m=40) -> Array(m+1).join(@)
-
-    say = (l...) ->
-      sep=""
-      for x in l
-        process.stdout.write sep+x
-        sep=", "
-      process.stdout.write "\n" 
-
-Unit tests
-
-    assert = (f,t) -> throw new Error t or "" if not f
 
 Csv
 
@@ -176,15 +167,14 @@ Csv
       prep: (s) ->
         t = +s
         if Number.isNaN(t) then s else t
-      @linesDo: ( file, action, done = (-> ) ) ->  
+      @linesDo: ( file, action, done = (-> ) ) ->
         stream = readline.createInterface
           input:    fs.createReadStream file
           output:   process.stdout
           terminal: false
         stream.on 'close',           -> done()
         stream.on 'error', ( error ) -> action error
-        stream.on 'line',  ( line  ) -> action line 
-
+        stream.on 'line',  ( line  ) -> action line
 
 ## Tables
 
@@ -194,7 +184,8 @@ Storing info about a column.
 
     class Col
       constructor:(txt,pos,w=1) -> [@n,@w,@pos,@txt]=[0,w,pos,txt]
-      norm: (x) -> if x isnt the.ch.ignore then @norm1 x else x
+      norm: (x)                 -> x isnt the.ch.ignore and @norm1 x or x
+      bin:  (x)                 -> x isnt the.ch.ignore and @bin1  x or x
       # ---------  ---------
       add: (x) ->
          if x isnt the.ch.ignore
@@ -221,6 +212,7 @@ Storing info about symbolic  columns.
       var:    () -> @ent()
       norm1: (x) -> x
       toString:  -> "Sym{#{@txt}:#{@mode}}"
+      bin1: (x)  -> x
       # ---------   ------------
       add1: (x) ->
         @_ent = null
@@ -250,6 +242,12 @@ Storing info about numeric columns.
       norm1: (x) -> (x - @lo) / (@hi - @lo + the.tiny)
       toString:  -> "Num{#{@txt}:#{@lo}..#{@hi}}"
       # ---------   ------------
+      bin1: (x) -> 
+        s = @sd0()
+        z = (x - @mu)/ (the.tiny + s)
+        z = Order.before(z,[-1.28,-.84,-.52,-.25,0,.25,.52,.84,1.28])
+        @mu + z*s
+      # ---------   ------------
       add1: (x) ->
         @lo   = if x < @lo then x else @lo
         @hi   = if x > @hi then x else @hi
@@ -274,7 +272,7 @@ Storing info about numeric  columns (resevoir style):
         @small =   0.147 # used in cliff's delta
         @magic =   2.564 # sd = (90th-10th)/@magic
                          # since 90th z-curve percentile= 1.282
-        @_cuts =  null
+        @bins  =  null
       # ---------   ---------
       mid: (j,k) -> @per(.5,j,k)
       var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
@@ -292,12 +290,13 @@ Storing info about numeric  columns (resevoir style):
         @good = true
         @_all
       # --------- --------- --------- -----------------
-      cuts: (debug=false) -> 
-        if not @_cuts?
-           b = new Bins(@)
-           b.debug = debug
-           @_cuts = b.cuts(@)
-        @_cuts
+      bin1: (x,debug=false) -> 
+        if  @bins?
+          Order.before(x, @bins.breaks())
+        else
+          @bins = new Bins(@,debug)
+          @bins.cuts(@)
+          @bin1(x,debug)
       # --------- --------- --------- -----------------
       add1: (x) ->
         if @_all.length  <= @max
@@ -313,30 +312,27 @@ Storing info about numeric  columns (resevoir style):
 Unsupervised discretization.
 
     class Bins
-      constructor: (s) ->
+      constructor: (s,debug=false) ->
         s.all()
-        @debug    = false # show debug information?
+        @debug    = debug # show debug information?
         @puny     =  1.05 # ignore puny improvements
         @min      =  0.5  # usually, divide into sqrt(n) size bins
         @cohen    =  0.3  # epsilon = @var()*@cohem
         @maxDepth = 15
         @min      = int(s._all.length**@min)
         @e        = s.var() * @cohen
-        @_ent     = 0
+        @breaks   = []
       # --------- --------- --------- ---------   ----------
-      cuts: (s, lo=0, hi=s._all.length-1, lvl=0, out=[]) ->
+      cuts: (s, lo=0, hi=s._all.length-1, lvl=0) ->
         if lvl < @maxDepth 
           if @debug
             say "| ".n(lvl)+"#{s._all[lo]} to #{s._all[hi]}: #{hi-lo+1}"
           cut = @argmin(s,lo,hi)
           if cut isnt null
-            @cuts(s, lo,   cut, lvl+1, out)
-            @cuts(s, cut+1, hi, lvl+1, out)
+            @cuts(s, lo,   cut, lvl+1)
+            @cuts(s, cut+1, hi, lvl+1)
           else
-            p = (hi - lo)/s._all.length
-            @_ent -= p*Math.log2(p)
-            out.push s._all[hi] 
-        out
+            @breaks.push s._all[hi] 
       # --------- --------- ---------
       argmin: (s,lo,hi) ->
         cut =  null                     # default result. null==no break found
@@ -418,6 +414,7 @@ Unsupervised discretization.
       @tries = 0
       @fails = 0
       @all   = {}
+      @if    = (f,t) -> throw new Error t or "" if not f
       @go:  ->
         say "\n# " + "-".n() + "\n# " + today() + "\n"
         await (Ok.run name,f for name,f of Ok.all)
@@ -440,61 +437,68 @@ Unsupervised discretization.
 
 Tests
 
-    Ok.all.bad= -> assert 1 is 2,"deliberate error to check test engine"
+    Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
 
     Ok.all.sort= ->
          x = [10000,-100,3,1,2,-10,30,15]
          y = x.sort(Order.it)
-         assert x[0]  == -100
-         assert x[x.length-1]  ==   10000
+         Ok.if x[0]  == -100
+         Ok.if last(x)   ==   10000
 
     Ok.all.keysort = ->
       l = ({a: n,b: -1*n} for n in [20..1])
       l.sort(Order.key "b")
-      assert l[0].b == -20
-      assert last(l).a  == 1
+      Ok.if l[0].b == -20
+      Ok.if last(l).a  == 1
 
     Ok.all.random = ->
       l= (p2 rand() for _ in [1..100])
       l= l.sort(Order.it)
-      assert  2 == l[0]
-      assert 98 == l[ l.length - 1 ]
+      Ok.if  2 == l[0]
+      Ok.if 98 == last(l)
     
     Ok.all.bsearch = ->
       l= (d2(rand(),2) for _ in [1..100])
       l.sort(Order.it)
       for i in [0.. l.length - 1] by 20
          j = Order.search(l,l[i])
-         assert Math.abs( j - i ) <= 3
+         Ok.if Math.abs( j - i ) <= 3
 
     Ok.all.before = ->
-      assert  2 == Order.before  0,[2,4,8,12]
-      assert  8 == Order.before 10,[2,4,8,12]
-      assert 12 == Order.before 99,[2,4,8,12]
+      Ok.if  2 == Order.before  0,[2,4,8,12]
+      Ok.if  8 == Order.before 10,[2,4,8,12]
+      Ok.if 12 == Order.before 99,[2,4,8,12]
 
     Ok.all.linesDo = (f= the.data + 'weather2.csv',n=0) -> 
-      Csv.linesDo f,(-> ++n),(-> assert n==20) 
+      Csv.linesDo f,(-> ++n),(-> Ok.if n==20) 
 
     Ok.all.csv = (f = the.data + 'weather2.csv',n=0) ->
-      new Csv f, (-> ++n), (-> assert n ==15,"bad rows length")
+      new Csv f, (-> ++n), (-> Ok.if n ==15,"bad rows length")
 
     Ok.all.num1 = ->
       n = new Num
       (n.add x for x in [9,2,5,4,12,7,8,11,9,
                           3,7,4,12,5,4,10,9,6,9,4])
-      assert n.mu==7
+      Ok.if n.mu==7
      
     Ok.all.num2 = ->
       n = new Num
       n.adds([9,2,5,4,12,7,8,11,9,3,
               7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
-      assert n.mu==0.7
-      assert .30 <= n.sd <=.31
-    
+      Ok.if n.mu==0.7
+      Ok.if .30 <= n.sd <=.31
+
+    Ok.all.num3 = ->
+      n = new Num
+      n.adds([9,2,5,4,12,7,8,11,9,3,
+              7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
+      Ok.if 0.957 <= n.bin(1.05) <= 0.958
+      Ok.if 1.09  <= n.bin(1.3)  <= 1.092
+     
     Ok.all.sym = ->
       s= new Sym
       s.adds ['a','b','b','c','c','c','c']
-      assert 1.3785 < s.var()<  1.379
+      Ok.if 1.3785 < s.var()<  1.379
 
      Ok.all.some1 = ->
       s = new Some
@@ -505,11 +509,11 @@ Tests
         m = x/100
         x = s.all()[ int(s.max *m) ] 
         y = s.per(m)
-        assert  y-0.01 <= x <= y+0.01
+        Ok.if  y-0.01 <= x <= y+0.01
       c= s.cuts()
-      assert c.length == 7
-      assert 0.375 <= c[2] <= 0.385
-      assert 0.815 <= c[5] <= 0.825
+      Ok.if c.length == 7
+      Ok.if 0.375 <= c[2] <= 0.385
+      Ok.if 0.815 <= c[5] <= 0.825
 
     Ok.all.some2 = ->
       s = new Some
@@ -517,7 +521,7 @@ Tests
         for j in [1..4]
           s.add j
       c= s.cuts()
-      assert  c[0]==1 and c[3]==4 and c.length==4
+      Ok.if  c[0]==1 and c[3]==4 and c.length==4
 
     Ok.all.table1 = (f= the.data + 'weather2.csv',n=0) ->
       worker=(u) ->
