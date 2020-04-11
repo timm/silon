@@ -410,16 +410,12 @@ Unsupervised discretization.
         t
 
     class KdTree
-      constructor: (t, min=  t.rows.length**0.5,
-                       axes= @axes(t),
-                       n=    axes.length-1,
-                       lvl=  0) ->
+      constructor: (t, colsfun,min=  t.rows.length**0.5, lvl=  0) ->
         @here = t
         @min  = min
         @lvl  = lvl
-        @kids = {} 
-        if n >= 0
-           @div min, axes, n, lvl
+        @kids = {}
+        @div colsfun
       # --------- --------- --------- --------- 
       nodes: ->
         unless @here.rows.length < @min
@@ -437,21 +433,21 @@ Unsupervised discretization.
           for k,kid of @kids
             kid.show(pre + "|.. ")
       # --------- --------- --------- ---------
-      axes: (t) ->
-        o  =  Order.fun (x) -> x.var()
-        xs = (c for c in t.x).sort o
-        ys = (c for c in t.y).sort o
-        xs = xs.concat ys
-        xs
-      # --------- --------- --------- ---------
-      div: (min,axes,n, lvl) ->
-        pre = "=".n(lvl)
-        tmp = {}
-        col = axes[n]
+      wasNum: (txt) -> switch
+           when the.ch.num  in txt then true
+           when the.ch.less in txt then true
+           when the.ch.more in txt then true
+           else false
+      div: (colsfun) ->
+        pre  = "=".n(lvl)
+        tmp  = {}
+        cols = colsfun(@here)
+        cols = cols.sort(Order.fun (x) -> -1*x.vars())
+        col  = col[0]
         for row in @here.rows
-          k      = row.cells[col.pos]
+          k = row.cells[col.pos]
           if k isnt the.ch.skip
-            tmp[k] = @here.clone() unless tmp[k]?
+            tmp[k] = @here.clone() unless k of tmp
             tmp[k].add row.cells
         for k,t of tmp
           if t.rows.length < @here.rows.length
