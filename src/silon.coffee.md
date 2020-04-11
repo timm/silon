@@ -93,12 +93,12 @@ Misc
 
     same   = (x) -> x 
     today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
-
-Maths
+    #abort  = throw new Error('bye')
+    sum    = (l,f=same,n=0) -> (n+=f(x) for x in l); n
 
     int =  Math.floor
     id  = (x) ->  
-      x.__id = the.id++ unless x.__id?
+      x.__id = ++the.id unless x.__id?
       x.__id
 
     rand=  ->
@@ -112,6 +112,15 @@ Maths
        l = s.length
        pre = if l < f then " ".n(f - l) else ""
        pre + s
+
+    clone = (x) -> # deepCopy
+      if not x? or typeof x isnt 'object'
+        x
+      else
+        y = new x.constructor()
+        for k of x
+          y[k] = clone x[k]
+        y
 
 Strings
 
@@ -357,7 +366,7 @@ Unsupervised discretization.
 ## Rows
 
     class Row
-      constructor: (l) -> [ @cells,@id ]=[ l,++the.id ]
+      constructor: (@cells) ->  
 
 ## Table
 
@@ -390,9 +399,9 @@ Unsupervised discretization.
            when the.ch.more in txt then true
            else false
       # --------- --------- --------- ---------
-      @isY= (txt) -> the.ch.klass in txt or
-                 the.ch.less  in txt or
-                 the.ch.more  in txt
+      @isY= (txt) -> 
+        the.ch.klass in txt or the.ch.less in txt or the.ch.more in txt
+      # --------- --------- --------- ---------
       bins: () ->
         t = new Table
         t.add ((the.ch.sym + name) for name in @names())
@@ -400,20 +409,54 @@ Unsupervised discretization.
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
 
-## Silo
-
-    class @KOD # k-object-dimensional tree
-      constructor: (t) ->
-        @t = t
-        @top = t.cols
-        @split(@rank())
-      rank: (l) ->
-        l1 = ([c.var(),c] for c in l)
-        l2 = l1.sort(Order.it).reverse()
-        (one[1] for one in l2)
-      tree: () ->
-        for col in @rank(@t.y)
-          say col.txt, col.cuts()
+    class KdTree
+      constructor: (t, min=  t.rows.length**0.5,
+                       axes= @axes(t),
+                       n=    axes.length-1,
+                       lvl=  0) ->
+        @here = t
+        @min  = min
+        @lvl  = lvl
+        @kids = {} 
+        if n >= 0
+           @div min, axes, n, lvl
+      # --------- --------- --------- --------- 
+      nodes: ->
+        unless @here.rows.length < @min
+          yield @
+          for _,kid of @kids
+            for x from  kid.nodes()
+              yield x
+      # --------- --------- --------- --------- 
+      isLeaf: -> 
+         Object.keys(@kids).length == 0
+      # --------- --------- --------- ---------
+      show: (pre="") ->
+        unless @isLeaf()
+          say s4(id(@))  + ": " + pre + "[#{@here.rows.length}]"
+          for k,kid of @kids
+            kid.show(pre + "|.. ")
+      # --------- --------- --------- ---------
+      axes: (t) ->
+        o  =  Order.fun (x) -> x.var()
+        xs = (c for c in t.x).sort o
+        ys = (c for c in t.y).sort o
+        xs = xs.concat ys
+        xs
+      # --------- --------- --------- ---------
+      div: (min,axes,n, lvl) ->
+        pre = "=".n(lvl)
+        tmp = {}
+        col = axes[n]
+        for row in @here.rows
+          k      = row.cells[col.pos]
+          if k isnt the.ch.skip
+            tmp[k] = @here.clone() unless tmp[k]?
+            tmp[k].add row.cells
+        for k,t of tmp
+          if t.rows.length < @here.rows.length
+            if t.rows.length >= @min
+              @kids[k]= new KdTree(t,min=min,axes=axes,n=n-1,lvl=lvl+1)
 
 ## Test Engine
 
@@ -447,8 +490,6 @@ Unsupervised discretization.
 
 Tests
 
-    Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
-
     Ok.all.timing = ->
       j=0
       n=0.25*10**9
@@ -462,6 +503,12 @@ Tests
       b1id = id(b)
       a2id = id(a)
       Ok.if a1id is a2id and a1id isnt b1id
+
+    Ok.all.clone= ->
+      b4  = [[1,2], {a: 10, b: 20, c: [3,4,[5,6]]}]
+      now = clone(b4)
+      b4[1].c[2][1] = 100
+      Ok.if  b4[ 1].c[2][1] isnt  now[1].c[2][1]
 
     Ok.all.sort= ->
          x = [10000,-100,3,1,2,-10,30,15]
@@ -537,9 +584,9 @@ Tests
       b = new Bins(s)
       b.cuts(s)
       Ok.if b.breaks.length == 6
-      Ok.if  0.55 <= b.bin(0.6)                 <= 0.56, .6
+      Ok.if  0.55 <= b.bin(0.6)                 <= 0.56 ,    .6
       Ok.if 0.82  <= Order.before(200,b.breaks) <=  .825, 200
-      Ok.if 0     <= Order.before(-1, b.breaks) <= 1.131, -1
+      Ok.if 0     <= Order.before(-1, b.breaks) <= 1.131,  -1
 
     Ok.all.some2 = ->
       s = new Some
@@ -551,15 +598,29 @@ Tests
       c=  b.breaks
       Ok.if  c[0]==1 and c[2]==3 and c.length==3
 
-    Ok.all.table1 = (f= the.data + 'weather2.csv',dump=true,n=0) ->
+    Ok.all.table1 = (f= the.data + 'weather2.csv',dump=false,n=0) ->
       worker=(u) ->
         v = u.bins()
         (Ok.if "Sym"==c.constructor.name for c in v.cols)
         v.dump() if dump
+        #say ""
+        #(say col.txt,col.var() for  \
+        #   col in v.cols.sort(Order.fun (x) -> -1*x.var()))
       t=(new Table).from(f,worker)
 
-    Ok.all.table2 = -> Ok.all.table1 the.data + 'auto93.csv',false
-    Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv',false
+    Ok.all.table2 = -> Ok.all.table1 the.data + 'auto93.csv'
+    Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv'
+
+    Ok.all.kdtree = (f= the.data + 'auto93.csv') ->
+      worker=(u) ->
+        v = u.bins()
+        k = new KdTree(v,min=20)
+        k.show()
+        for node from k.nodes() 
+            say ("|.. ".n(node.lvl)), node.here.rows.length
+      t=(new Table).from(f,worker)
+
+    Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
      
     # --------- --------- --------- --------- ---------
     if "--test" in process.argv then Ok.go()
