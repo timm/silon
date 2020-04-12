@@ -450,6 +450,11 @@ Unsupervised discretization.
           @kids = [one, two]
         else
           # start .. stop
+          # lowest one  start is ninf
+          # highest is stop is inf
+          # parent might be the end noode
+          # running down keep start..stop
+          # dont do tables till we divide the numbers
           for t in l # holes in the discrete
             if t.rows.length >= @min
               now = t
