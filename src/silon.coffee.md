@@ -1,4 +1,5 @@
-<a name=top>&nbsp;<p> </a>
+say 11
+<name=top>&nbsp;<p> </a>
 [home](http://tiny.cc/silon#top) | 
 [&copy; 2020](https://github.com/timm/silon/blob/master/LICENSE.md#top), Tim Menzies, <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon#top)<br> 
@@ -87,9 +88,7 @@ Much of V&V is "optimize", especially for AI systems.
     
 ## Standard Stuff
 
-### Standard functions.
-
-Misc
+Standard functions.
 
     same   = (x) -> x 
     today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
@@ -189,8 +188,6 @@ Csv
         stream.on 'line',  ( line  ) -> action line
 
 ## Tables
-
-### Columns
 
 Storing info about a column.
 
@@ -409,14 +406,65 @@ Unsupervised discretization.
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
 
+###
+
     class KdTree
       constructor: (t, colsfun,min=  t.rows.length**0.5, lvl=  0) ->
-        @here = t
-        @min  = min
-        @lvl  = lvl
-        @kids = {}
+        [ @here,@min,@lvl,@kids ]  = [t,min.lvl,[] ]
         @div colsfun
-      # --------- --------- --------- --------- 
+      # --------- --------- --------- ---------
+      wasNum: (txt) -> switch
+        when the.ch.num  in txt then true
+        when the.ch.less in txt then true
+        when the.ch.more in txt then true
+        else false
+      another: (k) ->
+        t     = @here.clone()
+        t.key = k
+        t
+      div: (colsfun) ->
+        pre  = "=".n(lvl)
+        tmp  = {}
+        cols = colsfun(@here)
+        cols = cols.sort(Order.fun (x) -> -1*x.vars())
+        col  = cols[0]
+        for row in @here.rows
+          k = row.cells[col.pos]
+          if k isnt the.ch.skip
+            tmp[k] = @another(k) unless k of tmp
+            tmp[k].add row.cells
+        l = (t for k,t of tmp).sort(Order.fun (z) -> z.key)
+        if @wasNum()
+          [ one,two ] = [ @another(0),@another(1) ]
+          [ now,key ] = [ one,null ]
+          for t,i in l
+            if i>0
+              if one.rows.length + t.rows.length > @here.rows.length /2
+                key = t.key if not key?
+                now = two
+            for row in t.rows
+              now.add row.cells
+          # start .. stop
+          one.use = ((row) -> row.cells[col.pos] <  key)
+          two.use = ((row) -> row.cells[col.pos] >= key)
+          @kids = [one, two]
+        else
+          # start .. stop
+          for t in l # holes in the discrete
+            if t.rows.length >= @min
+              now = t
+              now.use = ((row) -> row.cells[pos] <= t.key)
+            else
+              for row in t.rows
+                now.use = ((row) -> row.cells[pos] <= t.key)
+                now.add row.cells
+          @kids = l
+        for k,t of tmp
+          if t.rows.length < @here.rows.length
+            if t.rows.length >= @min
+              @kids[k]= new KdTree(t,min=min,axes=axes,n=n-1,lvl=lvl+1)
+ 
+    class Tree
       nodes: ->
         unless @here.rows.length < @min
           yield @
@@ -432,28 +480,9 @@ Unsupervised discretization.
           say s4(id(@))  + ": " + pre + "[#{@here.rows.length}]"
           for k,kid of @kids
             kid.show(pre + "|.. ")
-      # --------- --------- --------- ---------
-      wasNum: (txt) -> switch
-           when the.ch.num  in txt then true
-           when the.ch.less in txt then true
-           when the.ch.more in txt then true
-           else false
-      div: (colsfun) ->
-        pre  = "=".n(lvl)
-        tmp  = {}
-        cols = colsfun(@here)
-        cols = cols.sort(Order.fun (x) -> -1*x.vars())
-        col  = col[0]
-        for row in @here.rows
-          k = row.cells[col.pos]
-          if k isnt the.ch.skip
-            tmp[k] = @here.clone() unless k of tmp
-            tmp[k].add row.cells
-        for k,t of tmp
-          if t.rows.length < @here.rows.length
-            if t.rows.length >= @min
-              @kids[k]= new KdTree(t,min=min,axes=axes,n=n-1,lvl=lvl+1)
+###
 
+     
 ## Test Engine
 
     class Ok
@@ -607,6 +636,7 @@ Tests
     Ok.all.table2 = -> Ok.all.table1 the.data + 'auto93.csv'
     Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv'
 
+###
     Ok.all.kdtree = (f= the.data + 'auto93.csv') ->
       worker=(u) ->
         v = u.bins()
@@ -615,8 +645,9 @@ Tests
         for node from k.nodes() 
             say ("|.. ".n(node.lvl)), node.here.rows.length
       t=(new Table).from(f,worker)
+###
 
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
-     
+
     # --------- --------- --------- --------- ---------
-    if "--test" in process.argv then Ok.go()
+    #if "--test" in process.argv then Ok.go()
