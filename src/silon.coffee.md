@@ -412,73 +412,63 @@ Unsupervised discretization.
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
 
-###
-
     class KdTree
-      constructor: (t, cols = ((t) -> t.x),
-                       min  = t.rows.length**0.5,
-                       lvl  = 0) ->
-        [ @here,@min,@lvl,@kids ]  = [t,min.lvl,[] ]
-        pre  = "=".n(lvl)
-        @div cols,min,lvl
+      constructor:(t,
+                   cols= (t)->t.y,
+                   min = t.rows.length**0.5,
+                   lvl = 0) ->
+        [ @has, @min, @lvl ]  = [ t, min, lvl ]
+        all = cols(@has).sort(Order.fun (x) -> -1*x.vars())
+        best= all[0]
+        divs= Table.isNum(best.txt) and @halveNums(best) or @divSyms(best)
+        @kids = []
+        for t in divs
+          if t.rows.length < @has.rows.length
+            if t.rows.length >= @min
+              @kids.push new KdTree(t, cols, min, lvl+1)
       # --------- --------- --------- ---------
-      wasNum: (x) ->
-        the.ch.num  in x or the.ch.less in x or the.ch.more in x
+      now1: (txt,n,lo,hi,isSym=false) ->
+        if isSym
+          return {key:x, show:"#{txt} = #{x}",\
+                  use: (r)-> r.cells[n]==x}
+        if lo is the.ninf
+          return {key: x, show: "#{txt} < #{hi}", \
+                  use: (r)-> r.cells[n] < hi}
+        if hi is the.inf
+          return {key: x, show: "#{txt} >= #{lo}", \
+                  use :(r)-> r.cells[n] >= lo}
+        {key: x, show: "#{txt} = [#{lo}..#{hi})", \
+         use: (r)-> r.cells[n] >= lo and r.cells[n] < hi}
       # --------- --------- --------- ---------
-      another: (key,pos)
-        t= @here.clone()
-        t.key= key
-        t.use= ((row) --> row.cells[col.pos] == key
+      now: (txt,n,lo,hi,isSym=true) ->
+        t = @here.clone()
+        t.node = @now1(txt,n,lo,hi,isSym)
         t
       # --------- --------- --------- ---------
-      chopInTwo: (pos,ts) ->
-        [ one,two ] = [ @another(1,pos), @another(2,pos) ]
-        [ now,key ] = [ one,null ]
-        for t,i in ts
-          if i>0
-            if one.rows.length + t.rows.length > @here.rows.length /2
-              key = t.key if not key?
-              now = two
-          for row in t.rows
-            now.add row.cells
-        one.use = ((row) -> row.cells[pos] <  key)
-        two.use = ((row) -> row.cells[pos] >= key)
-        [one,two]
+      halveNums: (col) ->
+        mid = col.mid()
+        lt  = @now(col.txt, col.pos, the.ninf, mid)
+        gt  = @now(col.txt, col.pos, mid,      the.inf)
+        for row in @has.rows
+          x = row.cells[col.pos]
+          if x isnt the.ch.skip
+            (x < mid and lt or gt).add row.cells
+        [ lt,gt ]
       # --------- --------- --------- ---------
-      colWithMaxVar: (cols) ->
-        cols(@here).sort(Order.fun (x) -> -1*x.vars())[0]
-      # --------- --------- --------- ---------
-      div: (cols,min,lvl) ->
-        tmp = {}
-        col = colWithMaxVar(cols)
-        for row in @here.rows
-          k = row.cells[col.pos]
-          if k isnt the.ch.skip
-            tmp[k] = @another(k, col.pos) unless k of tmp
-            tmp[k].add row.cells
-        ts = (t for k,t of tmp).sort(Order.keysort "key")
-        ts = @wasNum(col.txt) and @chopInTwo(col.pos,ts) or ts
-        for t in ts
-          if t.rows.length < @here.rows.length
-            if t.rows.length >= @min
-              @kids.push new KdTree(t,cols=cols,min=min,lvl=lvl+1)
- 
-    class Tree
-      nodes: ->
-        unless @here.rows.length < @min
-          yield @
-          for _,kid of @kids
-            for x from  kid.nodes()
-              yield x
-      # --------- --------- --------- --------- 
-      isLeaf: -> 
-         Object.keys(@kids).length == 0
+      divSyms: (col) ->
+        d = {}
+        for row in @has.rows
+          x = row.cells[col.pos]
+          if x isnt the.ch.skip
+            d[x] = @now(col.txt, col.pos, x,true) unless x of d
+            d[x].add row.cells
+        (t for k,t of d)
       # --------- --------- --------- ---------
       show: (pre="") ->
-        unless @isLeaf()
-          say s4(id(@))  + ": " + pre + "[#{@here.rows.length}]"
-          for k,kid of @kids
-            kid.show(pre + "|.. ")
+        say s4(id(@))  + ": " + pre + @.node.show
+        for kid of @kids
+          kid.show( pre + "|.. ")
+
 ###
 
      
