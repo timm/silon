@@ -415,48 +415,53 @@ Unsupervised discretization.
 ###
 
     class KdTree
-      constructor: (t, colsfun,min=  t.rows.length**0.5, lvl=  0) ->
+      constructor: (t, cols = ((t) -> t.x),
+                       min  = t.rows.length**0.5,
+                       lvl  = 0) ->
         [ @here,@min,@lvl,@kids ]  = [t,min.lvl,[] ]
-        @div colsfun
+        pre  = "=".n(lvl)
+        @div cols,min,lvl
       # --------- --------- --------- ---------
       wasNum: (x) ->
         the.ch.num  in x or the.ch.less in x or the.ch.more in x
+      # --------- --------- --------- ---------
       another: (key,pos)
         t= @here.clone()
         t.key= key
         t.use= ((row) --> row.cells[col.pos] == key
         t
-      div: (colsfun,min,lvl) ->
-        pre  = "=".n(lvl)
-        tmp  = {}
-        kids = []
-        cols = colsfun(@here).sort(Order.fun (x) -> -1*x.vars())
-        col  = cols[0]
+      # --------- --------- --------- ---------
+      chopInTwo: (pos,ts) ->
+        [ one,two ] = [ @another(1,pos), @another(2,pos) ]
+        [ now,key ] = [ one,null ]
+        for t,i in ts
+          if i>0
+            if one.rows.length + t.rows.length > @here.rows.length /2
+              key = t.key if not key?
+              now = two
+          for row in t.rows
+            now.add row.cells
+        one.use = ((row) -> row.cells[pos] <  key)
+        two.use = ((row) -> row.cells[pos] >= key)
+        [one,two]
+      # --------- --------- --------- ---------
+      colWithMaxVar: (cols) ->
+        cols(@here).sort(Order.fun (x) -> -1*x.vars())[0]
+      # --------- --------- --------- ---------
+      div: (cols,min,lvl) ->
+        tmp = {}
+        col = colWithMaxVar(cols)
         for row in @here.rows
           k = row.cells[col.pos]
           if k isnt the.ch.skip
-            tmp[k] = @another(k, col.pos) unless k of tmps
+            tmp[k] = @another(k, col.pos) unless k of tmp
             tmp[k].add row.cells
-        l = (t for k,t of tmp).sort(Order.keysort "key")
-        if @wasNum(col.txt)
-          [ one,two ] = [ @here.clone(), @here.clone() ]
-          [ now,key ] = [ one,null ]
-          for t,i in l
-            if i>0
-              if one.rows.length + t.rows.length > @here.rows.length /2
-                key = t.key if not key?
-                now = two
-            for row in t.rows
-              now.add row.cells
-          one.key = 1; one.use = ((row) -> row.cells[col.pos] <  key)
-          two.use = 2; two.use = ((row) -> row.cells[col.pos] >= key)
-          kids  = [one, two]
-        else
-          kids = l
-        for t in kids
+        ts = (t for k,t of tmp).sort(Order.keysort "key")
+        ts = @wasNum(col.txt) and @chopInTwo(col.pos,ts) or ts
+        for t in ts
           if t.rows.length < @here.rows.length
             if t.rows.length >= @min
-              @kids.push new KdTree(t,colsfun,min=min,lvl=lvl+1)
+              @kids.push new KdTree(t,cols=cols,min=min,lvl=lvl+1)
  
     class Tree
       nodes: ->
