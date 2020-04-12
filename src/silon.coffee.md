@@ -373,9 +373,15 @@ Unsupervised discretization.
       from:(f,after=same)-> new Csv f,((row) => @add row), (=> after(@))
       add:          (l)  -> @cols.length and @row(l) or @top(l)
       top:   (l, pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
-      clone:         ()  -> t=new Table; t.add (c.txt for c in @cols); t
       names:             -> (col.txt for col in @cols)
       dump:              -> say @names(); (say row.cells for row in @rows)
+      # --------- --------- --------- --------- ---------   -----------
+      clone: (rows) ->
+        t=new Table
+        t.add (c.txt for c in @cols)
+        for row in rows
+          t.add row.cells
+        t
       # --------- --------- --------- --------- ---------   -----------
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
@@ -413,29 +419,27 @@ Unsupervised discretization.
         [ @here,@min,@lvl,@kids ]  = [t,min.lvl,[] ]
         @div colsfun
       # --------- --------- --------- ---------
-      wasNum: (txt) -> switch
-        when the.ch.num  in txt then true
-        when the.ch.less in txt then true
-        when the.ch.more in txt then true
-        else false
-      another: (k) ->
-        t     = @here.clone()
-        t.key = k
+      wasNum: (x) ->
+        the.ch.num  in x or the.ch.less in x or the.ch.more in x
+      another: (key,pos)
+        t= @here.clone()
+        t.key= key
+        t.use= ((row) --> row.cells[col.pos] == key
         t
-      div: (colsfun) ->
+      div: (colsfun,min,lvl) ->
         pre  = "=".n(lvl)
         tmp  = {}
-        cols = colsfun(@here)
-        cols = cols.sort(Order.fun (x) -> -1*x.vars())
+        kids = []
+        cols = colsfun(@here).sort(Order.fun (x) -> -1*x.vars())
         col  = cols[0]
         for row in @here.rows
           k = row.cells[col.pos]
           if k isnt the.ch.skip
-            tmp[k] = @another(k) unless k of tmp
+            tmp[k] = @another(k, col.pos) unless k of tmps
             tmp[k].add row.cells
-        l = (t for k,t of tmp).sort(Order.fun (z) -> z.key)
-        if @wasNum()
-          [ one,two ] = [ @another(0),@another(1) ]
+        l = (t for k,t of tmp).sort(Order.keysort "key")
+        if @wasNum(col.txt)
+          [ one,two ] = [ @here.clone(), @here.clone() ]
           [ now,key ] = [ one,null ]
           for t,i in l
             if i>0
@@ -444,30 +448,15 @@ Unsupervised discretization.
                 now = two
             for row in t.rows
               now.add row.cells
-          # start .. stop
-          one.use = ((row) -> row.cells[col.pos] <  key)
-          two.use = ((row) -> row.cells[col.pos] >= key)
-          @kids = [one, two]
+          one.key = 1; one.use = ((row) -> row.cells[col.pos] <  key)
+          two.use = 2; two.use = ((row) -> row.cells[col.pos] >= key)
+          kids  = [one, two]
         else
-          # start .. stop
-          # lowest one  start is ninf
-          # highest is stop is inf
-          # parent might be the end noode
-          # running down keep start..stop
-          # dont do tables till we divide the numbers
-          for t in l # holes in the discrete
-            if t.rows.length >= @min
-              now = t
-              now.use = ((row) -> row.cells[pos] <= t.key)
-            else
-              for row in t.rows
-                now.use = ((row) -> row.cells[pos] <= t.key)
-                now.add row.cells
-          @kids = l
-        for k,t of tmp
+          kids = l
+        for t in kids
           if t.rows.length < @here.rows.length
             if t.rows.length >= @min
-              @kids[k]= new KdTree(t,min=min,axes=axes,n=n-1,lvl=lvl+1)
+              @kids.push new KdTree(t,colsfun,min=min,lvl=lvl+1)
  
     class Tree
       nodes: ->
