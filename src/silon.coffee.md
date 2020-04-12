@@ -104,9 +104,10 @@ Standard functions.
         x = Math.sin(the.seed++) * 10000
         x - int(x)
 
-     d2= (n,f=2) ->  n.toFixed(f)
-     p2= (n,f=2) ->  Math.round(100*d2(n,f))
-     s4= (n,f=4) ->
+    any= (l) ->  l[ int(rand()*l.length) ] 
+    d2= (n,f=2) ->  n.toFixed(f)
+    p2= (n,f=2) ->  Math.round(100*d2(n,f))
+    s4= (n,f=4) ->
        s = n.toString()
        l = s.length
        pre = if l < f then " ".n(f - l) else ""
@@ -217,7 +218,13 @@ Storing info about symbolic  columns.
       var:    () -> @ent()
       norm1: (x) -> x
       toString:  -> "Sym{#{@txt}:#{@mode}}"
-      bin1: (x)  -> x
+      bin1:  (x) -> x
+      big:   (n) -> t
+      dist:(x,y) ->
+        if x is the.ch.ignore and y is the.ch.ignore
+          1
+        else
+          x is y and 0 or 1
       # ---------  --------- --------- ---------
       add1: (x) ->
         @_ent = null
@@ -235,7 +242,20 @@ Storing info about symbolic  columns.
 
 Storing info about numeric columns.
 
-    class Num extends Col
+    class NumThing extends Col
+      dist:(x,y) ->
+        if x is the.ch.ignore and y is the.ch.ignore
+          1
+        else
+          if x is the.ch.ignore
+            y = @norm1(y)
+            x = x > 0 and 0 or 1
+          if y is the.ch.ignore
+            x = @norm1(y)
+            y = x > 0 and 0 or 1
+          abs(x-y)
+
+    class Num extends NumThing
       constructor: (args...) ->
         super args...
         [ @mu,@m2,@sd ] = [ 0,0,0,0 ]
@@ -245,6 +265,7 @@ Storing info about numeric columns.
       var:    () -> @sd
       norm1: (x) -> (x - @lo) / (@hi - @lo + the.tiny)
       toString:  -> "Num{#{@txt}:#{@lo}..#{@hi}}"
+      big:   (n) -> (@hi - @lo) > n
       # ---------  --------- --------- ---------
       bin1: (x) ->
         z = (x - @mu)/ (the.tiny + @sd0())
@@ -266,7 +287,7 @@ Storing info about numeric columns.
 
 Storing info about numeric  columns (resevoir style):
     
-    class Some extends Col
+    class Some extends NumThing
       constructor: (args...) ->
         super args...
         @good  = false   # is @_all sorted?
@@ -281,8 +302,8 @@ Storing info about numeric  columns (resevoir style):
       var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
       iqr: (j,l) -> @per(.75,j,k) - @per(.25,j,k)
       toString:  -> "Some{#{@txt}:#{@mid()}}"
-      norm1: (x) -> @all(); (x -  @_all[0])/
-                            (last(@_all) - @_all[0]+10**(-32)) 
+      big:   (n) -> (last(@all()) - @all()[0]) > n
+      norm1: (x) -> Order.search(@_all,x) / @_all.length
       # --------- --------- --------- -----------------
       per: (p=0.5,j=0,k=(@_all.length)) ->
          n= @all()[ int(j+p*(k-j)) ]
@@ -364,6 +385,12 @@ Unsupervised discretization.
 
     class Row
       constructor: (@cells) ->  
+      dist: (that, cols, p=2, n=0, d=0) ->
+        for c in cols
+          n++
+          d0 = c.dist(this.cells[col.pos], that.cells[col.pos])
+          d += d0**p
+        (d / n) ** (1/p)
 
 ## Table
 
@@ -375,14 +402,14 @@ Unsupervised discretization.
       top:   (l, pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
       names:             -> (col.txt for col in @cols)
       dump:              -> say @names(); (say row.cells for row in @rows)
-      # --------- --------- --------- --------- ---------   -----------
-      clone: (rows) ->
+      # --------- --------- --------- --------- ---------  -----------
+      clone: (rows=[]) ->
         t=new Table
         t.add (c.txt for c in @cols)
         for row in rows
           t.add row.cells
         t
-      # --------- --------- --------- --------- ---------   -----------
+      # --------- --------- --------- --------- ---------   
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
         @rows.push(new Row(l))
@@ -412,50 +439,94 @@ Unsupervised discretization.
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
 
+    class FastMap
+      constructor: (@t,
+                    @cols= (t) -> t.x,
+                    @n=128,
+                    @min=t.rows.length**0.5,
+                    @p=2) ->
+      farFrom: (row1, max=-1, out=row1) ->
+        for i in [0 .. @n]
+          row2 = any(@t.rows)
+          tmp  = row1.dist(row2, @cols, @p)
+          if tmp > max
+            [ max,out ] = [ tmp,row2 ]
+        out
+      poles: () ->
+        tmp   = any(@t.rows)
+        @east = @farFrom(tmp)
+        @west = @farFrom(@east)
+        @c    = @east.dist(@west) + tiny
+        dists = Some()
+        for row in @t.rows
+          a = row.dist(@east) 
+          b = row.dist(@west) 
+          d = (a**2 + c**2 - b**2) / (2*c)
+          all[ id(row) ] = d
+          dists.add d
+        mid = dists.mid()
+        [ left,right ] = [ @t.clone(),@t.clone() ]
+        for row in @t.rows
+          what = all[ id(row) ] <= mid and left or right
+          what.add row
+        [ left,right ]
+    split: () ->
+      if @t.rows.length >= 2*@min
+        [ tmp1,tmp2 ] = @poles()
+        @wests = new Fastmap(tmp1,@cols,@m,@min,@p)  
+        @easts = new Fastmap(tmp2,@cols,@m,@min,@p)  
+
+
+
+
+ ###
+
     class KdTree
-      constructor:(t,
-                   cols= (t)->t.y,
-                   min = t.rows.length**0.5,
-                   lvl = 0) ->
-        [ @has, @min, @lvl ]  = [ t, min, lvl ]
-        all = cols(@has).sort(Order.fun (x) -> -1*x.vars())
-        best= all[0]
-        divs= Table.isNum(best.txt) and @halveNums(best) or @divSyms(best)
-        @kids = []
-        for t in divs
-          if t.rows.length < @has.rows.length
-            if t.rows.length >= @min
-              @kids.push new KdTree(t, cols, min, lvl+1)
-      # --------- --------- --------- ---------
-      now1: (txt,n,lo,hi,isSym=false) ->
+      constructor:(t0,
+                   cohen= 0.3
+                   min  = t0.rows.length**0.5,
+                   cols = (t1)->t1.y,
+                   lvl  = 0) ->
+        [ @has,@kids ]  = [ t0,[] ]
+        c = @axis(cols(t0))
+        maybe= Table.isNum(c.txt) and @nums(c) or @syms(c)
+        for kid in maybe
+          say ("|..".n(lvl)) + kid.node.txt
+          if kid.rows.length < t0.rows.length
+            if kid.rows.length >= min
+              @kids.push( new KdTree(kid, cohen, min, cols, lvl+1) )
+      # --------- --------- --------- --------- --------- ---------
+      axis: (cols) ->
+        l = cols.sort(Order.fun ((c) -> -1*c.var()))
+        l[0]
+      # --------- --------- --------- --------- --------- ---------
+      now1: (x, n, lo, hi, isSym=false) ->
         if isSym
-          return {key:x, show:"#{txt} = #{x}",\
-                  use: (r)-> r.cells[n]==x}
+          return {key:x, txt:"#{x} = #{lo}",   use: (r)-> r.cells[n]==x}
         if lo is the.ninf
-          return {key: x, show: "#{txt} < #{hi}", \
-                  use: (r)-> r.cells[n] < hi}
+          return {key:x, txt:"#{x} < #{hi}",  use: (r)-> r.cells[n] < hi}
         if hi is the.inf
-          return {key: x, show: "#{txt} >= #{lo}", \
-                  use :(r)-> r.cells[n] >= lo}
-        {key: x, show: "#{txt} = [#{lo}..#{hi})", \
+          return {key:x, txt:"#{x} >= #{lo}", use: (r)-> r.cells[n] >= lo}
+        {key: x, txt: "#{x} = [#{lo}..#{hi})", \
          use: (r)-> r.cells[n] >= lo and r.cells[n] < hi}
       # --------- --------- --------- ---------
       now: (txt,n,lo,hi,isSym=true) ->
-        t = @here.clone()
+        t = @has.clone()
         t.node = @now1(txt,n,lo,hi,isSym)
         t
       # --------- --------- --------- ---------
-      halveNums: (col) ->
+      nums: (col) ->
         mid = col.mid()
         lt  = @now(col.txt, col.pos, the.ninf, mid)
         gt  = @now(col.txt, col.pos, mid,      the.inf)
         for row in @has.rows
           x = row.cells[col.pos]
           if x isnt the.ch.skip
-            (x < mid and lt or gt).add row.cells
+            what = x < mid and lt or gt
+            what.add row.cells
         [ lt,gt ]
       # --------- --------- --------- ---------
-      divSyms: (col) ->
+      syms: (col) ->
         d = {}
         for row in @has.rows
           x = row.cells[col.pos]
@@ -465,8 +536,8 @@ Unsupervised discretization.
         (t for k,t of d)
       # --------- --------- --------- ---------
       show: (pre="") ->
-        say s4(id(@))  + ": " + pre + @.node.show
-        for kid of @kids
+        say pre
+        for kid in @kids
           kid.show( pre + "|.. ")
 
 ###
@@ -625,18 +696,14 @@ Tests
     Ok.all.table2 = -> Ok.all.table1 the.data + 'auto93.csv'
     Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv'
 
-###
     Ok.all.kdtree = (f= the.data + 'auto93.csv') ->
       worker=(u) ->
-        v = u.bins()
-        k = new KdTree(v,min=20)
-        k.show()
-        for node from k.nodes() 
-            say ("|.. ".n(node.lvl)), node.here.rows.length
+        k = new KdTree(u,min=20)
       t=(new Table).from(f,worker)
-###
 
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
 
     # --------- --------- --------- --------- ---------
     #if "--test" in process.argv then Ok.go()
+    f = new FastMap
+    say f.aa(22)
