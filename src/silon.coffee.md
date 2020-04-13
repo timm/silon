@@ -464,6 +464,8 @@ Unsupervised discretization.
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
 
+REcursive clustering
+
      class FastMap
        constructor: (t, @n=32, @p=2, @far=0.9,
                         @lvl=0, @debug=false,
