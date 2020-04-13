@@ -491,8 +491,7 @@ Unsupervised discretization.
         else
           if @debug
             say '|.. '.n(@lvl) + @t.rows.length  +  \
-               " : "+(c.mid() for c in @t.y) 
-
+               " : "+(c.mid() for c in @t.y)
       # --------- --------- --------- ---------
       divide: () ->
         cols = @t[ @cols ]
