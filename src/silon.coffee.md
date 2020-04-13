@@ -484,11 +484,8 @@ REcursive clustering
          if @t.rows.length > 2*@min
            say '|.. '.n(@lvl) + @t.rows.length  if @debug
            [ below,after ] = @divide()
-           if below.rows.length < @t.rows.length
-             @wests = @kid(below) 
- 
-           if after.rows.length < @t.rows.length
-              @wests = @kid(after) 
+           @wests = @kid(below) if below.rows.length < @t.rows.length
+           @easts = @kid(after) if after.rows.length < @t.rows.length
          else
            if @debug
              say '|.. '.n(@lvl) + @t.rows.length  +  \
@@ -684,7 +681,7 @@ Tests
           say row1.cells
           say row2.cells, row1.dist(row2, cols)
           say row3.cells, row1.dist(row3, cols)
-      t = (new Table).from(f, worker)
+      t = (new Table).from(f, worker) 
 
     Ok.all.dist1 = (f=the.data + 'weather4.csv') ->
       worker = (u) ->
@@ -705,4 +702,5 @@ Tests
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
 
     # --------- --------- --------- --------- ---------
-    if "--test" in process.argv then Ok.go()
+    #if "--test" in process.argv then Ok.go()
+    Ok.all.fastmap()
