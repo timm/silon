@@ -697,7 +697,7 @@ Tests
         f = new FastMap(u)
         f.debug = true
         f.split()
-      t = (new Table).from(f, worker)
+      t = (new Table).from(f,worker)
 
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
 
