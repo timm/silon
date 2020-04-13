@@ -113,6 +113,13 @@ Standard functions.
        pre = if l < f then " ".n(f - l) else ""
        pre + s
 
+    xray= (o) -> say ""; (say "#{k} = #{v}"  for k,v of o)
+
+    zero1= (x) -> switch
+       when x<0 then 0
+       when x>1 then 1
+       else x
+
     clone = (x) -> # deepCopy
       if not x? or typeof x isnt 'object'
         x
@@ -222,9 +229,9 @@ Storing info about symbolic  columns.
       big:   (n) -> t
       dist:(x,y) ->
         if x is the.ch.ignore and y is the.ch.ignore
-          1
-        else
-          x is y and 0 or 1
+           return 1
+        if x == y then  0 else  1
+
       # ---------  --------- --------- ---------
       add1: (x) ->
         @_ent = null
@@ -245,15 +252,18 @@ Storing info about numeric columns.
     class NumThing extends Col
       dist:(x,y) ->
         if x is the.ch.ignore and y is the.ch.ignore
-          1
+          return 1
+        if x is the.ch.ignore
+          y1 = @norm1 y
+          x1 = y1 > 0.5 and 0 or 1
         else
-          if x is the.ch.ignore
-            y = @norm1(y)
-            x = x > 0 and 0 or 1
           if y is the.ch.ignore
-            x = @norm1(y)
-            y = x > 0 and 0 or 1
-          abs(x-y)
+             x1 = @norm1 x
+             y1 = x1 > 0.5 and 0 or 1
+          else
+            x1 = @norm1 x
+            y1 = @norm1 y
+        Math.abs(x1-y1)
 
     class Num extends NumThing
       constructor: (args...) ->
@@ -300,12 +310,14 @@ Storing info about numeric  columns (resevoir style):
       # ---------   ---------
       mid: (j,k) -> @per(.5,j,k)
       var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
-      iqr: (j,l) -> @per(.75,j,k) - @per(.25,j,k)
+      iqr: (j,k) -> @per(.75,j,k) - @per(.25,j,k)
       toString:  -> "Some{#{@txt}:#{@mid()}}"
       big:   (n) -> (last(@all()) - @all()[0]) > n
-      norm1: (x) -> Order.search(@_all,x) / @_all.length
+      norm1: (x) -> 
+        @all()
+        Order.search(@_all,x) / @_all.length
       # --------- --------- --------- -----------------
-      per: (p=0.5,j=0,k=(@_all.length)) ->
+      per: (p=0.5, j=0, k=@_all.length) ->
          n= @all()[ int(j+p*(k-j)) ]
          n
       # --------- --------- --------- -----------------
@@ -385,10 +397,12 @@ Unsupervised discretization.
 
     class Row
       constructor: (@cells) ->  
-      dist: (that, cols, p=2, n=0, d=0) ->
+      dist: (that, cols,  p=2, n=0, d=0) ->
         for c in cols
           n++
-          d0 = c.dist(this.cells[col.pos], that.cells[col.pos])
+          x  = this.cells[c.pos]
+          y  = that.cells[c.pos]
+          d0 = c.dist(x,y)
           d += d0**p
         (d / n) ** (1/p)
 
@@ -409,6 +423,18 @@ Unsupervised discretization.
         for row in rows
           t.add row.cells
         t
+      # --------- --------- --------- --------- ---------   
+      furthest:  (row1,cols,best=0, better=(x,y) -> x>y) ->
+        for row2 in @rows
+          if id(row1) isnt id(row2)
+            tmp = row1.dist(row2,cols)
+            if better(tmp,best)
+              [ best,out ] = [ tmp,row2 ]
+        out
+
+      nearest: (row1,cols) ->
+        @furthest(row1, cols, 10**32, (x,y) -> x < y)
+         
       # --------- --------- --------- --------- ---------   
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
@@ -440,113 +466,67 @@ Unsupervised discretization.
         t
 
     class FastMap
-      constructor: (@t,
-                    @cols= (t) -> t.x,
-                    @n=128,
-                    @min=t.rows.length**0.5,
-                    @p=2) ->
-      farFrom: (row1, max=-1, out=row1) ->
-        for i in [0 .. @n]
-          row2 = any(@t.rows)
-          tmp  = row1.dist(row2, @cols, @p)
-          if tmp > max
-            [ max,out ] = [ tmp,row2 ]
-        out
-      poles: () ->
+      constructor: (t, @n=32, @p=2, @far=0.9,
+                       @lvl=0, @debug=false,
+                       @cols= "x",
+                       @min= t.rows.length**0.5,
+                       @depth=15) ->
+        @t = t
+      # --------- --------- --------- ---------
+      kid:(t) ->
+        x=new FastMap(t,@n,@p,@far,@lvl+1,\
+                        @debug,@cols,@min,@depth-1)
+        x.split()
+        x
+      # --------- --------- --------- ---------
+      split: () ->
+        if @t.rows.length > 2*@min
+          say '|.. '.n(@lvl) + @t.rows.length  if @debug
+          [ below,after ] = @divide()
+          if below.rows.length < @t.rows.length
+            @wests = @kid(below) 
+
+          if after.rows.length < @t.rows.length
+             @wests = @kid(after) 
+        else
+          if @debug
+            say '|.. '.n(@lvl) + @t.rows.length  +  \
+               " : "+(c.mid() for c in @t.y) 
+
+      # --------- --------- --------- ---------
+      divide: () ->
+        cols = @t[ @cols ]
         tmp   = any(@t.rows)
-        @east = @farFrom(tmp)
-        @west = @farFrom(@east)
-        @c    = @east.dist(@west) + tiny
-        dists = Some()
+        @east = @farFrom(tmp,    cols)
+        @west = @farFrom(@east,  cols)
+        @c    = @east.dist(@west,cols) + the.tiny
+        dists = new Some
+        all = []
         for row in @t.rows
-          a = row.dist(@east) 
-          b = row.dist(@west) 
-          d = (a**2 + c**2 - b**2) / (2*c)
+          a = row.dist(@east, cols)
+          b = row.dist(@west, cols)
+          d = zero1( (a**2 + @c**2 - b**2) / (2*@c) )
+          d  = d.toFixed(3)
           all[ id(row) ] = d
           dists.add d
-        mid = dists.mid()
-        [ left,right ] = [ @t.clone(),@t.clone() ]
+        mid = dists.mid() 
+        [ below,after ] = [ @t.clone(),@t.clone() ]
         for row in @t.rows
-          what = all[ id(row) ] <= mid and left or right
-          what.add row
-        [ left,right ]
-    split: () ->
-      if @t.rows.length >= 2*@min
-        [ tmp1,tmp2 ] = @poles()
-        @wests = new Fastmap(tmp1,@cols,@m,@min,@p)  
-        @easts = new Fastmap(tmp2,@cols,@m,@min,@p)  
-
-
-
-
- ###
-
-    class KdTree
-      constructor:(t0,
-                   cohen= 0.3
-                   min  = t0.rows.length**0.5,
-                   cols = (t1)->t1.y,
-                   lvl  = 0) ->
-        [ @has,@kids ]  = [ t0,[] ]
-        c = @axis(cols(t0))
-        maybe= Table.isNum(c.txt) and @nums(c) or @syms(c)
-        for kid in maybe
-          say ("|..".n(lvl)) + kid.node.txt
-          if kid.rows.length < t0.rows.length
-            if kid.rows.length >= min
-              @kids.push( new KdTree(kid, cohen, min, cols, lvl+1) )
-      # --------- --------- --------- --------- --------- ---------
-      axis: (cols) ->
-        l = cols.sort(Order.fun ((c) -> -1*c.var()))
-        l[0]
-      # --------- --------- --------- --------- --------- ---------
-      now1: (x, n, lo, hi, isSym=false) ->
-        if isSym
-          return {key:x, txt:"#{x} = #{lo}",   use: (r)-> r.cells[n]==x}
-        if lo is the.ninf
-          return {key:x, txt:"#{x} < #{hi}",  use: (r)-> r.cells[n] < hi}
-        if hi is the.inf
-          return {key:x, txt:"#{x} >= #{lo}", use: (r)-> r.cells[n] >= lo}
-        {key: x, txt: "#{x} = [#{lo}..#{hi})", \
-         use: (r)-> r.cells[n] >= lo and r.cells[n] < hi}
+          what = all[ id(row) ] <= mid and below or after
+          what.add row.cells
+        [ below, after ]
       # --------- --------- --------- ---------
-      now: (txt,n,lo,hi,isSym=true) ->
-        t = @has.clone()
-        t.node = @now1(txt,n,lo,hi,isSym)
-        t
-      # --------- --------- --------- ---------
-      nums: (col) ->
-        mid = col.mid()
-        lt  = @now(col.txt, col.pos, the.ninf, mid)
-        gt  = @now(col.txt, col.pos, mid,      the.inf)
-        for row in @has.rows
-          x = row.cells[col.pos]
-          if x isnt the.ch.skip
-            what = x < mid and lt or gt
-            what.add row.cells
-        [ lt,gt ]
-      # --------- --------- --------- ---------
-      syms: (col) ->
-        d = {}
-        for row in @has.rows
-          x = row.cells[col.pos]
-          if x isnt the.ch.skip
-            d[x] = @now(col.txt, col.pos, x,true) unless x of d
-            d[x].add row.cells
-        (t for k,t of d)
-      # --------- --------- --------- ---------
-      show: (pre="") ->
-        say pre
-        for kid in @kids
-          kid.show( pre + "|.. ")
-
-###
-
-     
+      farFrom: (row1, cols, l=[], j=int(@n*@far)) ->
+        for i in [1 .. @n]
+          row2 = any(@t.rows)
+          l.push {r: row2, d: row1.dist(row2, cols, @p)}
+        l = l.sort(Order.key("d")) 
+        l[j].r 
+ 
 ## Test Engine
 
     class Ok
-      @tries = 0
+      @tries = 0 
       @fails = 0
       @all   = {}
       @if    = (f,t) -> throw new Error t or "" if not f
@@ -556,7 +536,7 @@ Unsupervised discretization.
       @fyi: (name) -> 
           a= Ok.tries
           b= Ok.fails
-          c= int(0.5 + 100*(a-b)/a)
+          c= int(0.5 + 100*(a-b)/a)   
           process.stdout.write "#{s4(a)}) #{s4(c,3)} 
                                %passed after failures= #{b} "
           process.stdout.write console.timeEnd(name)
@@ -688,22 +668,41 @@ Tests
         v = u.bins()
         (Ok.if "Sym"==c.constructor.name for c in v.cols)
         v.dump() if dump
-        #say ""
-        #(say col.txt,col.var() for  \
-        #   col in v.cols.sort(Order.fun (x) -> -1*x.var()))
       t=(new Table).from(f,worker)
 
     Ok.all.table2 = -> Ok.all.table1 the.data + 'auto93.csv'
     Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv'
 
-    Ok.all.kdtree = (f= the.data + 'auto93.csv') ->
+    Ok.all.nearfar = (f=the.data + 'weather4.csv') ->
+      worker = (u) ->
+        cols = u.x
+        for row1 in u.rows
+          row2 = u.nearest( row1,cols)
+          row3 = u.furthest(row1,cols)
+
+          say ""
+          say row1.cells
+          say row2.cells, row1.dist(row2, cols)
+          say row3.cells, row1.dist(row3, cols)
+      t = (new Table).from(f, worker)
+
+    Ok.all.dist1 = (f=the.data + 'weather4.csv') ->
+      worker = (u) ->
+        cols = u.x 
+        a = u.rows[0]
+        b = u.rows[1]
+        #say a.dist(b,u.x)
+      t = (new Table).from(f, worker)
+
+    Ok.all.fastmap = (f= the.data + 'auto93.csv') ->
+      the.seed= 1
       worker=(u) ->
-        k = new KdTree(u,min=20)
-      t=(new Table).from(f,worker)
+        f = new FastMap(u)
+        f.debug = true
+        f.split()
+      t = (new Table).from(f, worker)
 
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
 
     # --------- --------- --------- --------- ---------
-    #if "--test" in process.argv then Ok.go()
-    f = new FastMap
-    say f.aa(22)
+    if "--test" in process.argv then Ok.go()
