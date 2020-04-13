@@ -431,10 +431,9 @@ Unsupervised discretization.
             if better(tmp,best)
               [ best,out ] = [ tmp,row2 ]
         out
-
+      # --------- --------- --------- --------- ---------   
       nearest: (row1,cols) ->
         @furthest(row1, cols, 10**32, (x,y) -> x < y)
-         
       # --------- --------- --------- --------- ---------   
       row: (l) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
