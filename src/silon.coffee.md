@@ -469,7 +469,7 @@ REcursive clustering
      class FastMap
        constructor: (t, @n=32, @p=2, @far=0.9,
                         @lvl=0, @debug=false,
-                        @cols= "x",
+                        @cols= "y",
                         @min= t.rows.length**0.5,
                         @depth=15) ->
          @t = t
@@ -492,7 +492,7 @@ REcursive clustering
                 " : "+(c.mid() for c in @t.y)
        # --------- --------- --------- ---------
        divide: () ->
-         cols = @t[ @cols ]
+         cols = @t[@cols]
          tmp   = any(@t.rows)
          @east = @farFrom(tmp,    cols)
          @west = @farFrom(@east,  cols)
