@@ -464,62 +464,62 @@ Unsupervised discretization.
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
 
-    class FastMap
-      constructor: (t, @n=32, @p=2, @far=0.9,
-                       @lvl=0, @debug=false,
-                       @cols= "x",
-                       @min= t.rows.length**0.5,
-                       @depth=15) ->
-        @t = t
-      # --------- --------- --------- ---------
-      kid:(t) ->
-        x=new FastMap(t,@n,@p,@far,@lvl+1,\
-                        @debug,@cols,@min,@depth-1)
-        x.split()
-        x
-      # --------- --------- --------- ---------
-      split: () ->
-        if @t.rows.length > 2*@min
-          say '|.. '.n(@lvl) + @t.rows.length  if @debug
-          [ below,after ] = @divide()
-          if below.rows.length < @t.rows.length
-            @wests = @kid(below) 
-
-          if after.rows.length < @t.rows.length
-             @wests = @kid(after) 
-        else
-          if @debug
-            say '|.. '.n(@lvl) + @t.rows.length  +  \
-               " : "+(c.mid() for c in @t.y)
-      # --------- --------- --------- ---------
-      divide: () ->
-        cols = @t[ @cols ]
-        tmp   = any(@t.rows)
-        @east = @farFrom(tmp,    cols)
-        @west = @farFrom(@east,  cols)
-        @c    = @east.dist(@west,cols) + the.tiny
-        dists = new Some
-        all = []
-        for row in @t.rows
-          a = row.dist(@east, cols)
-          b = row.dist(@west, cols)
-          d = zero1( (a**2 + @c**2 - b**2) / (2*@c) )
-          d  = d.toFixed(3)
-          all[ id(row) ] = d
-          dists.add d
-        mid = dists.mid() 
-        [ below,after ] = [ @t.clone(),@t.clone() ]
-        for row in @t.rows
-          what = all[ id(row) ] <= mid and below or after
-          what.add row.cells
-        [ below, after ]
-      # --------- --------- --------- ---------
-      farFrom: (row1, cols, l=[], j=int(@n*@far)) ->
-        for i in [1 .. @n]
-          row2 = any(@t.rows)
-          l.push {r: row2, d: row1.dist(row2, cols, @p)}
-        l = l.sort(Order.key("d")) 
-        l[j].r 
+     class FastMap
+       constructor: (t, @n=32, @p=2, @far=0.9,
+                        @lvl=0, @debug=false,
+                        @cols= "x",
+                        @min= t.rows.length**0.5,
+                        @depth=15) ->
+         @t = t
+       # --------- --------- --------- ---------
+       kid:(t) ->
+         x=new FastMap(t,@n,@p,@far,@lvl+1,\
+                         @debug,@cols,@min,@depth-1)
+         x.split()
+         x
+       # --------- --------- --------- ---------
+       split: () ->
+         if @t.rows.length > 2*@min
+           say '|.. '.n(@lvl) + @t.rows.length  if @debug
+           [ below,after ] = @divide()
+           if below.rows.length < @t.rows.length
+             @wests = @kid(below) 
+ 
+           if after.rows.length < @t.rows.length
+              @wests = @kid(after) 
+         else
+           if @debug
+             say '|.. '.n(@lvl) + @t.rows.length  +  \
+                " : "+(c.mid() for c in @t.y)
+       # --------- --------- --------- ---------
+       divide: () ->
+         cols = @t[ @cols ]
+         tmp   = any(@t.rows)
+         @east = @farFrom(tmp,    cols)
+         @west = @farFrom(@east,  cols)
+         @c    = @east.dist(@west,cols) + the.tiny
+         dists = new Some
+         all = []
+         for row in @t.rows
+           a = row.dist(@east, cols)
+           b = row.dist(@west, cols)
+           d = zero1( (a**2 + @c**2 - b**2) / (2*@c) )
+           d  = d.toFixed(3)
+           all[ id(row) ] = d
+           dists.add d
+         mid = dists.mid() 
+         [ below,after ] = [ @t.clone(),@t.clone() ]
+         for row in @t.rows
+           what = all[ id(row) ] <= mid and below or after
+           what.add row.cells
+         [ below, after ]
+       # --------- --------- --------- ---------
+       farFrom: (row1, cols, l=[], j=int(@n*@far)) ->
+         for i in [1 .. @n]
+           row2 = any(@t.rows)
+           l.push {r: row2, d: row1.dist(row2, cols, @p)}
+         l = l.sort(Order.key("d")) 
+         l[j].r 
  
 ## Test Engine
 
