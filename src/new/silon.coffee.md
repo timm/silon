@@ -396,7 +396,8 @@ Unsupervised discretization.
 ## Rows
 
     class Row
-      constructor: (@cells) ->  
+      constructor: (@cells,@id) ->
+        @id or=  id(@)
       dist: (that, cols,  p=2, n=0, d=0) ->
         for c in cols
           n++
@@ -412,8 +413,8 @@ Unsupervised discretization.
       constructor:       -> [ @cols,@x,@y,@rows ] = [[],[],[],[]]
       klass:             -> @y[0]
       from:(f,after=same)-> new Csv f,((row) => @add row), (=> after(@))
-      add:          (l)  -> @cols.length and @row(l) or @top(l)
-      top:   (l, pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
+      add:          (l,id) -> @cols.length and @row(l,id) or @top(l,id)
+      top:   (l, id,pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
       names:             -> (col.txt for col in @cols)
       dump:              -> say @names(); (say row.cells for row in @rows)
       # --------- --------- --------- --------- ---------  -----------
@@ -435,9 +436,9 @@ Unsupervised discretization.
       nearest: (row1,cols) ->
         @furthest(row1, cols, 10**32, (x,y) -> x < y)
       # --------- --------- --------- --------- ---------   
-      row: (l) -> 
+      row: (l,id) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
-        @rows.push(new Row(l))
+        @rows.push(new Row(l,id))
       # --------- --------- --------- ---------
       col: (txt,pos) ->
         what   = if Table.isNum(txt)   then Some else Sym
@@ -534,9 +535,9 @@ REcursive clustering
           a= Ok.tries
           b= Ok.fails
           c= int(0.5 + 100*(a-b)/a)   
-          process.stdout.write "#{s4(a)}) #{s4(c,3)} 
+          process.stdout.write "#{s4(a)} #{s4(c,3)} 
                                %passed after failures= #{b} "
-          process.stdout.write console.timeEnd(name)
+          console.timeEnd(name)
       @run: (name,f) ->
          try
            Ok.tries++
@@ -693,7 +694,9 @@ Tests
 
     Ok.all.fastmap = (f= the.data + 'auto93.csv') ->
       the.seed= 1
+      say 222
       worker=(u) ->
+        say 111,u.rows[0].id
         f = new FastMap(u)
         f.debug = true
         f.split()
@@ -703,4 +706,4 @@ Tests
 
     # --------- --------- --------- --------- ---------
     #if "--test" in process.argv then Ok.go()
-    Ok.all.fastmap()
+    #Ok.all.fastmap()

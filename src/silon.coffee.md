@@ -1,4 +1,3 @@
-say 11
 <name=top>&nbsp;<p> </a>
 [home](http://tiny.cc/silon#top) | 
 [&copy; 2020](https://github.com/timm/silon/blob/master/LICENSE.md#top), Tim Menzies, <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
@@ -135,6 +134,7 @@ Strings
     String::n    = (m=40) -> Array(m+1).join(@)
 
     say = (l...) -> process.stdout.write l.join(", ") + "\n"
+    soy = (l...) -> process.stdout.write l.join(", ")
 
 Lists
 
@@ -205,6 +205,7 @@ Storing info about a column.
       norm: (x) ->  if x is   the.ch.ignore then x else @norm1 x
       bin:  (x) ->  if x is   the.ch.ignore then x else @bin1  x
       add:  (x) -> (if x isnt the.ch.ignore then (@n++; @add1 x)); x
+      show:    ->  (@w>0 and ">" or "<")+@mid()
       # ---------  --------- --------- ---------
       adds: (a,f=same) ->
          (@add f(x) for x in a)
@@ -396,7 +397,8 @@ Unsupervised discretization.
 ## Rows
 
     class Row
-      constructor: (@cells) ->  
+      constructor: (@cells,@id) ->
+        @id or= id(@)
       dist: (that, cols,  p=2, n=0, d=0) ->
         for c in cols
           n++
@@ -405,6 +407,17 @@ Unsupervised discretization.
           d0 = c.dist(x,y)
           d += d0**p
         (d / n) ** (1/p)
+      dominates: (that, cols) ->
+        [ s1,s2,n ] = [ 0,0,cols.length ]
+        for c in cols
+          x   = this.cells[c.pos]
+          y   = that.cells[c.pos]
+          x1   = c.norm(x)
+          y1   = c.norm(y)
+          s1 -= 10**(c.w*(x1-y1)/n)
+          s2 -= 10**(c.w*(y1-x1)/n)
+          #say "x #{x} y #{y} x1 #{x1} y1 #{y1} s1 #{s1} s2 #{s2}"
+        s1/n < s2/n
 
 ## Table
 
@@ -412,10 +425,12 @@ Unsupervised discretization.
       constructor:       -> [ @cols,@x,@y,@rows ] = [[],[],[],[]]
       klass:             -> @y[0]
       from:(f,after=same)-> new Csv f,((row) => @add row), (=> after(@))
-      add:          (l)  -> @cols.length and @row(l) or @top(l)
-      top:   (l, pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
+      add:    (l,id)  -> @cols.length and @row(l,id) or @top(l,id)
+      top:   (l, id,pos=0)  -> @cols = (@col(txt,pos++) for txt in l); l
       names:             -> (col.txt for col in @cols)
       dump:              -> say @names(); (say row.cells for row in @rows)
+      # --------- --------- --------- --------- ---------  -----------
+      mid: -> new Row (c.mid() for c in @cols)
       # --------- --------- --------- --------- ---------  -----------
       clone: (rows=[]) ->
         t=new Table
@@ -435,9 +450,9 @@ Unsupervised discretization.
       nearest: (row1,cols) ->
         @furthest(row1, cols, 10**32, (x,y) -> x < y)
       # --------- --------- --------- --------- ---------   
-      row: (l) -> 
+      row: (l,id) -> 
         l=(col.add( l[col.pos] ) for col in @cols)
-        @rows.push(new Row(l))
+        @rows.push(new Row(l,id))
       # --------- --------- --------- ---------
       col: (txt,pos) ->
         what   = if Table.isNum(txt)   then Some else Sym
@@ -467,63 +482,76 @@ Unsupervised discretization.
 REcursive clustering
 
      class FastMap
-       constructor: (t, @n=32, @p=2, @far=0.9,
+       constructor: (t, @n=128, @p=2, @far=0.9,
                         @lvl=0, @debug=false,
-                        @cols= "y",
+                        @cols= (t1) -> t1.y,
                         @min= t.rows.length**0.5,
                         @depth=15) ->
-         @t = t
+         [ @t,@wests,@mid,@easts,@use ]  = [ t,null,0.5,null,true ]
+
+       # --------- --------- --------- ---------
+       dist: (row1,row2) -> row1.dist(row2,@cols(@t),@p)
        # --------- --------- --------- ---------
        kid:(t) ->
-         x=new FastMap(t,@n,@p,@far,@lvl+1,\
-                         @debug,@cols,@min,@depth-1)
+         x=new FastMap(t,
+                       @n,@p,@far,@lvl+1,@debug,@cols,@min,@depth-1)
          x.split()
          x
        # --------- --------- --------- ---------
+       leaves: (f) ->
+          if @wests? and @easts?
+            @wests.leaves f
+            @easts.leaves f
+          else
+            f( @t)
+       # --------- --------- --------- ---------
        split: () ->
+         leaf=true
          if @t.rows.length > 2*@min
-           say '|.. '.n(@lvl) + @t.rows.length  if @debug
-           [ below,after ] = @divide()
-           @wests = @kid(below) if below.rows.length < @t.rows.length
-           @easts = @kid(after) if after.rows.length < @t.rows.length
-         else
-           if @debug
-             say '|.. '.n(@lvl) + @t.rows.length  +  \
-                " : "+(c.mid() for c in @t.y)
+           [ below,after ] = @divide()  
+           t= @t.rows.length 
+           a= after.rows.length
+           b= below.rows.length
+           if b< t and b > @min and a<t and a>@min
+             leaf=false
+             @wests = @kid(below) 
+             @easts = @kid(after) 
+         if @debug
+             report =  (c.show() for c in @t.y).join(", ")  
+             post = leaf and "x"+id(@t) or ""
+             say s4(report,35)+ ' |..'.n(@lvl) + " (" +@t.rows.length+')'+post 
        # --------- --------- --------- ---------
        divide: () ->
-         cols = @t[@cols]
          tmp   = any(@t.rows)
-         @east = @farFrom(tmp,    cols)
-         @west = @farFrom(@east,  cols)
-         @c    = @east.dist(@west,cols) + the.tiny
+         @east = @farFrom(tmp)
+         @west = @farFrom(@east)
+         @c    = @dist(@east, @west) + the.tiny
          dists = new Some
-         all = []
+         cache = []
          for row in @t.rows
-           a = row.dist(@east, cols)
-           b = row.dist(@west, cols)
-           d = zero1( (a**2 + @c**2 - b**2) / (2*@c) )
-           d  = d.toFixed(3)
-           all[ id(row) ] = d
-           dists.add d
-         mid = dists.mid() 
+           a = @dist(row, @east)
+           b = @dist(row, @west)
+           x = zero1( (a**2 + @c**2 - b**2) / (2*@c) )
+           cache[ id(row) ] = x 
+           dists.add x
+         @mid = dists.mid()
          [ below,after ] = [ @t.clone(),@t.clone() ]
          for row in @t.rows
-           what = all[ id(row) ] <= mid and below or after
-           what.add row.cells
+           what = cache[ id(row) ] <= @mid and below or after
+           what.add row.cells,row.id
          [ below, after ]
        # --------- --------- --------- ---------
-       farFrom: (row1, cols, l=[], j=int(@n*@far)) ->
+       farFrom: (row1, l=[], j=int(@n*@far)) ->
          for i in [1 .. @n]
            row2 = any(@t.rows)
-           l.push {r: row2, d: row1.dist(row2, cols, @p)}
-         l = l.sort(Order.key("d")) 
-         l[j].r 
+           l.push {r: row2, d: @dist(row1,row2)}
+         l = l.sort(Order.key("d"))
+         l[j].r
  
 ## Test Engine
 
     class Ok
-      @tries = 0 
+      @tries = 0
       @fails = 0
       @all   = {}
       @if    = (f,t) -> throw new Error t or "" if not f
@@ -694,9 +722,40 @@ Tests
     Ok.all.fastmap = (f= the.data + 'auto93.csv') ->
       the.seed= 1
       worker=(u) ->
+        say u.mid().cells
         f = new FastMap(u)
         f.debug = true
+        say ""
         f.split()
+        l=[]
+        f.leaves((t) -> l.push t)
+        for t1 in l
+          t1.dom = 0
+          for t2 in l
+            if t1.mid().dominates( t2.mid(),u.y) 
+              t1.dom += 1
+        for t in l.sort(Order.key "dom")
+          say id(t), t.dom
+      t = (new Table).from(f,worker)
+
+    Ok.all.dominates = (f= the.data + 'auto93-10000.csv') ->
+      worker = (u) ->
+         cache = {}
+         for row1 in u.rows
+           d=0
+           for i in [1..64]
+             row2 = any(u.rows)
+             if row1.dominates(row2,u.y) 
+               d+=1
+           cache[ row1.id ] = d
+         u.rows = u.rows.sort(Order.fun (x) -> cache[x.id])
+         n = u.rows.length
+         say "\nworst:"
+         for i in [0 .. 5]
+           say (u.rows[i].cells[c.pos] for c in u.y).join(", ")
+         say "\nbest:"
+         for i in [ (n-6) .. (n-1) ]
+           say (u.rows[i].cells[c.pos] for c in u.y).join(", ")
       t = (new Table).from(f,worker)
 
     Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"

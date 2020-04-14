@@ -54,3 +54,28 @@ Lists
 
     @last = (a) -> a[ a.length - 1 ]
 
+    class @Order
+      @fun = (f)   -> ((x,y) -> @Order.it  f(x), f(y))
+      @key = (key) -> ((x,y) -> @Order.fun (z) -> z[key])
+      @it  = (x,y) -> switch
+        when x <  y then -1
+        when x == y then  0
+        else 1
+      @search = (lst,val,f=((z) -> z)) ->
+        [lo,hi] = [0, lst.length - 1]
+        while lo <= hi
+          mid = @int((lo+hi)/2)
+          if f( lst[mid] ) >= val
+            hi = mid - 1
+          else
+            lo = mid + 1
+        Math.min(lo,lst.length-1)
+      @before = (x,lst, y=lst[0]) ->
+        for z in lst
+          if z>x then break else y=z
+        y
+
+    x=  [10,20,30]
+    x.sort(@Order.fun((x) -> -1*x))
+    @say x
+
