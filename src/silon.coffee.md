@@ -1,4 +1,4 @@
-<name=top>&nbsp;<p> </a>
+<a name=top>&nbsp;<p> </a>
 [home](http://tiny.cc/silon#top) | 
 [&copy; 2020](https://github.com/timm/silon/blob/master/LICENSE.md#top), Tim Menzies, <a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon#top)<br> 
@@ -142,7 +142,6 @@ Lists
 
     class Order
       @fun = (f)   -> ((x,y) -> Order.it  f(x), f(y))
-      @key = (key) -> ((x,y) -> Order.fun (z) -> z[key])
       @it  = (x,y) -> switch
         when x <  y then -1
         when x == y then  0
@@ -490,7 +489,8 @@ REcursive clustering
          [ @t,@wests,@mid,@easts,@use ]  = [ t,null,0.5,null,true ]
 
        # --------- --------- --------- ---------
-       dist: (row1,row2) -> row1.dist(row2,@cols(@t),@p)
+       dist: (row1,row2) -> 
+          row1.dist(row2,@cols(@t),@p)
        # --------- --------- --------- ---------
        kid:(t) ->
          x=new FastMap(t,
@@ -506,20 +506,18 @@ REcursive clustering
             f( @t)
        # --------- --------- --------- ---------
        split: () ->
-         leaf=true
+         if @debug
+             report =  (c.show() for c in @t.y).join(", ")
+             say s4(report,35)+ ' |..'.n(@lvl) + " (" +@t.rows.length+')'
          if @t.rows.length > 2*@min
            [ below,after ] = @divide()  
            t= @t.rows.length 
            a= after.rows.length
            b= below.rows.length
            if b< t and b > @min and a<t and a>@min
-             leaf=false
              @wests = @kid(below) 
              @easts = @kid(after) 
-         if @debug
-             report =  (c.show() for c in @t.y).join(", ")  
-             post = leaf and "x"+id(@t) or ""
-             say s4(report,35)+ ' |..'.n(@lvl) + " (" +@t.rows.length+')'+post 
+         @
        # --------- --------- --------- ---------
        divide: () ->
          tmp   = any(@t.rows)
@@ -545,9 +543,34 @@ REcursive clustering
          for i in [1 .. @n]
            row2 = any(@t.rows)
            l.push {r: row2, d: @dist(row1,row2)}
-         l = l.sort(Order.key("d"))
+         l = l.sort(Order.fun (x) -> x.d)
          l[j].r
- 
+
+    class Learn
+      constructor: (t, @n=128,@p=2,@far=0.9,
+                       @min=t.rows.length**0.5) ->
+        [ lvl,debug ] = [ 0,false ]
+        y = new FastMap(t,@n,@p,@far,lvl,debug,cols=((t1)->t1.y),@min)
+        x = new FastMap(t,@n,@p,@far,lvl,debug,cols=((t1)->t1.x),@min)
+        x = x.split()
+        y = y.split()
+        [ ys,xs ] = [ [],[] ]
+        y.leaves((yt) -> ys.push yt)
+        x.leaves((xt) -> xs.push xt)
+        say ">", xs.length, ys.length
+        r2c = {}
+        for yt in ys
+           for row in yt.rows
+             say row.id, id(yt)
+             r2c[row.id] = id(yt)
+        for xt in xs
+          s= new Sym
+          for row in yt.rows
+            s.add r2c[row.id]
+          for k,v of  s.counts
+            say ">", k,v
+          say 1000,s.var()
+
 ## Test Engine
 
     class Ok
@@ -580,6 +603,8 @@ REcursive clustering
 
 Tests
 
+    Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
+
     Ok.all.timing = ->
       j=0
       n=0.25*10**9
@@ -605,12 +630,6 @@ Tests
          y = x.sort(Order.it)
          Ok.if x[0]  == -100
          Ok.if last(x)   ==   10000
-
-    Ok.all.keysort = ->
-      l = ({a: n,b: -1*n} for n in [20..1])
-      l.sort(Order.key "b")
-      Ok.if l[0].b == -20
-      Ok.if last(l).a  == 1
 
     Ok.all.random = ->
       l= (p2 rand() for _ in [1..100])
@@ -699,47 +718,58 @@ Tests
     Ok.all.table3 = -> Ok.all.table1 the.data + 'auto93-10000.csv'
 
     Ok.all.nearfar = (f=the.data + 'weather4.csv') ->
-      worker = (u) ->
+      nearfar = (u) ->
         cols = u.x
         for row1 in u.rows
           row2 = u.nearest( row1,cols)
           row3 = u.furthest(row1,cols)
-
-          say ""
-          say row1.cells
-          say row2.cells, row1.dist(row2, cols)
-          say row3.cells, row1.dist(row3, cols)
-      t = (new Table).from(f, worker) 
+          d12   = row2.dist(row1, u.x)
+          d13   = row3.dist(row1, u.x)
+          Ok.if  d13 > d12
+      t = (new Table).from(f, nearfar) 
 
     Ok.all.dist1 = (f=the.data + 'weather4.csv') ->
       worker = (u) ->
         cols = u.x 
         a = u.rows[0]
         b = u.rows[1]
-        #say a.dist(b,u.x)
       t = (new Table).from(f, worker)
 
     Ok.all.fastmap = (f= the.data + 'auto93.csv') ->
       the.seed= 1
-      worker=(u) ->
-        say u.mid().cells
+      fastmap=(u) ->
         f = new FastMap(u)
-        f.debug = true
-        say ""
+        f.debug = false
         f.split()
         l=[]
         f.leaves((t) -> l.push t)
         for t1 in l
           t1.dom = 0
           for t2 in l
-            if t1.mid().dominates( t2.mid(),u.y) 
+            if t1.mid().dominates( t2.mid(), u.y)
               t1.dom += 1
-        for t in l.sort(Order.key "dom")
-          say id(t), t.dom
-      t = (new Table).from(f,worker)
+        l = l.sort(Order.fun (x) -> x.dom)
+        best = last(l)
+        worst= l[0]
+        Ok.if best.mid().dominates(u.mid(), u.y)
+        f.leaves((t) ->  soy " ",t.rows.length)
+        say ""
+      t = (new Table).from(f,fastmap)
+
+    Ok.all.xfastmap = (f= the.data + 'auto93.csv') ->
+      the.seed= 1
+      fastmap=(u) ->
+        f = new FastMap(u)
+        f.debug = false
+        f.cols = (t1) -> t1.x
+        f.split()
+        f.leaves((t) ->  soy " ",t.rows.length)
+        say ""
+      t = (new Table).from(f,fastmap)
+
 
     Ok.all.dominates = (f= the.data + 'auto93-10000.csv') ->
-      worker = (u) ->
+      dominates = (u) ->
          cache = {}
          for row1 in u.rows
            d=0
@@ -749,17 +779,18 @@ Tests
                d+=1
            cache[ row1.id ] = d
          u.rows = u.rows.sort(Order.fun (x) -> cache[x.id])
-         n = u.rows.length
-         say "\nworst:"
-         for i in [0 .. 5]
-           say (u.rows[i].cells[c.pos] for c in u.y).join(", ")
-         say "\nbest:"
-         for i in [ (n-6) .. (n-1) ]
-           say (u.rows[i].cells[c.pos] for c in u.y).join(", ")
-      t = (new Table).from(f,worker)
+         worst  = u.rows[0]
+         best   = last(u.rows)
+         Ok.if best.dominates(worst, u.y)
+      t = (new Table).from(f,dominates)
 
-    Ok.all.bad= -> Ok.if 1 is 2,"deliberate error to check test engine"
+    Ok.all.js = (f= the.data + 'auto93.csv') ->
+      the.seed= 1
+      js=(u) ->
+        f = new Learn(u)
+      t = (new Table).from(f,js)
+
 
     # --------- --------- --------- --------- ---------
     #if "--test" in process.argv then Ok.go()
-    Ok.all.fastmap()
+    Ok.all.js()
