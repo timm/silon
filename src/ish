@@ -219,9 +219,9 @@ bashrc() { cat<<-'EOF'
 	uname="$(uname -s)"
 	case "${uname}" in
 	     Linux*)
-	       alias ls='ls --color=auto';;
+	       alias l='ls --color=auto';;
 	     Darwin*)
-	       alias ls='ls -G' ;;
+	       alias l='ls -G' ;;
 	     *) ;;
 	esac
 	_c0="\033[00m"     # white

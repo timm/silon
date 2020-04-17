@@ -64,135 +64,14 @@ Much of V&V is "optimize", especially for AI systems.
 
 ## Stuff needed from elsewhere.
 
-    readline  = require 'readline'
-    fs        = require 'fs'
+    {the}     = require  "./the" 
 
-## My own config
+    {same, today, sum, int, id, 
+    rand, any, d2, p2, s4, xray, 
+    zero1, clone, say,soy,last, 
+    Order}    = require "./fun"
 
-    the =
-      id: 0
-      data: "../etc/data/"
-      conf: 95
-      seed: 1
-      ch:
-        num: '$'
-        sym: ':'
-        more: '>'
-        less: '<'
-        klass: '!'
-        ignore: '?'
-      ninf: -1 * (Number.MAX_SAFE_INTEGER - 1)
-      inf:  Number.MAX_SAFE_INTEGER
-      tiny: 10 ** (-32)
-    
-## Standard Stuff
-
-Standard functions.
-
-    same   = (x) -> x 
-    today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
-    #abort  = throw new Error('bye')
-    sum    = (l,f=same,n=0) -> (n+=f(x) for x in l); n
-
-    int =  Math.floor
-    id  = (x) ->  
-      x.__id = ++the.id unless x.__id?
-      x.__id
-
-    rand=  ->
-        x = Math.sin(the.seed++) * 10000
-        x - int(x)
-
-    any= (l) ->  l[ int(rand()*l.length) ] 
-    d2= (n,f=2) ->  n.toFixed(f)
-    p2= (n,f=2) ->  Math.round(100*d2(n,f))
-    s4= (n,f=4) ->
-       s = n.toString()
-       l = s.length
-       pre = if l < f then " ".n(f - l) else ""
-       pre + s
-
-    xray= (o) -> say ""; (say "#{k} = #{v}"  for k,v of o)
-
-    zero1= (x) -> switch
-       when x<0 then 0
-       when x>1 then 1
-       else x
-
-    clone = (x) -> # deepCopy
-      if not x? or typeof x isnt 'object'
-        x
-      else
-        y = new x.constructor()
-        for k of x
-          y[k] = clone x[k]
-        y
-
-Strings
-
-    String::last = @[ @.length - 1 ]
-    String::n    = (m=40) -> Array(m+1).join(@)
-
-    say = (l...) -> process.stdout.write l.join(", ") + "\n"
-    soy = (l...) -> process.stdout.write l.join(", ")
-
-Lists
-
-    last = (a) -> a[ a.length - 1 ]
-
-    class Order
-      @fun = (f)   -> ((x,y) -> Order.it  f(x), f(y))
-      @it  = (x,y) -> switch
-        when x <  y then -1
-        when x == y then  0
-        else 1
-      @search = (lst,val,f=((z) -> z)) ->
-        [lo,hi] = [0, lst.length - 1]
-        while lo <= hi
-          mid = int((lo+hi)/2)
-          if f( lst[mid] ) >= val
-            hi = mid - 1
-          else
-            lo = mid + 1
-        Math.min(lo,lst.length-1)
-      @before = (x,lst, y=lst[0]) ->
-        for z in lst
-          if z>x then break else y=z
-        y
-
-Csv
-
-    class Csv
-      constructor: (file, action, done) ->
-        @use     = null
-        @lines    = []
-        @action  = action
-        Csv.linesDo file, @line, (done or ->)
-      line: (s) =>
-        if s
-          s = s.replace /\s/g,''
-          s = s.replace /#.*/,''
-          @merge s if s.length
-      merge: (s) ->
-        @lines.push s
-        if last(s) isnt ','
-          @act @lines.join("").split ','
-          @lines = []
-      act: (cells) ->
-        if cells.length
-          @use or= (i for c,i in cells when the.ch.ignore not in c)
-          @action (@prep cells[i] for i in @use)
-      prep: (s) ->
-        t = +s
-        if Number.isNaN(t) then s else t
-      @linesDo: ( file, action, done = (-> ) ) ->
-        stream = readline.createInterface
-          input:    fs.createReadStream file
-          output:   process.stdout
-          terminal: false
-        stream.on 'close',           -> done()
-        stream.on 'error', ( error ) -> action error
-        stream.on 'line',  ( line  ) -> action line
+    {Csv} = require './csv' 
 
 ## Tables
 
@@ -581,12 +460,11 @@ REcursive clustering
       @go:  ->
         say "\n# " + "-".n() + "\n# " + today() + "\n"
         (Ok.run name,f for name,f of Ok.all)
-      @fyi: (name) -> 
+      @fyi: (name) ->
           a= Ok.tries
           b= Ok.fails
-          c= int(0.5 + 100*(a-b)/a)   
-          process.stdout.write "#{s4(a)}) #{s4(c,3)} 
-                               %passed after failures= #{b} "
+          c= int(0.5 + 100*(a-b)/a)
+          process.stdout.write "#{s4(a)}) #{s4(c,3)} %passed after failures= #{b} "
           process.stdout.write console.timeEnd(name)
       @run: (name,f) ->
          try
@@ -785,12 +663,11 @@ Tests
       t = (new Table).from(f,dominates)
 
     Ok.all.js = (f= the.data + 'auto93.csv') ->
-      the.seed= 1
+      the.seed= 1 
       js=(u) ->
-        f = new Learn(u)
+        true  #f = new Learn(u)
       t = (new Table).from(f,js)
-
 
     # --------- --------- --------- --------- ---------
     #if "--test" in process.argv then Ok.go()
-    Ok.all.js()
+    Ok.go()
