@@ -4,37 +4,37 @@ Imports
 
 Standard functions
 
-    @same   = (x) -> x 
-    @today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
+    same   = (x) -> x 
+    today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
     #abort  = throw new Error('bye')
-    @sum    = (l,f=@same,n=0) -> (n+=f(x) for x in l); n
+    sum    = (l,f=same,n=0) -> (n+=f(x) for x in l); n
 
-    @int =  Math.floor
-    @id  = (x) ->
+    int =  Math.floor
+    id  = (x) ->
       x.__id = ++the.id unless x.__id?
       x.__id
 
-    @rand=  ->
+    rand=  ->
         x = Math.sin(the.seed++) * 10000
-        x - @int(x)
+        x - int(x)
 
-    @any= (l) ->  l[ @int(@rand()*l.length) ] 
-    @d2= (n,f=2) ->  n.toFixed(f)
-    @p2= (n,f=2) ->  Math.round(100*d2(n,f))
-    @s4= (n,f=4) ->
+    any= (l) ->  l[ int(rand()*l.length) ] 
+    d2= (n,f=2) ->  n.toFixed(f)
+    p2= (n,f=2) ->  Math.round(100*d2(n,f))
+    s4= (n,f=4) ->
        s = n.toString()
        l = s.length
        pre = if l < f then " ".n(f - l) else ""
        pre + s
 
-    @xray= (o) -> @say ""; (@say "#{k} = #{v}"  for k,v of o)
+    xray= (o) -> say ""; (say "#{k} = #{v}"  for k,v of o)
 
-    @zero1= (x) -> switch
+    zero1= (x) -> switch
        when x<0 then 0
        when x>1 then 1
        else x
 
-    @clone = (x) -> # deepCopy
+    clone = (x) -> # deepCopy
       if not x? or typeof x isnt 'object'
         x
       else
@@ -48,15 +48,15 @@ Strings
     String::last = @[ @.length - 1 ]
     String::n    = (m=40) -> Array(m+1).join(@)
 
-    @say = (l...) -> process.stdout.write l.join(", ") + "\n"
+    say = (l...) -> process.stdout.write l.join(", ") + "\n"
 
 Lists
 
-    @last = (a) -> a[ a.length - 1 ]
+    last = (a) -> a[ a.length - 1 ]
 
-    class @Order
-      @fun = (f)   -> ((x,y) -> @Order.it  f(x), f(y))
-      @key = (key) -> ((x,y) -> @Order.fun (z) -> z[key])
+    class Order
+      @fun = (f)   -> ((x,y) -> Order.it  f(x), f(y))
+      @key = (key) -> ((x,y) -> Order.fun (z) -> z[key])
       @it  = (x,y) -> switch
         when x <  y then -1
         when x == y then  0
@@ -64,7 +64,7 @@ Lists
       @search = (lst,val,f=((z) -> z)) ->
         [lo,hi] = [0, lst.length - 1]
         while lo <= hi
-          mid = @int((lo+hi)/2)
+          mid = int((lo+hi)/2)
           if f( lst[mid] ) >= val
             hi = mid - 1
           else
@@ -76,6 +76,11 @@ Lists
         y
 
     x=  [10,20,30]
-    x.sort(@Order.fun((x) -> -1*x))
-    @say x
+    x.sort(Order.fun((x) -> -1*x))
+    say x
+
+    module.exports = { Order: Order,  say:say,last:last,
+    clone:clone,  zero1: zero1, xray:xray, p2:p2, s4:s4,
+    d2:d2, rand:rand, int:int, id:id, sum:sum, today: today, same:same}
+
 
