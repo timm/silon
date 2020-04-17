@@ -64,14 +64,12 @@ Much of V&V is "optimize", especially for AI systems.
 
 ## Stuff needed from elsewhere.
 
-    {the}     = require  "./the" 
+    {the}     = require  "./the"
 
-    {same, today, sum, int, id, 
-    rand, any, d2, p2, s4, xray, 
-    zero1, clone, say,soy,last, 
-    Order}    = require "./fun"
+    {same, today, sum, int, id, rand, any, d2, p2, s4, xray,
+    zero1, clone, say,soy,last, Order}    = require "./fun"
 
-    {Csv} = require './csv' 
+    {Csv} = require './csv'
 
 ## Tables
 
