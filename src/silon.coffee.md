@@ -15,7 +15,7 @@
 
 ## What is SILON?
 
-SILON is a technology demonstrator: epsilon domination
+aSILON is a technology demonstrator: epsilon domination
 
 SILON is a teaching tool:
 
