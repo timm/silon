@@ -1,5 +1,5 @@
-    {the} = require './the'
-    {n,int,say,Order} = require './fun'
+    {the} = require '../src/the'
+    {n,int,say,Order} = require '../src/fun'
 
 Unsupervised discretization. Support code for `Some`.
 

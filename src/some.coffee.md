@@ -1,8 +1,7 @@
-    {the}      = require './the'
-    {Ok}       = require './ok'
-    {Bins}     = require './bins'
-    {NumThing} = require './numthing'
-    {Order,last,int,rand,d2} = require './fun'
+    {the}      = require '../src/the'
+    {Bins}     = require '../src/bins'
+    {NumThing} = require '../src/numthing'
+    {Order,last,int,rand,d2} = require '../src/fun'
 
 Storing info about numeric  columns (resevoir style):
 
@@ -54,43 +53,6 @@ Storing info about numeric  columns (resevoir style):
              @_cuts = null
              @_all[ Order.search(@_all,x) ] = x
 
-Test cases
+Exports
 
-    Ok.all.some = {}
-    Ok.all.some.some1 = ->
-       s = new Some
-       n = 100000
-       for x in (d2(rand(),2) for _ in [1..n]) 
-         s.add x
-       for x in [0..99] by 10
-         m = x/100
-         x = s.all()[ int(s.max *m) ]  
-         y = s.per(m)
-         Ok.if  y-0.01 <= x <= y+0.01
-       
-    Ok.all.some.some2 = ->
-       s = new Some
-       n = 100000
-       for x in (d2(rand(),2) for _ in [1..n]) 
-         s.add x
-       b = new Bins(s)
-       b.cuts(s)
-       Ok.if b.breaks.length == 6
-       Ok.if  0.55 <= b.bin(0.6)                 <=  0.56,  .6
-       Ok.if 0.82  <= Order.before(200,b.breaks) <=  .825, 200
-       Ok.if 0     <= Order.before(-1, b.breaks) <= 1.131,  -1
-
-    Ok.all.some.some3 = ->
-       s = new Some
-       for i in [1..10]
-         for j in [1..4]
-           s.add j
-       b = new Bins(s)
-       b.cuts(s)
-       c=  b.breaks
-       Ok.if  c[0]==1 and c[2]==3 and c.length==3
-
-Main.
-
-    Ok.go "some" if require.main is module
     @Some = Some

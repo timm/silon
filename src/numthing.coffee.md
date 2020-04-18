@@ -1,6 +1,6 @@
 
-    {the} = require './the'
-    {Col} = require './col'
+    {the} = require '../src/the'
+    {Col} = require '../src/col'
 
 Storing info about numeric columns.
 

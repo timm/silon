@@ -13,4 +13,3 @@
       ninf: -1 * (Number.MAX_SAFE_INTEGER - 1)
       inf:  Number.MAX_SAFE_INTEGER
       tiny: 10 ** (-32)
- 

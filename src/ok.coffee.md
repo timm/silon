@@ -1,4 +1,4 @@
-    {the} = require './the'
+    {the} = require '../src/the'
 
     say = (l...) -> process.stdout.write l.join(", ") + "\n"
     today = () -> Date(Date.now()).toLocaleString().slice(0,25)
@@ -22,7 +22,7 @@
           b  = Ok.fails
           c  = Math.floor(0.5 + 100*(a-b)/a)
           t2 = (new Date).getTime()
-          say "Ok.now #{s3(a)}) #{s3(c)} %passed after failures= 
+          say "#{Ok.now} #{s3(a)}) #{s3(c)} %passed after failures= 
               #{b} : #{name} in #{t2-t1} ms"
       @run: (name,f) ->
          t1 = (new Date).getTime()
@@ -37,19 +37,6 @@
            say l[2]
            Ok.fyi(name,t1)
 
-# Test cases
+Exports
 
-    Ok.all.ok = {}
-    Ok.all.ok.bad= ->
-       Ok.if 1 is 2,"deliberate error to check test engine"
-    Ok.all.ok.timing = ->
-       j=0
-       n=0.25*10**9
-       for i in [1 .. n]
-         j++
-       Ok.if j == n
-
-# Main
-
-    Ok.go("ok") if require.main is module
     @Ok = Ok

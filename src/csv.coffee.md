@@ -1,8 +1,8 @@
     readline  = require 'readline'
     fs        = require 'fs'
-    {the}     = require './the'
-    {last}    = require './fun'
-    {Ok}      = require './ok'
+    {the}     = require '../src/the'
+    {last}    = require '../src/fun'
+    {Ok}      = require '../src/ok'
     
     class Csv
       constructor: (file, action, done) ->

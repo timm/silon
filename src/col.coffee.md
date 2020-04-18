@@ -1,5 +1,5 @@
-    {the}  = require './the'
-    {same} = require './fun'
+    {the}  = require '../src/the'
+    {same} = require '../src/fun'
 
 Storing info about a column.
 

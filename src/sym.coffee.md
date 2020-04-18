@@ -1,7 +1,6 @@
-    {the} = require './the'
-    {say} = require './fun'
-    {Ok}  = require './ok'
-    {Col} = require './col'
+    {the} = require '../src/the'
+    {say} = require '../src/fun'
+    {Col} = require '../src/col'
 
 Storing info about symbolic  columns.
 
@@ -36,17 +35,7 @@ Storing info about symbolic  columns.
              @_ent -= p*Math.log2(p)
          @_ent
 
-Tests
+Export
 
-    Ok.all.sym = {}
-    Ok.all.sym.adds = ->
-       s= new Sym("<cost")
-       Ok.if s.w == - 1
-       s.adds ['a','b','b','c','c','c','c']
-       Ok.if 1.378 < s.var() < 1.379
-
-Main
-
-    Ok.go "sym" if require.main is module
     @Sym = Sym
 

@@ -1,4 +1,4 @@
-    {id} = require './fun'
+    {id} = require '../src/fun'
 
 # Row
 
