@@ -1,5 +1,5 @@
 <a name=top>&nbsp;<p></a>       
-[home](http://tiny.cc/silon#top) |
+&nbsp;&nbsp;[home](http://tiny.cc/silon#top) |
 [src](https://github.com/timm/silon/raw/master/src) | 
 [issues](http://tiny.cc/silon) |
 <a href="https://github.com/timm/silon/raw/master/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <<a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>>
