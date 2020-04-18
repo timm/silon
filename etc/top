@@ -8,7 +8,7 @@ cat<<EOF> /tmp/top$$
 [home](${s}#top) |
 [src](${r}/src) | 
 [issues]($s) |
-<a href="$r/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>
+<a href="$r/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <<a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>>
 <br> [<img width=900 src=${q}${r}/etc/img/banner.jpg${q}>](${s})<br>
 EOF
 
