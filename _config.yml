@@ -3,6 +3,8 @@ logo: /assets/img/cylon.png
 google_analytics:
 theme: jekyll-theme-minimal
 show_downloads: true
+plugins:
+  - jekyll-coffeescript
 description: >
   Cluster, contrast, dominate, control
   <p>
