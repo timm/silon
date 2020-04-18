@@ -11,5 +11,3 @@ script:
   - cd test
   - pwd
   - bash ./all.sh
-
-
