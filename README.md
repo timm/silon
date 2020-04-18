@@ -6,5 +6,20 @@
 [issues](http://tiny.cc/silon)
 
 
-# silon
-Cluster + contrast + optimize
+# Silon
+
+Cluster + contrast + dominate + optimize
+
+Give me the fruitful error any time, full of seeds, bursting with its own corrections. You can keep your sterile truth for yourself.    
+--  Vilfredo Pareto
+
+Don't sweat the small stuff.
+
+Less is more.   
+-- Dieter Rams
+
+Simplicity is the ultimate sophistication.  
+-- Leonardo da Vinci
+
+The art of being wise is the art of knowing what to overlook.   
+-- William James
