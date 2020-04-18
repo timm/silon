@@ -1,10 +1,9 @@
-language: C
+language: c
 
-sudo: true
 
 install:
   - apt install nodejs npm
-  - npm install coffee-script
+  - npm install coffeescript
 
 script:
   - ls
