@@ -4,13 +4,19 @@ google_analytics:
 theme: jekyll-theme-minimal
 description: >
   Cluster, contrast, dominate, control 
-   
-  [asda](asdas)
-  
-  asdas
-  <a href="adsa">asda<a>
-   
-   
-  -  asdas
-  - asda asdas
+  <P>
+  <ul>
+  <li> 
+    here:
+    <a href="adsa">one<a>;
+    <a href="adsa">two<a>;
+    <a href="adsa">three<a>
+  </li>
+  <li> 
+    there:
+    <a href="adsa">one<a>;
+    <a href="adsa">two<a>;
+    <a href="adsa">three<a>
+  </li>
+  </ul> 
    
