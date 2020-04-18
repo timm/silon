@@ -1,10 +1,9 @@
-
     readline  = require 'readline'
     fs        = require 'fs'
-
-    {the} = require "./the"
-    {last} = require "./fun"
-
+    {the}     = require './the'
+    {last}    = require './fun'
+    {Ok}      = require './ok'
+    
     class Csv
       constructor: (file, action, done) ->
         @use     = null
@@ -38,5 +37,17 @@
         stream.on 'error', ( error ) -> action error
         stream.on 'line',  ( line  ) -> action line
 
-    @Csv = Csv
+Tests
 
+    Ok.all.csv = {}
+    Ok.all.csv.linesDo= (f= the.data + 'weather2.csv',n=0) -> 
+       Csv.linesDo f,(-> ++n),(-> n is 20)
+
+    Ok.all.csv.rows = (f = the.data + 'weather2.csv',n=0) ->
+       new Csv f, (-> ++n), (-> Ok.if n ==15,"bad rows length")
+
+Main
+
+    Ok.go 'csv' if require.main is module
+    @Csv = Csv
+    
