@@ -3,10 +3,9 @@ q='"'
 r='https://github.com/timm/silon/raw/master'
 s='http://tiny.cc/silon'
 
-cat<<EOF> /tmp/head$$
-<a name=top>&nbsp;<p></a>  
-[home](${s}#top) | 
-[copyright]($r/LICENSE.md#top) &copy;2020,
+cat<<EOF> /tmp/top$$
+<a name=top>&nbsp;<p></a>       
+[home](${s}#top) |
 <a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>
 <br> [<img width=900 src=${q}${r}/etc/img/banner.jpg${q}>](${s})<br>
 [src](${r}/src) | 
@@ -14,17 +13,21 @@ cat<<EOF> /tmp/head$$
 EOF
 
 if [ $0 -nt $1 ]; then
+  echo "# $1 ..."
+  cat $1 |
   gawk 'BEGIN  {
     RS = "^$"
-    f  = "'/tmp/head$$'"
-    getline head < f
+    f  = "'/tmp/top$$'"
+    getline top < f
     close(f)
     FS="\n"
     RS=""
   }
-  NR==1 { print head
-        if($0 ~ /<a name=top>/) next  }
-  1{print ""; print $0}' $1  > /tmp/file$$
+  NR==1 { print top
+          if($0 ~ /<a name=top>/) next  }
+  1     { print ""; print $0}
+  ' > /tmp/$$new
 
-  mv /tmp/file$$ $1
+  cp /tmp/$$new $1
+
 fi
