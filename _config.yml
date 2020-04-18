@@ -12,8 +12,7 @@ description: >
     <a href="four">four</a> |
     <a href="five">five</a> |
     <a href="six">six</a> 
-  </p>
-  <p>
+  <br>
   here:
     <a href="one">one</a> |
     <a href="two">two</a> |
@@ -21,8 +20,7 @@ description: >
     <a href="four">four</a> |
     <a href="five">five</a> |
     <a href="six">six</a> 
-  </p>
-  <p>
+  <br>
   here:
     <a href="one">one</a> |
     <a href="two">two</a> |
@@ -30,8 +28,7 @@ description: >
     <a href="four">four</a> |
     <a href="five">five</a> |
     <a href="six">six</a> 
-  </p>
-  <p>
+  <br>
   here:
     <a href="one">one</a> |
     <a href="two">two</a> |
