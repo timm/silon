@@ -1,6 +1,8 @@
 markdown: kramdown
 highlighter: rouge
 theme: jekyll-theme-minimal
+plugins:
+  - jekyll-coffeescript
 title : Silon
 author :
   name : Tim Menzies
