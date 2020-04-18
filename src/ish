@@ -239,7 +239,8 @@ bashrc() { cat<<-'EOF'
 	}
         publish() {
 		( cd $root
-      for i in src/*.md; do etc/top $i; done
+      for i in *.md;      do etc/top $i; done
+      for i in src/*.md;  do etc/top $i; done
       for i in test/*.md; do etc/top $i; done
     )
 		put
