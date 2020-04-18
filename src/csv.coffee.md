@@ -5,11 +5,18 @@
 <a href="https://github.com/timm/silon/raw/master/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <<a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>>
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon)<br>
 
+# csv.coffee.md
+
+Read comma-seperated values from disk.
+
+Imports:
 
     fs       = require 'fs'
     readline = require 'readline'
     {the}    = require "./the"
     {last}   = require "./fun"
+
+Code:
 
     class Csv
       constructor: (file, action, done) ->
@@ -42,5 +49,7 @@
         stream.on 'close',           -> done()
         stream.on 'error', ( error ) -> action error
         stream.on 'line',  ( line  ) -> action line
+
+Exports:
 
     @Csv = Csv
