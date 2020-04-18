@@ -1,12 +1,12 @@
-markdown: kramdown
-highlighter: rouge
-theme: jekyll-theme-minimal
-plugins:
-  - jekyll-coffeescript
-title : Silon
 author :
   name : Tim Menzies
   email : timm@ieee.org
   github : timm
   twitter : timmenzies
 
+title: 'SILON'
+logo: /assets/img/fun.png
+google_analytics:
+theme: jekyll-theme-minimal
+description: |
+   Cluster, contrast, dominate, control
