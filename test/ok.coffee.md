@@ -1,4 +1,4 @@
-<a name=top>&nbsp;<p></a>       
+<a name=top>&nbsp;</a><p>       
 &nbsp;&nbsp;[home](http://tiny.cc/silon#top) ::
 [src](https://github.com/timm/silon/raw/master/src) ::
 [issues](http://tiny.cc/silon) ::

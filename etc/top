@@ -4,7 +4,7 @@ r='https://github.com/timm/silon/raw/master'
 s='http://tiny.cc/silon'
 
 cat<<EOF> /tmp/top$$
-<a name=top>&nbsp;<p></a>       
+<a name=top>&nbsp;</a><p>       
 &nbsp;&nbsp;[home](${s}#top) ::
 [src](${r}/src) ::
 [issues]($s) ::
