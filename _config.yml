@@ -3,21 +3,14 @@ logo: /assets/img/cylon.png
 google_analytics:
 theme: jekyll-theme-minimal
 description: >
-  Cluster, contrast, dominate, control 
-  <P>
-  <ul>
-  <li> 
-    here:
+  Cluster, contrast, dominate, control <br>
+  here:
+    <a href="adsa">one<a>
+    <a href="adsa">two<a>
+    <a href="adsa">three<a><br>
+  there:
     <a href="adsa">one<a>
     <a href="adsa">two<a>
     <a href="adsa">three<a>
-  </li>
-  <li> 
-    there:
-    <a href="adsa">one<a>
-    <a href="adsa">two<a>
-    <a href="adsa">three<a>
-  </li>
-  </ul> 
   <br clear=all>
    
