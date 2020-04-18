@@ -1,23 +1,6 @@
-markdown: redcarpet
-redcarpet:
-  extensions: [smart, autolink]
-
-# syntax highlighting
-plugins:
-  - jekyll-coffeescript
-
-author :
-  name : Tim Menzies
-  email : timm@ieee.org
-  github : timm
-  twitter : timmenzies
-
-title: 'SILON'
+title: 'SILON- v0.1'
 logo: /assets/img/cylon.png
 google_analytics:
 theme: jekyll-theme-minimal
 description: |
    Cluster, contrast, dominate, control
-
-highlighter: rouge
-
