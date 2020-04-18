@@ -238,11 +238,10 @@ bashrc() { cat<<-'EOF'
 	    sudo -H npm install --global coffeescript
 	}
         publish() {
-		( cd $root/src
-		  $root/md *.gold
-                )
- 		cp $HOME/opt/gold/docs/*.md $root/docs
-		git add $root/docs/*
+		( cd $root
+      for i in src/*.md; do etc/top $i; done
+      for i in test/*.md; do etc/top $i; done
+    )
 		put
 	}
 		
