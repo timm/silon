@@ -60,5 +60,5 @@ Tests
 
 Main
 
-    Ok.go "num" if require.main is module
-    @Num = Num
+Ok.go "num" if require.main is module
+@Num = Num
