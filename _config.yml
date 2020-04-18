@@ -1,10 +1,8 @@
 title: 'SILON- v0.1'
 logo: /assets/img/cylon.png
 google_analytics:
+highlighter: rouge
 theme: jekyll-theme-minimal
-show_downloads: true
-plugins:
-  - jekyll-coffeescript
 description: >
   Cluster, contrast, dominate, control
   <p>
