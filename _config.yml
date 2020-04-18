@@ -5,12 +5,12 @@ theme: jekyll-theme-minimal
 description: >
   Cluster, contrast, dominate, control <br>
   here:
-    <a href="adsa">one<a>
-    <a href="adsa">two<a>
-    <a href="adsa">three<a><br>
+    <a href="one">one<a>
+    <a href="two">two<a>
+    <a href="three">three<a> <br>
   there:
-    <a href="adsa">one<a>
-    <a href="adsa">two<a>
-    <a href="adsa">three<a>
+    <a href="four">four<a>
+    <a href="five">five<a>
+    <a href="six">six<a>
   <br clear=all>
    
