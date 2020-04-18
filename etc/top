@@ -6,10 +6,10 @@ s='http://tiny.cc/silon'
 cat<<EOF> /tmp/top$$
 <a name=top>&nbsp;<p></a>       
 [home](${s}#top) |
+[src](${r}/src) | 
+[issues]($s) |
 <a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>
 <br> [<img width=900 src=${q}${r}/etc/img/banner.jpg${q}>](${s})<br>
-[src](${r}/src) | 
-[issues]($s)
 EOF
 
 if [ $0 -nt $1 ]; then
