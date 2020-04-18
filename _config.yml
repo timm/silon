@@ -3,7 +3,8 @@ logo: /assets/img/cylon.png
 google_analytics:
 theme: jekyll-theme-minimal
 description: >
-  Cluster, contrast, dominate, control <br>
+  Cluster, contrast, dominate, control
+  <p>
   here:
     <a href="one">one</a> |
     <a href="two">two</a> |
@@ -11,5 +12,32 @@ description: >
     <a href="four">four</a> |
     <a href="five">five</a> |
     <a href="six">six</a> 
-  <br clear=all>
+  </p>
+  <p>
+  here:
+    <a href="one">one</a> |
+    <a href="two">two</a> |
+    <a href="three">three</a> <br>there1:
+    <a href="four">four</a> |
+    <a href="five">five</a> |
+    <a href="six">six</a> 
+  </p>
+  <p>
+  here:
+    <a href="one">one</a> |
+    <a href="two">two</a> |
+    <a href="three">three</a> <br>there1:
+    <a href="four">four</a> |
+    <a href="five">five</a> |
+    <a href="six">six</a> 
+  </p>
+  <p>
+  here:
+    <a href="one">one</a> |
+    <a href="two">two</a> |
+    <a href="three">three</a> <br>there1:
+    <a href="four">four</a> |
+    <a href="five">five</a> |
+    <a href="six">six</a> 
+  </p>
    
