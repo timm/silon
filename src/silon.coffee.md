@@ -72,104 +72,6 @@ Stuff needed from elsewhere.
 
 Tables
 
-Storing info about numeric  columns (resevoir style):
-
-    class Some extends NumThing
-       constructor: (args...) ->
-         super args...
-         @good  = false   # is @_all sorted?
-         @_all  = []      # where to keep things
-         @max   = 256     # keep no more than @max items
-         @small =   0.147 # used in cliff's delta
-         @magic =   2.564 # sd = (90th-10th)/@magic
-                          # since 90th z-curve percentile= 1.282
-         @bins  =  null
-       # ---------   ---------
-       mid: (j,k) -> @per(.5,j,k)
-       var: (j,k) -> (@per(.9,j,k) - @per(.1,j,k)) / @magic
-       iqr: (j,k) -> @per(.75,j,k) - @per(.25,j,k)
-       toString:  -> "Some{#{@txt}:#{@mid()}}"
-       big:   (n) -> (last(@all()) - @all()[0]) > n
-       norm1: (x) -> 
-         @all()
-         Order.search(@_all,x) / @_all.length
-       # --------- --------- --------- -----------------
-       per: (p=0.5, j=0, k=@_all.length) ->
-          n= @all()[ int(j+p*(k-j)) ]
-          n
-       # --------- --------- --------- -----------------
-       all: ->
-         @_all.sort(Order.it) if not @good
-         @good = true
-         @_all
-       # --------- --------- --------- -----------------
-       bin1: (x,debug=false) -> 
-         if  @bins?
-           Order.before(x, @bins.breaks)
-         else
-           @bins = new Bins(@,debug)
-           @bins.cuts(@)
-           @bin1(x,debug)
-       # --------- --------- --------- -----------------
-       add1: (x) ->
-         if @_all.length  <= @max
-           @_cuts = null
-           @good = false
-           @_all.push(x)
-         else
-           @all()
-           if rand() < @max/@n
-             @_cuts = null
-             @_all[ Order.search(@_all,x) ] = x
-
-Unsupervised discretization.
-
-    class Bins
-       constructor: (s,debug=false) ->
-         s.all()
-         @debug    = debug # show debug information?
-         @puny     =  1.05 # ignore puny improvements
-         @min      =  0.5  # usually, divide into sqrt(n) size bins
-         @cohen    =  0.3  # epsilon = @var()*@cohem
-         @maxDepth = 15
-         @min      = int(s._all.length**@min)
-         @e        = s.var() * @cohen
-         @breaks   = []
-       # --------- --------- --------- ---------   ----------
-       bin: (x) -> Order.before(x,@breaks)
-       # --------- --------- --------- ---------   ----------
-       cuts: (s, lo=0, hi=s._all.length-1, lvl=0) ->
-         if lvl < @maxDepth 
-           if @debug
-             say "| ".n(lvl)+"#{s._all[lo]} to #{s._all[hi]}: #{hi-lo+1}"
-           cut = @argmin(s,lo,hi)
-           if cut isnt null
-             @cuts(s, lo,   cut, lvl+1)
-             @cuts(s, cut+1, hi, lvl+1)
-           else
-             # ignore cutting on last value (no point)
-             @breaks.push s._all[hi] if hi < s._all.length - 1
-       # --------- --------- ---------
-       argmin: (s,lo,hi) ->
-         cut =  null                     # default result. null==no break found
-         if hi - lo > 2*@min             # is there enough here to cut in two?
-           best = s.var(lo,hi)           # the status quo that we want to beat
-           for j in [lo+@min .. hi-@min] # (start,end) needs at least @min
-             x     = s._all[j]
-             after = s._all[j+1]
-             if x isnt after             # only break between different values
-               below = s.mid(lo,j)
-               above = s.mid(j+1,hi)
-               if (above - below) > @e   # ignore breaks with small median diff
-                 now = @xpect(s,lo,j,hi)
-                 if now * @puny < best   # ignore puny small improvements
-                   best = now
-                   cut  = j              # update the best cut found so far
-         cut # return the best cut found
-       # --------- --------- --------- ---------   ------------
-       xpect: (s,j, m, k) ->
-         (the.tiny + (m-j)*s.var(j,m) + (k-m-1)*s.var(m+1,k))/(k-j+1)
-
 Rows
 
     class Row
@@ -378,26 +280,6 @@ Test Engine
            Ok.fyi(name)
 
 Tests
-
-    Ok.all.num1 = ->
-       n = new Num
-       (n.add x for x in [9,2,5,4,12,7,8,11,9,
-                           3,7,4,12,5,4,10,9,6,9,4])
-       Ok.if n.mu==7
-
-    Ok.all.num2 = ->
-       n = new Num
-       n.adds([9,2,5,4,12,7,8,11,9,3,
-               7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
-       Ok.if n.mu==0.7
-       Ok.if .30 <= n.sd <=.31
-
-    Ok.all.num3 = ->
-       n = new Num
-       n.adds([9,2,5,4,12,7,8,11,9,3,
-               7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
-       Ok.if 0.957 <= n.bin(1.05) <= 0.958
-       Ok.if 1.09  <= n.bin(1.3)  <= 1.092
 
     Ok.all.some1 = ->
        s = new Some

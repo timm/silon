@@ -5,7 +5,7 @@ Storing info about a column.
 
     class Col
        constructor:(@txt="",@pos=0,@w=1) -> 
-         @n = 1
+         @n = 0
          @w = -1 if the.ch.less in @txt
 
        # ---------  --------- --------- ---------

@@ -1,4 +1,5 @@
     {the} = require './the'
+    {say} = require './fun'
     {Ok}  = require './ok'
     {Col} = require './col'
 
@@ -42,7 +43,7 @@ Tests
        s= new Sym("<cost")
        Ok.if s.w == - 1
        s.adds ['a','b','b','c','c','c','c']
-       Ok.if s.var() == 1.375
+       Ok.if 1.378 < s.var() < 1.379
 
 Main
 
