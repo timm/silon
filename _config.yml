@@ -7,7 +7,8 @@ include:
   - CONTRIBUTING.md
   - README.md
   - LICENSE.md
-  - COPYING.md
+  - src/csv.coffee.md
+  - src/row.coffee.md
   - CODE_OF_CONDUCT.md
   - CONTRIBUTING.md
   - ISSUE_TEMPLATE.md
