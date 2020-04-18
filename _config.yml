@@ -2,6 +2,7 @@ title: 'SILON- v0.1'
 logo: /assets/img/cylon.png
 google_analytics:
 theme: jekyll-theme-minimal
+show_downloads: true
 description: >
   Cluster, contrast, dominate, control
   <p>
