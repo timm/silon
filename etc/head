@@ -2,8 +2,9 @@
 q='"'
 r='https://github.com/timm/silon/raw/master'
 s='http://tiny.cc/silon'
-cat<<EOF
-<a name=top>&nbsp;<p> </a>
+
+cat<<EOF> /tmp/head$$
+<a name=top>&nbsp;<p></a>  
 [home](${s}#top) | 
 [copyright]($r/LICENSE.md#top) &copy;2020,
 <a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>
@@ -12,3 +13,18 @@ cat<<EOF
 [issues]($s)
 EOF
 
+if [ $0 -nt $1 ]; then
+  gawk 'BEGIN  {
+    RS = "^$"
+    f  = "'/tmp/head$$'"
+    getline head < f
+    close(f)
+    FS="\n"
+    RS=""
+  }
+  NR==1 { print head
+        if($0 ~ /<a name=top>/) next  }
+  1{print ""; print $0}' $1  > /tmp/file$$
+
+  mv /tmp/file$$ $1
+fi
