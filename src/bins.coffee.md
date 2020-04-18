@@ -49,4 +49,6 @@ Unsupervised discretization. Support code for `Some`.
        xpect: (s,j, m, k) ->
          (the.tiny + (m-j)*s.var(j,m) + (k-m-1)*s.var(m+1,k))/(k-j+1)
 
+Main 
+
     @Bins = Bins
