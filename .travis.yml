@@ -1,0 +1,15 @@
+language: C
+
+sudo: true
+
+install:
+  - apt install nodejs npm
+  - npm install coffee-script
+
+script:
+  - ls
+  - cd test
+  - pwd
+  - bash ./all.sh
+
+
