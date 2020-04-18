@@ -3,7 +3,8 @@ language: c
 sudo: true
 
 install:
-  - sudo apt install nodejs npm
+  - sudo apt install nodejs 
+  - curl -L https://npmjs.org/install.sh | sudo sh
   - sudo npm install coffeescript
 
 script:
