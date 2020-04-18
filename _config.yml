@@ -1,3 +1,6 @@
+plugins:
+  - jekyll-coffeescript
+
 author :
   name : Tim Menzies
   email : timm@ieee.org
