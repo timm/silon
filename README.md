@@ -8,7 +8,7 @@
 
 # Silon
 
-Cluster + contrast + dominate + optimize
+Cluster + contrast + dominate + optimize 
 
 Don't sweat the small stuff. When you can't distinquish
 between
