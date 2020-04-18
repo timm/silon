@@ -10,10 +10,12 @@
 
 Cluster + contrast + dominate + optimize
 
+Don't sweat the small stuff. When you can't distinquish
+between
+
 Give me the fruitful error any time, full of seeds, bursting with its own corrections. You can keep your sterile truth for yourself.    
 --  Vilfredo Pareto
 
-Don't sweat the small stuff.
 
 Less is more.   
 -- Dieter Rams
