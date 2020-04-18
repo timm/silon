@@ -1,7 +1,7 @@
-    {the}                 = require './the'
-    {Ok}                  = require './ok'
-    {Bins}                = require './bins'
-    {NumThing}            = require './numthing'
+    {the}      = require './the'
+    {Ok}       = require './ok'
+    {Bins}     = require './bins'
+    {NumThing} = require './numthing'
     {Order,last,int,rand,d2} = require './fun'
 
 Storing info about numeric  columns (resevoir style):
@@ -89,6 +89,8 @@ Test cases
        b.cuts(s)
        c=  b.breaks
        Ok.if  c[0]==1 and c[2]==3 and c.length==3
+
+Main.
 
     Ok.go "some" if require.main is module
     @Some = Some

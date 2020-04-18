@@ -1,4 +1,4 @@
-    {the}             = require './the'
+    {the} = require './the'
     {n,int,say,Order} = require './fun'
 
 Unsupervised discretization. Support code for `Some`.

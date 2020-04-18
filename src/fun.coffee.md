@@ -114,17 +114,18 @@ Lists
 Main
 
     Ok.go "fun" if require.main is module
-    @same  =same
-    @int   = int
-    @rand  = rand
-    @any   = any
     @d2    = d2
     @p2    = p2
     @s4    = s4
-    @xray  = xray
-    @zero1 = zero1
-    @clone = clone
+    @id    = id
+    @int   = int
+    @any   = any
     @say   = say
     @soy   = soy
     @last  = last
+    @rand  = rand
+    @same  = same
+    @xray  = xray
+    @zero1 = zero1
+    @clone = clone
     @Order = Order

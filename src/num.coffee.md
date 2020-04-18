@@ -1,6 +1,6 @@
-    {the}      = require './the'
-    {Ok}       = require './ok'
-    {Order}    = require './fun'
+    {the}   = require './the'
+    {Ok}    = require './ok'
+    {Order} = require './fun'
     {NumThing} = require './numthing'
 
 Collection of numbers.
