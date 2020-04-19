@@ -8,7 +8,7 @@
 
 # Silon
 
-<img width=300 align=right src="etc/img/simplicity.jpg">
+<img width=500 align=right src="etc/img/simplicity.jpg">
 
 Cluster + contrast + dominate + optimize 
 
