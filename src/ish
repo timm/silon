@@ -203,7 +203,7 @@ bashrc() { cat<<-'EOF'
 	root=$(git rev-parse --show-toplevel)
 	ishs=$HOME/tmp/ish
 	mkdir -p $ishs
-        export PATH="$PATH:$HOME/opt/gold/bin:$(PWD)"
+        export PATH="$PATH:$HOME/opt/gold/bin:`pwd`"
 	alias vi="vim -u $ishs/.vimrc "
 	alias ..='cd ..'
 	alias tmux="$(which tmux) -f $ishs/.tmuxrc "
@@ -255,7 +255,7 @@ bashrc() { cat<<-'EOF'
  
 	reload() { . $ishs/.bashrc ; }
 	 
-  here() { cd $1; basename "$PWD"; }
+  here() { cd $1; basename `pwd`; }
   PROMPT_COMMAND='echo -ne "${_c2}iSH:${_c6}$(git branch 2>/dev/null | grep '^*' | colrm 1 2) ";PS1="${_c1}$_c0$(here ../..)/$(here ..)/$(here .) ${_c3}\!>${_c0}\e[m "'
 	EOF
 }
