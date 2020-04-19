@@ -8,4 +8,3 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
-
