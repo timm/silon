@@ -188,6 +188,7 @@ vimrc() { cat<<-'EOF'
 	map <C-o> :NERDTreeToggle<CR>
 	nnoremap <Leader><space> :noh<cr>
 	autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+	set titlestring=%{expand(\"%:p:h\")}
 	hi Normal guibg=NONE ctermbg=NONE
 	hi NonText guibg=NONE ctermbg=NONE
         set fillchars=vert:\|

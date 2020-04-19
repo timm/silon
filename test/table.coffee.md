@@ -5,9 +5,8 @@
 <a href="https://github.com/timm/silon/raw/master/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <<a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>>
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon)<br>
 
-
     {the} = require '../src/the'
-    {say} = require '../src/fun'
+    {say,xray} = require '../src/fun'
     {Ok} = require '../src/ok'
     {Table} = require '../src/table'
 
@@ -19,8 +18,6 @@ Tests
          v = u.bins()
          (Ok.if "Sym"==c.constructor.name for c in v.cols)
          v.dump() if dump
-         if u.cols[0].counts?
-           say u.cols[0].counts
        t=(new Table).from(f,tab1)
 
     Ok.all.tab.tab2 = -> Ok.all.tab.tab1 the.data + 'auto93.csv'

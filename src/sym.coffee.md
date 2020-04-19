@@ -15,7 +15,10 @@ Storing info about symbolic  columns.
     class Sym extends Col
        constructor: (args...) ->
          super args...
-         [ @counts,@most,@mode,@_ent ] = [ [],0,null,null ]
+         @counts = {}
+         @most   = 0
+         @mode   = null
+         @_ent   = null
        # ---------  --------- --------- ---------
        mid:    () -> @mode
        var:    () -> @ent()
@@ -27,13 +30,16 @@ Storing info about symbolic  columns.
          if x is the.ch.ignore and y is the.ch.ignore
             return 1
          if x == y then  0 else  1
-
        # ---------  --------- --------- ---------
        add1: (x) ->
          @_ent = null
          @counts[x] = 0 unless x of @counts
          n = ++@counts[x]
          [ @most,@mode ] = [ n,x ] if n > @most
+       # ---------  --------- --------- ---------
+       like: (x,prior,m=2) ->
+         f = x in @count and @count[x] or 0
+         (f + m*prior) /(@n + m)
        # ---------  --------- --------- ---------
        ent: (e=0)->
          if  not @_ent?

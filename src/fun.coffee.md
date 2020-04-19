@@ -31,6 +31,7 @@
        pre = if l < f then " ".n(f - l) else ""
        pre + s
 
+    show= (o) -> ("#{k}: #{v}" for k,v of o).join(", ")
     xray= (o) -> say ""; (say "#{k} = #{v}"  for k,v of o)
 
     zero1= (x) -> switch
@@ -85,3 +86,4 @@ Main
     @int   = int;   @any   = any;   @say   = say;  @soy   = soy;
     @last  = last;  @rand  = rand;  @same  = same; @xray  = xray;
     @zero1 = zero1; @clone = clone; @Order = Order
+    @show = show

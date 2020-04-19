@@ -32,8 +32,7 @@ Test cases
          best = last(l)
          worst= l[0]
          Ok.if best.mid().dominates(u.mid(), u.y)
-         f.leaves((t) ->  soy " ",t.rows.length)
-         say ""
+         #f.leaves((t) ->  soy " ",t.rows.length); say ""
        t = (new Table).from(f,fastmap)
 
     Ok.all.fmap.xfastmap = (f= the.data + 'auto93.csv') ->
@@ -43,8 +42,7 @@ Test cases
          f.debug = false
          f.cols = (t1) -> t1.x
          f.split()
-         f.leaves((t) ->  soy " ",t.rows.length)
-         say ""
+         #f.leaves((t) ->  soy " ",t.rows.length); say ""
        t = (new Table).from(f,fastmap)
 
     Ok.all.fmap.dominates = (f= the.data + 'auto93-10000.csv') ->

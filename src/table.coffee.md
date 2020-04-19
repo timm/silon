@@ -7,7 +7,7 @@
 
 
     {the}  = require '../src/the'
-    {say,id}  = require '../src/fun'
+    {say,id,xray}  = require '../src/fun'
     {Row}  = require '../src/row'
     {Csv}  = require '../src/csv'
     {Sym}  = require '../src/sym'
@@ -19,10 +19,12 @@ Table
       constructor:        -> [ @cols,@x,@y,@rows ] = [[],[],[],[]]
       klass:              -> @y[0]
       from:(f,after=same) -> new Csv f,((row) => @add row), (=> after(@))
-      add:         (l,id) -> @cols.length and @row(l,id) or @top(l,id)
-      top:  (l, id,pos=0) -> @cols = (@col(txt,pos++) for txt in l); l
       names:              -> (col.txt for col in @cols)
       dump:               -> say @names(); (say row.cells for row in @rows)
+      add:         (l,id) -> @cols.length and @row(l,id) or @top(l,id)
+      top:  (l, id,pos=0) -> 
+        @cols = (@col(txt,pos++) for txt in l) 
+        l
       # --------- --------- --------- --------- ---------  -----------
       mid: -> new Row (c.mid() for c in @cols)
       # --------- --------- --------- --------- ---------  -----------

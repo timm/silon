@@ -5,7 +5,6 @@
 <a href="https://github.com/timm/silon/raw/master/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <<a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>>
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon)<br>
 
-
     {the} = require '../src/the'
 
     say = (l...) -> process.stdout.write l.join(", ") + "\n"
@@ -37,7 +36,8 @@
          try
            Ok.tries++
            the.seed = 1
-           await (f(); Ok.fyi(name,t1))
+           await f()
+           Ok.fyi(name,t1)
          catch error
            Ok.fails++
            l = error.stack.split('\n')

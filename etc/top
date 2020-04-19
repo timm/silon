@@ -5,11 +5,14 @@ s='http://tiny.cc/silon'
 
 cat<<EOF> /tmp/top$$
 <a name=top></a><p>       
-&nbsp;&nbsp;[home](${s}#top) ::
+&nbsp;[home](${s}#top) ::
 [src](${r}/src) ::
 [issues]($s) ::
-<a href="$r/raw/master/LICENSE.md">&copy; 2020</a>, Tim Menzies <<a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>>
-<br> [<img width=900 src=${q}${r}/etc/img/banner.jpg${q}>](${s})<br>
+<a href="$r/raw/master/LICENSE.md">&copy; 2020</a>,
+Tim Menzies
+<<a href=${q}mailto:timm@ieee.org${q}>timm&commat;ieee.org</a>>
+<br>
+[<img width=900 src=${q}${r}/etc/img/banner.jpg${q}>](${s})<br>
 EOF
 
 if [ $0 -nt $1 ]; then

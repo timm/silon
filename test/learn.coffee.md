@@ -6,12 +6,10 @@
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon)<br>
 
 
-    require "../src/ok"
-    require "./ok"
-    require "./csv"
-    require "./fun"
-    require "./num"
-    require "./sym"
-    require "./some"
-    require "./fastmap"
-    require "./table"
+    {the} = require '../src/the'
+    {Ok} = require '../src/ok'
+    {Table} = require '../src/table'
+    {FastMap} = require '../src/fastmap'
+    {id,int,any,soy,say,last,zero1,Order} = require '../src/fun'
+
+
