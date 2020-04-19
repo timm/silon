@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 q='"'
 r='https://github.com/timm/silon/raw/master'
-s='https://git.io/silon'
+s='http://git.io/silon'
 
 cat<<EOF> /tmp/top$$
 <a name=top></a><p>       
