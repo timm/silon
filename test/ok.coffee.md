@@ -6,7 +6,7 @@
 <br> [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://tiny.cc/silon)<br>
 
 
-    {Ok} = require "../src/Ok"
+    {Ok} = require "../src/ok"
 
 # Test cases
 
