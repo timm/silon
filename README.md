@@ -34,28 +34,23 @@ Simplicity is the ultimate sophistication.
 The art of simplicity is a puzzle of complexity.  
 -- Doug Horton
 
-Nature is pleased with simplicity. And nature is no dummy.   
--- Isaac Newton
-
-
 It is vain to do with more what can be done with less.   
 -- William Of Occam
 
-The art of being wise is the art of knowing what to overlook.   
+TNature is pleased with simplicity. And nature is no dummy.   
+-- Isaac Newton
+
+he art of being wise is the art of knowing what to overlook.   
 -- William James
-
-Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
--- Leo Babauta 
-
 
 Strive for design simplicity. You never have to fix anything you leave out.   
 -- William P. Lear
 
+Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
+-- Leo Babauta 
+
 Technical skill is mastery of complexity while creativity is mastery of simplicity.  
 --  Sir Erik Christopher Zeeman
-
-It is always the nearest, plainest and simplest principles that learned men comprehend last.  
--- Elbert (Green) Hubbard
 
 Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.  
 -- Sir Isaac Newton
@@ -64,13 +59,15 @@ Truth is ever to be found in simplicity, and not in the multiplicity and confusi
 The more you have, the more you are occupied. The less you have, the more free you are.  
 -- Mother Teresa
 
+It is always the nearest, plainest and simplest principles that learned men comprehend last.  
+-- Elbert (Green) Hubbard
+
+
 Give me the fruitful error any time, full of seeds, bursting with its own corrections. You can keep your sterile truth for yourself.    
 --  Vilfredo Pareto
 
 In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
 --  Karl Raimund Popper
-
-
 
 
 Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius — and a lot of courage to move in the opposite direction.   
