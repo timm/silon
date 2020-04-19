@@ -40,7 +40,7 @@ It is vain to do with more what can be done with less.
 TNature is pleased with simplicity. And nature is no dummy.   
 -- Isaac Newton
 
-he art of being wise is the art of knowing what to overlook.   
+The art of being wise is the art of knowing what to overlook.   
 -- William James
 
 Strive for design simplicity. You never have to fix anything you leave out.   
@@ -74,11 +74,12 @@ Any intelligent fool can make things bigger, more complex, and more violent. It 
 -- Ernst F. Schumacher
 
 
-Il faut bien s'arrêter quelque part, et pour que la science soit possible, il faut s'arrêter quand on a trouvé la simplicité
-(Analyse data just so far as to obtain simplicity and no further.)   
--- A.D. Ritchue
-
 
 Ccomplexity and precision bear an inverse relation to one another in the sense that, as the complexity of a problem increases, the possibility of analysing it in precise terms diminishes.  
 -- Lofti Zadeh 
+
+Il faut bien s'arrêter quelque part, et pour que la science soit possible, il faut s'arrêter quand on a trouvé la simplicité
+(You have to stop somewhere, and for science to be possible, you have to stop when you find simplicity).
+-- A.D. Ritchue
+
 
