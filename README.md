@@ -77,5 +77,5 @@ Ccomplexity and precision bear an inverse relation to one another in the sense t
 -- Lofti Zadeh 
 
 Il faut bien s'arrêter quelque part, et pour que la science soit possible, il faut s'arrêter quand on a trouvé la simplicité
-(You have to stop somewhere, and for science to be possible, you have to stop when you find simplicity).
+(You have to stop somewhere, and for science to be possible, you have to stop when you find simplicity).  
 -- A.D. Ritchue
