@@ -41,6 +41,12 @@ Collection of numbers.
          when  @n < 2  then 0
          when  @m2 < 0 then 0
          else (@m2 / (@n - 1))**0.5
+       # ---------  --------- --------- ---------
+       like: (x,prior,m) ->
+         v     = @sd
+         denom = (Math.PI*2*v)^.5
+         num   =  Math.E**(-(x-@mu)^2/(2*v+0.0001))
+         num/(denom + 10**-64)
 
 Exports
 

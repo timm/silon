@@ -16,7 +16,7 @@
 Table
 
     class Table
-      constructor:        -> [ @cols,@x,@y,@rows ] = [[],[],[],[]]
+      constructor:  ( @m=2,@k=1,@cols=[],@x=[],@y=[],@rows=[] ) ->
       klass:              -> @y[0]
       from:(f,after=same) -> new Csv f,((row) => @add row), (=> after(@))
       names:              -> (col.txt for col in @cols)
@@ -29,7 +29,7 @@ Table
       mid: -> new Row (c.mid() for c in @cols)
       # --------- --------- --------- --------- ---------  -----------
       clone: (rows=[]) ->
-        t=new Table
+        t=new Table(@m,@k)
         t.add (c.txt for c in @cols)
         for row in rows
           t.add row.cells
@@ -74,6 +74,22 @@ Table
         for row in @rows
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
+      @likes: (l,cols,tables, nall=0,nthings=0) ->
+         for t in tables
+           nthings++
+           nall o+= nall.rows.length
+         guess=null
+         for k,t of  tables
+           guess or= k
+           tmp = t.like(l,cols,XXXclass)
+           
+      like: (l,cols,klass,nall,nthings) ->
+        like = prior = (klass.n + @k)/(nall + @k*nthings)
+        like = Math.log2(like)
+        for c,x of l
+          if x isnt the.ch.skip
+            like += col[c].like(x,prior,@m)
+        return like
 
 Exprt
 
