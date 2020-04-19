@@ -8,10 +8,9 @@
 
 # Silon
 
-Cluster + contrast + dominate + optimize 
+<img width=300 align=right src="etc/img/simplicity.jpg">
 
-Don't sweat the small stuff. When you can't distinquish
-between
+Cluster + contrast + dominate + optimize 
 
 Less is more.   
 -- Dieter Rams
@@ -68,6 +67,11 @@ The more you have, the more you are occupied. The less you have, the more free y
 Give me the fruitful error any time, full of seeds, bursting with its own corrections. You can keep your sterile truth for yourself.    
 --  Vilfredo Pareto
 
+In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
+--  Karl Raimund Popper
+
+
+
 
 Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius — and a lot of courage to move in the opposite direction.   
 -- Ernst F. Schumacher
@@ -77,8 +81,7 @@ Il faut bien s'arrêter quelque part, et pour que la science soit possible, il f
 (Analyse data just so far as to obtain simplicity and no further.)   
 -- A.D. Ritchue
 
-In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
---  Karl Raimund Popper
 
-
+Ccomplexity and precision bear an inverse relation to one another in the sense that, as the complexity of a problem increases, the possibility of analysing it in precise terms diminishes.  
+-- Lofti Zadeh 
 
