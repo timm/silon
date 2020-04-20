@@ -40,8 +40,7 @@ Tim Menzies
          try
            Ok.tries++
            the.seed = 1
-           await f()
-           Ok.fyi(name,t1)
+           await (f(); Ok.fyi(name,t1))
          catch error
            Ok.fails++
            l = error.stack.split('\n')
