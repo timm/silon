@@ -12,7 +12,6 @@ Tim Menzies
 
 # Silon
 
-<img width=400 align=right src="etc/img/simplicity.jpg">
 
 Cluster + contrast + dominate + optimize 
 
@@ -49,6 +48,8 @@ The art of simplicity is a puzzle of complexity.
 
 The central enemy of reliability is complexity.   
 -- Geer et al.
+
+<img width=400 align=right src="etc/img/simplicity.jpg">
 
 Simplicity is the ultimate sophistication.  
 -- Leonardo da Vinci
