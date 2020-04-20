@@ -15,6 +15,8 @@ Tim Menzies
 
 Cluster + contrast + dominate + optimize 
 
+<img width=500  src="etc/img/simplicity.jpg">
+
 The more you have, the more you are occupied. The less you have, the more free you are.  
 -- Mother Teresa
 
@@ -47,7 +49,6 @@ Simplicity is prerequisite for reliability.
 Small needs lead to a large life.   
 -- Unknown
 
-<img width=300 align=right src="etc/img/simplicity.jpg">
 
 Simplex sigillum veri   
 (Simplicity is the sign of truth.)   
