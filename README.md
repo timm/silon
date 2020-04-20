@@ -44,7 +44,7 @@ In my view, aiming at simplicity and lucidity is a moral duty of all intellectua
 In software, the most beautiful code, the most beautiful functions, and the most beautiful programs are sometimes not there at all.   
 -- Jon Bentley
 
-The computing scientist’s main challenge is not to get confused by the complexities of his own making.
+The computing scientist’s main challenge is not to get confused by the complexities of his own making.   
 --  E. W. Dijkstra
 
 
