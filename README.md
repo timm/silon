@@ -18,9 +18,6 @@ Cluster + contrast + dominate + optimize
 The more you have, the more you are occupied. The less you have, the more free you are.  
 -- Mother Teresa
 
-Strive for design simplicity. You never have to fix anything you leave out.   
--- William P. Lear
-
 The whole point of getting things done is knowing what to leave undone.  
 -- Oswald Chambers
 
@@ -30,9 +27,6 @@ Complexity has nothing to do with intelligence, simplicity does.
 The art of being wise is the art of knowing what to overlook.   
 -- William James
 
-Nature is pleased with simplicity. And nature is no dummy.   
--- Isaac Newton
-
 It is vain to do with more what can be done with less.   
 -- William Of Occam
 
@@ -41,9 +35,6 @@ Simplicity carried to the extreme becomes elegance.
 
 The art of simplicity is a puzzle of complexity.  
 -- Doug Horton
-
-The central enemy of reliability is complexity.   
--- Geer et al.
 
 
 Simplicity is the ultimate sophistication.  
