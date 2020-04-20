@@ -16,7 +16,7 @@ Tim Menzies
 Cluster + contrast + dominate + optimize 
 
 The beauty of small and simple code is that you can bend or break the rules as long it stays small and simple. Rules allow people to write code without thinking. [And when] you don't think […] you get bloated code that just concatenates stupid patterns.
-People stop thinking and questioning [and] then its just worshipping some rules without any pruporse.
+People stop thinking and questioning [and] then its just worshipping some rules without any pruporse.   
 -- Cinap Lenrek
 
 
@@ -41,7 +41,7 @@ Any intelligent fool can make things bigger, more complex, and more violent. It 
 In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
 --  Karl Raimund Popper
 
-In software, the most beautiful code, the most beautiful functions, and the most beautiful programs are sometimes not there at all.
+In software, the most beautiful code, the most beautiful functions, and the most beautiful programs are sometimes not there at all.   
 -- Jon Bentley
 
 The computing scientist’s main challenge is not to get confused by the complexities of his own making.
@@ -58,7 +58,7 @@ The ability to simplify means to eliminate the unnecessary so that the necessary
 Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.  
 -- Sir Isaac Newton
 
-A (system) that doesn’t have everything is actually easier to (use) in than some that do.
+A (system) that doesn’t have everything is actually easier to (use) in than some that do.    
 -- Dennis M. Ritchie
 
 
@@ -68,7 +68,7 @@ The more you have, the more you are occupied. The less you have, the more free y
 Technical skill is mastery of complexity while creativity is mastery of simplicity.  
 --  Sir Erik Christopher Zeeman
 
-The cheapest, fastest, and most reliable components are those that aren’t there.
+The cheapest, fastest, and most reliable components are those that aren’t there.   
 -- Gordon Bell
 
 Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
@@ -84,7 +84,7 @@ The whole point of getting things done is knowing what to leave undone.
 -- Oswald Chambers
 
 
-One of my most productive days was throwing away 1000 lines of code.
+One of my most productive days was throwing away 1000 lines of code.    
 -- Ken Thompson
 
 Complexity has nothing to do with intelligence, simplicity does.  
@@ -105,7 +105,7 @@ Simplicity carried to the extreme becomes elegance.
 The art of simplicity is a puzzle of complexity.  
 -- Doug Horton
 
-The central enemy of reliability is complexity.
+The central enemy of reliability is complexity.   
 -- Geer et al.
 
 Simplicity is the ultimate sophistication.  
@@ -120,7 +120,7 @@ Simplicity is prerequisite for reliability.
 Small needs lead to a large life.   
 -- Unknown
 
-Simplex sigillum veri
+Simplex sigillum veri   
 (Simplicity is the sign of truth.)  
 -- Hermann Boerhaave
 
