@@ -26,9 +26,6 @@ In my view, aiming at simplicity and lucidity is a moral duty of all intellectua
 --  Karl Raimund Popper
 
 
-The (scientist)’s main challenge is not to get confused by the complexities of his (sic) own making.   
---  E. W. Dijkstra
-
 It is always the nearest, plainest and simplest principles that learned men (sic) comprehend last.  
 -- Elbert (Green) Hubbard
 
@@ -37,10 +34,6 @@ The ability to simplify means to eliminate the unnecessary so that the necessary
 
 Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.  
 -- Sir Isaac Newton
-
-A (system) that doesn’t have everything is actually easier to (use) in than some that do.    
--- Dennis M. Ritchie
-
 
 The more you have, the more you are occupied. The less you have, the more free you are.  
 -- Mother Teresa
