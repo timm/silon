@@ -30,8 +30,6 @@ The art of being wise is the art of knowing what to overlook.
 It is vain to do with more what can be done with less.   
 -- William Of Occam
 
-Simplicity carried to the extreme becomes elegance.  
--- Jon Franklin
 
 The art of simplicity is a puzzle of complexity.  
 -- Doug Horton
