@@ -15,24 +15,12 @@ Tim Menzies
 
 Cluster + contrast + dominate + optimize 
 
-The beauty of small and simple (thibgs) is that you can bend or break the rules as long it stays small and simple. Rules allow people to write (things) without thinking. [And when] you don't think […] you get bloated code that just concatenates stupid patterns.
-People stop thinking and questioning [and] then its just worshipping some rules without any pruporse.   
--- Cinap Lenrek
-
-
 Increasingly, people seem to misinterpret complexity as sophistication, which is baffling—the incomprehensible should cause suspicion rather than admiration. Possibly this trend results from a mistaken belief that using a somewhat mysterious device confers an aura of power on the user.    
 -- Niklaus Wirth
 
 Il faut bien s'arrêter quelque part, et pour que la science soit possible, il faut s'arrêter quand on a trouvé la simplicité
 (You have to stop somewhere, and for science to be possible, you have to stop when you find simplicity).  
 -- A.D. Ritchue
-
-Are you quite sure that all those bells and whistles, all those wonderful facilities of your so called powerful programming languages, belong to the solution set rather than the problem set?   
---  Edsger W. Dijkstra
-
-Complexity and precision bear an inverse relation to one another in the sense that, as the complexity of a problem increases, the possibility of analysing it in precise terms diminishes.  
--- Lofti Zadeh 
-
 
 
 Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius — and a lot of courage to move in the opposite direction.   
