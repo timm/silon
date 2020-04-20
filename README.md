@@ -15,9 +15,6 @@ Tim Menzies
 
 Cluster + contrast + dominate + optimize 
 
-Increasingly, people seem to misinterpret complexity as sophistication, which is baffling—the incomprehensible should cause suspicion rather than admiration. Possibly this trend results from a mistaken belief that using a somewhat mysterious device confers an aura of power on the user.    
--- Niklaus Wirth
-
 The more you have, the more you are occupied. The less you have, the more free you are.  
 -- Mother Teresa
 
@@ -26,7 +23,6 @@ Strive for design simplicity. You never have to fix anything you leave out.
 
 The whole point of getting things done is knowing what to leave undone.  
 -- Oswald Chambers
-
 
 Complexity has nothing to do with intelligence, simplicity does.  
 -- Larry Bossidy
@@ -49,7 +45,7 @@ The art of simplicity is a puzzle of complexity.
 The central enemy of reliability is complexity.   
 -- Geer et al.
 
-<img width=400 align=right src="etc/img/simplicity.jpg">
+<img width=300 align=right src="etc/img/simplicity.jpg">
 
 Simplicity is the ultimate sophistication.  
 -- Leonardo da Vinci
