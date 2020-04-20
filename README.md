@@ -127,5 +127,5 @@ Simplex sigillum veri
 Less is more.   
 -- Dieter Rams
 
-Less. Please.   
+less, plz.
 -- Tim Menzies
