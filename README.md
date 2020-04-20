@@ -15,7 +15,7 @@ Tim Menzies
 
 Cluster + contrast + dominate + optimize 
 
-The beauty of small and simple code is that you can bend or break the rules as long it stays small and simple. Rules allow people to write code without thinking. [And when] you don't think […] you get bloated code that just concatenates stupid patterns.
+The beauty of small and simple (thibgs) is that you can bend or break the rules as long it stays small and simple. Rules allow people to write (things) without thinking. [And when] you don't think […] you get bloated code that just concatenates stupid patterns.
 People stop thinking and questioning [and] then its just worshipping some rules without any pruporse.   
 -- Cinap Lenrek
 
