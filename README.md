@@ -45,7 +45,6 @@ The art of simplicity is a puzzle of complexity.
 The central enemy of reliability is complexity.   
 -- Geer et al.
 
-<img width=300 align=right src="etc/img/simplicity.jpg">
 
 Simplicity is the ultimate sophistication.  
 -- Leonardo da Vinci
@@ -59,6 +58,7 @@ Simplicity is prerequisite for reliability.
 Small needs lead to a large life.   
 -- Unknown
 
+<img width=300 align=right src="etc/img/simplicity.jpg">
 Simplex sigillum veri   
 (Simplicity is the sign of truth.)  
 -- Hermann Boerhaave
