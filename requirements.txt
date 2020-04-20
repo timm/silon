@@ -1,0 +1,3 @@
+node>=13.2
+coffeescript>=2.5
+gawk>=5.0
