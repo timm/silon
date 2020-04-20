@@ -1,4 +1,5 @@
 <a name=top></a><p>       
+
 &nbsp;[home](http://git.io/silon) ::
 [src](https://github.com/timm/silon/raw/master/src) ::
 [issues](http://git.io/silon) ::
@@ -28,8 +29,7 @@ In my view, aiming at simplicity and lucidity is a moral duty of all intellectua
 The (scientist)’s main challenge is not to get confused by the complexities of his (sic) own making.   
 --  E. W. Dijkstra
 
-
-It is always the nearest, plainest and simplest principles that learned men comprehend last.  
+It is always the nearest, plainest and simplest principles that learned men (sic) comprehend last.  
 -- Elbert (Green) Hubbard
 
 The ability to simplify means to eliminate the unnecessary so that the necessary may speak.   
@@ -48,9 +48,6 @@ The more you have, the more you are occupied. The less you have, the more free y
 Technical skill is mastery of complexity while creativity is mastery of simplicity.  
 --  Sir Erik Christopher Zeeman
 
-The cheapest, fastest, and most reliable components are those that aren’t there.   
--- Gordon Bell
-
 Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
 -- Leo Babauta 
 
@@ -63,9 +60,6 @@ Strive for design simplicity. You never have to fix anything you leave out.
 The whole point of getting things done is knowing what to leave undone.  
 -- Oswald Chambers
 
-
-One of my most productive days was throwing away 1000 lines of code.    
--- Ken Thompson
 
 Complexity has nothing to do with intelligence, simplicity does.  
 -- Larry Bossidy
