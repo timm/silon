@@ -15,67 +15,71 @@ Tim Menzies
 
 Cluster + contrast + dominate + optimize 
 
-Less is more.   
--- Dieter Rams
+
+Il faut bien s'arrêter quelque part, et pour que la science soit possible, il faut s'arrêter quand on a trouvé la simplicité
+(You have to stop somewhere, and for science to be possible, you have to stop when you find simplicity).  
+-- A.D. Ritchue
+
+Ccomplexity and precision bear an inverse relation to one another in the sense that, as the complexity of a problem increases, the possibility of analysing it in precise terms diminishes.  
+-- Lofti Zadeh 
+
+Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius — and a lot of courage to move in the opposite direction.   
+-- Ernst F. Schumacher
+
+In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
+--  Karl Raimund Popper
+
+Give me the fruitful error any time, full of seeds, bursting with its own corrections. You can keep your sterile truth for yourself.    
+--  Vilfredo Pareto
+
+It is always the nearest, plainest and simplest principles that learned men comprehend last.  
+-- Elbert (Green) Hubbard
+
+The more you have, the more you are occupied. The less you have, the more free you are.  
+-- Mother Teresa
+
+Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.  
+-- Sir Isaac Newton
+
+Technical skill is mastery of complexity while creativity is mastery of simplicity.  
+--  Sir Erik Christopher Zeeman
+
+Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
+-- Leo Babauta 
+
+Strive for design simplicity. You never have to fix anything you leave out.   
+-- William P. Lear
+
+The art of being wise is the art of knowing what to overlook.   
+-- William James
+
+Nature is pleased with simplicity. And nature is no dummy.   
+-- Isaac Newton
+
+It is vain to do with more what can be done with less.   
+-- William Of Occam
+
+The art of simplicity is a puzzle of complexity.  
+-- Doug Horton
+
+Simplicity is the ultimate sophistication.  
+-- Leonardo da Vinci
+
+My greatest skill has been to want little.    
+-- Henry David Thoreau
+
+Simplicity is prerequisite for reliability.  
+— Edsger W. Dijkstra
+
+Small needs lead to a large life.   
+-- Unknown
 
 Simplex sigillum veri
 (Simplicity is the sign of truth.)  
 -- Hermann Boerhaave
 
-Small needs lead to a large life.   
--- Unknown
+Less is more.   
+-- Dieter Rams
 
-Simplicity is prerequisite for reliability.  
-— Edsger W. Dijkstra
-
-My greatest skill has been to want little.    
--- Henry David Thoreau
-
-Simplicity is the ultimate sophistication.  
--- Leonardo da Vinci
-
-The art of simplicity is a puzzle of complexity.  
--- Doug Horton
-
-It is vain to do with more what can be done with less.   
--- William Of Occam
-
-TNature is pleased with simplicity. And nature is no dummy.   
--- Isaac Newton
-
-The art of being wise is the art of knowing what to overlook.   
--- William James
-
-Strive for design simplicity. You never have to fix anything you leave out.   
--- William P. Lear
-
-Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
--- Leo Babauta 
-
-Technical skill is mastery of complexity while creativity is mastery of simplicity.  
---  Sir Erik Christopher Zeeman
-
-Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.  
--- Sir Isaac Newton
-
-The more you have, the more you are occupied. The less you have, the more free you are.  
--- Mother Teresa
-
-It is always the nearest, plainest and simplest principles that learned men comprehend last.  
--- Elbert (Green) Hubbard
-
-Give me the fruitful error any time, full of seeds, bursting with its own corrections. You can keep your sterile truth for yourself.    
---  Vilfredo Pareto
-
-In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
---  Karl Raimund Popper
-
-Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius — and a lot of courage to move in the opposite direction.   
--- Ernst F. Schumacher
-
-Ccomplexity and precision bear an inverse relation to one another in the sense that, as the complexity of a problem increases, the possibility of analysing it in precise terms diminishes.  
--- Lofti Zadeh 
-
-Il faut bien s'arrêter quelque part, et pour que la science soit possible, il faut s'arrêter quand on a trouvé la simplicité
-(You have to stop somewhere, and for science to be possible, you have to stop when you find simplicity).  
--- A.D. Ritchue
+Less. Please.
+-- Tim Menzies
