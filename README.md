@@ -19,33 +19,8 @@ Cluster + contrast + dominate + optimize
 Increasingly, people seem to misinterpret complexity as sophistication, which is baffling—the incomprehensible should cause suspicion rather than admiration. Possibly this trend results from a mistaken belief that using a somewhat mysterious device confers an aura of power on the user.    
 -- Niklaus Wirth
 
-Any intelligent fool can make things bigger, more complex, and more violent. It takes a touch of genius — and a lot of courage to move in the opposite direction.   
--- Ernst F. Schumacher
-
-In my view, aiming at simplicity and lucidity is a moral duty of all intellectuals: lack of clarity is a sin, and pretentiousness is a crime.  
---  Karl Raimund Popper
-
-
-It is always the nearest, plainest and simplest principles that learned men (sic) comprehend last.  
--- Elbert (Green) Hubbard
-
-The ability to simplify means to eliminate the unnecessary so that the necessary may speak.   
--- Hans Hoffmann
-
-Truth is ever to be found in simplicity, and not in the multiplicity and confusion of things.  
--- Sir Isaac Newton
-
 The more you have, the more you are occupied. The less you have, the more free you are.  
 -- Mother Teresa
-
-Technical skill is mastery of complexity while creativity is mastery of simplicity.  
---  Sir Erik Christopher Zeeman
-
-Simplicity boils down to two steps: Identify the essential. Eliminate the rest.   
--- Leo Babauta 
-
-Simplicity – the art of maximizing the amount of work not done – is essential.  
--- From the Agile Manifesto.
 
 Strive for design simplicity. You never have to fix anything you leave out.   
 -- William P. Lear
