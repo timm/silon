@@ -8,12 +8,16 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Num
+
+Collection of numbers.
+
     src = '../../src/'
     {the}      = require src+'lib/the'
     {Order}    = require src+'lib/fun'
     {NumThing} = require src+'cols/numthing'
 
-Collection of numbers.
+Code:
 
     class Num extends NumThing
        constructor: (args...) ->
@@ -51,6 +55,6 @@ Collection of numbers.
          num   =  Math.E**(-(x-@mu)^2/(2*v+0.0001))
          num/(denom + 10**-64)
 
-Exports
+Exports:
 
     @Num = Num

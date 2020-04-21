@@ -8,11 +8,15 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Bins
+
+Unsupervised discretization. Support code for `Some`.
+
     src = '../../src/'
     {the}             = require src+'lib/the'
     {n,int,say,Order} = require src+'lib/fun'
 
-Unsupervised discretization. Support code for `Some`.
+Code:
 
     class Bins
        constructor: (s,debug=false) ->
@@ -60,6 +64,6 @@ Unsupervised discretization. Support code for `Some`.
        xpect: (s,j, m, k) ->
          (the.tiny + (m-j)*s.var(j,m) + (k-m-1)*s.var(m+1,k))/(k-j+1)
 
-Main 
+Exports:
 
     @Bins = Bins

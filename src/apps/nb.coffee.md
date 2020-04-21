@@ -8,12 +8,14 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Naive Bayes
+
     src = "../../src/"
     {the}         = require src+'lib/the'
     {id,say,show} = require src+'lib/fun'
     {FastMap}     = require src+'apps/fastmap'
 
-Recursive clustering:
+Code:
 
     class Xy
       constructor: (t)->

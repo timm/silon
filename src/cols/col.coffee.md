@@ -9,11 +9,15 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
+# Col
+
+Root class for all columns.
+
     src = '../../src/'
     {the}  = require src+'lib/the'
     {same} = require src+'lib/fun'
 
-Storing info about a column.
+Code:
 
     class Col
        constructor:(@txt="",@pos=0,@w=1) -> 
@@ -33,5 +37,7 @@ Storing info about a column.
        xpect: (that) ->
          n = this.n + that.n
          this.n/n * this.var() + that.n/n * that.var()
+
+Exports:
 
     @Col = Col

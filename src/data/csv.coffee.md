@@ -8,7 +8,7 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
-# csv.coffee.md
+# Csv
 
 Read comma-seperated values from disk.
 

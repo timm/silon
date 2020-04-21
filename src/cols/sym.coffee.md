@@ -8,12 +8,16 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Sym
+
+Storing info about symbolic  columns.
+
     src   = '../../src/'
     {the} = require src+'lib/the'
     {say} = require src+'lib/fun'
     {Col} = require src+'cols/col'
 
-Storing info about symbolic  columns.
+Code:
 
     class Sym extends Col
        constructor: (args...) ->
@@ -52,6 +56,6 @@ Storing info about symbolic  columns.
              @_ent -= p*Math.log2(p)
          @_ent
 
-Export
+Exports:
 
     @Sym = Sym

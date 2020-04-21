@@ -9,9 +9,11 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
+# Row
+
     {id} = require '../../src/lib/fun'
 
-# Row
+Code:
 
     class Row
        constructor: (@cells,@id) ->
@@ -34,5 +36,7 @@ Tim Menzies
            s1 -= 10**(c.w*(x1-y1)/n)
            s2 -= 10**(c.w*(y1-x1)/n)
          s1/n < s2/n
+
+Exports:
 
      @Row = Row

@@ -8,7 +8,13 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# OK
+
+Unit tests.
+
     {the} = require '../../src/lib/the'
+
+Code: 
 
     say = (l...) -> process.stdout.write l.join(", ") + "\n"
     today = () -> Date(Date.now()).toLocaleString().slice(0,25)
@@ -47,6 +53,6 @@ Tim Menzies
            say l[2]
            Ok.fyi(name,t1)
 
-Exports
+Exports:
 
     @Ok = Ok

@@ -8,6 +8,10 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# The
+
+Global config.
+
     @the =
       id: 0
       data: "../../etc/data/"

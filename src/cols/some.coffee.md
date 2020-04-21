@@ -8,13 +8,17 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Some
+
+Resevoir sampling.
+
     src = '../../src/'
     {the}                    = require src+'lib/the'
     {Bins}                   = require src+'cols/bins'
     {NumThing}               = require src+'cols/numthing'
     {Order,last,int,rand,d2} = require src+'lib/fun'
 
-Storing info about numeric  columns (resevoir style):
+Code:
 
     class Some extends NumThing
        constructor: (args...) ->
@@ -65,6 +69,6 @@ Storing info about numeric  columns (resevoir style):
              @_cuts = null
              @_all[ Order.search(@_all,x) ] = x
 
-Exports
+Exports:
 
     @Some = Some

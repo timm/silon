@@ -8,6 +8,12 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# FastMap
+
+Recursive clustering
+
+Includes:
+
     src = "../../src/"
     {the}            = require src+'lib/the'
     {Some}           = require src+'cols/some'
@@ -15,7 +21,7 @@ Tim Menzies
     {id,int,any,soy,say,
     last,zero1,Order} = require src+'lib/fun'
 
-Recursive clustering
+Code:
 
     class FastMap
       constructor: (t, @n=128, @p=2, @far=0.9,
@@ -83,6 +89,6 @@ Recursive clustering
         l = l.sort(Order.fun (x) -> x.d)
         l[j].r
 
-Exports.
+Exports:
 
     @FastMap = FastMap

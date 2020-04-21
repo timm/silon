@@ -8,7 +8,13 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Fun
+
+All my fun little coffeescript tricks
+
     {the} = require '../../src/lib/the'
+
+Misc
 
     same   = (x) -> x 
     today  = () -> Date(Date.now()).toLocaleString().slice(0,25)
@@ -81,7 +87,7 @@ Lists
           if z>x then break else y=z
         y
 
-Main
+Exports:
 
     @d2    = d2;    @p2    = p2;    @s4    = s4;   @id    = id;
     @int   = int;   @any   = any;   @say   = say;  @soy   = soy;

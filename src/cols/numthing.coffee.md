@@ -8,11 +8,16 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# NumThing
+
+Abstract class above `Some` and `Num`.
+Storing info about numeric columns.
+
     src = '../../src/'
     {the} = require src+'lib/the'
     {Col} = require src+'cols/col'
 
-Storing info about numeric columns.
+Code:
 
     class NumThing extends Col
        dist:(x,y) ->
@@ -29,5 +34,7 @@ Storing info about numeric columns.
              x1 = @norm1 x
              y1 = @norm1 y
          Math.abs(x1-y1)
+
+Exports:
 
     @NumThing = NumThing

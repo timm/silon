@@ -8,6 +8,10 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Table
+
+Handles rows and columns.
+
     src           = '../../src/'
     {the}         = require src+'lib/the'
     {say,id,xray} = require src+'lib/fun'
@@ -16,7 +20,7 @@ Tim Menzies
     {Sym}         = require src+'cols/sym'
     {Some}        = require src+'cols/some'
 
-Table
+Code:
 
     class Table
       constructor:  ( @m=2,@k=1,@cols=[],@x=[],@y=[],@rows=[] ) ->
@@ -94,6 +98,6 @@ Table
             like += col[c].like(x,prior,@m)
         return like
 
-Exprt
+Exports:
 
     @Table = Table
