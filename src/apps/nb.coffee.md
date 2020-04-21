@@ -20,24 +20,25 @@ Code:
     class Nb extends Table
       constructor: (args...) ->
         super args...
-        [ @m,@k,@wait,@klasses ] = [2,1,10,{}]
+        [ @m,@k,@wait,@klasses,@nKlasses ] = [ 2,1,10,{},0 ]
       row: (l,id) ->
         out = super.row(l,id)
         @classify(l) unless --@wait > 0
         @learn l
         out
+      known: (k) ->
+        unless k in @klasses
+          @klasses[k] = clone()
+          @nklasses++
+        @klasses[k]
       learn: (l) ->
-        k = @klassVal(l)
-        @klasses[k] = @clone() unless k in @klasses
-        @klasses[k].add l
+        @known( @klassVal(l) ).add l
       classify: (l, out, best=0) ->
-        nthings = Object.keys(@klasses).length
         for k,t of @klasses
           out or= k
-          tmp = t.like(l,@x,@klass(),@n)
-          if tmp > best
-            [ best,out ] = [ k,tmp ]
-        out
+          tmp = t.like(l,@)
+          [ best,out ] = [ k,tmp ] if tmp > best
+        [out,best]
 
 Exports:
 

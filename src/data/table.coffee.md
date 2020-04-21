@@ -82,13 +82,13 @@ Code:
         for row in @rows
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
-      like: (l,klass,all) ->
-        nthings = Object.keys(all.klasses).length
-        like = prior = (klass.n + @k)/(all.n + @k*nthings)
+      like: (l,all,m=2,k=1) ->
+        like = prior = (@n + k)/(all.n + k*all.nKlasses)
         like = Math.log2(like)
         for c,x of l
           if x isnt the.ch.skip
-            like += col[c].like(x,prior,@m)
+            inc   = col[c].like(x,prior,m)
+            like += Math.log2(inc)
         return like
 
 Exports:
