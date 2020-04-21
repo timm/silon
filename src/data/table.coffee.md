@@ -14,7 +14,7 @@ Handles rows and columns.
 
     src           = '../../src/'
     {the}         = require src+'lib/the'
-    {say,id,xray} = require src+'lib/fun'
+    {say,id,xray,same} = require src+'lib/fun'
     {Row}         = require src+'data/row'
     {Csv}         = require src+'data/csv'
     {Sym}         = require src+'cols/sym'
@@ -23,8 +23,9 @@ Handles rows and columns.
 Code:
 
     class Table
-      constructor:  ( @m=2,@k=1,@cols=[],@x=[],@y=[],@rows=[] ) ->
+      constructor: (@cols=[],@x=[],@y=[],@rows=[]) ->
       klass:              -> @y[0]
+      klassVal:       (l) -> l[ @y[0].pos ]
       from:(f,after=same) -> new Csv f,((row) => @add row), (=> after(@))
       names:              -> (col.txt for col in @cols)
       dump:               -> say @names(); (say row.cells for row in @rows)
@@ -36,7 +37,7 @@ Code:
       mid: -> new Row (c.mid() for c in @cols)
       # --------- --------- --------- --------- ---------  -----------
       clone: (rows=[]) ->
-        t=new Table(@m,@k)
+        t=new Table()
         t.add (c.txt for c in @cols)
         for row in rows
           t.add row.cells
@@ -81,17 +82,9 @@ Code:
         for row in @rows
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
-      @likes: (l,cols,tables, nall=0,nthings=0) ->
-         for t in tables
-           nthings++
-           nall o+= nall.rows.length
-         guess=null
-         for k,t of  tables
-           guess or= k
-           tmp = t.like(l,cols,XXXclass)
-           
-      like: (l,cols,klass,nall,nthings) ->
-        like = prior = (klass.n + @k)/(nall + @k*nthings)
+      like: (l,klass,all) ->
+        nthings = Object.keys(all.klasses).length
+        like = prior = (klass.n + @k)/(all.n + @k*nthings)
         like = Math.log2(like)
         for c,x of l
           if x isnt the.ch.skip

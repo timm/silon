@@ -10,34 +10,35 @@ Tim Menzies
 
 # Naive Bayes
 
-    src = "../../src/"
+    src           = "../../src/"
     {the}         = require src+'lib/the'
+    {Table}       = require src+'data/Table'
     {id,say,show} = require src+'lib/fun'
-    {FastMap}     = require src+'apps/fastmap'
 
 Code:
 
-    class Xy
-      constructor: (t)->
-        @x = new FastMap(t)
-        @y = new FastMap(t)
-        @x.cols = (u) -> u.x
-        @y.cols = (v) -> v.y
-      split: ->
-        @x.split()
-        @y.split()
-        @
-      doms: ->
-        l = {}
-        @x.leaves((z) -> 
-           l[ id(z) ] = {doms:0, z:z, rule:z.mid()})
-        for zid1,o1 of l
-          o1.doms = 0
-          for zid2,o2 of l
-            if o1.rule.dominates(o2.rule, o1.z.y)
-              o1.doms++
-        l
-       
+    class Nb extends Table
+      constructor: (args...) ->
+        super args...
+        [ @m,@k,@wait,@klasses ] = [2,1,10,{}]
+      row: (l,id) ->
+        out = super.row(l,id)
+        @classify(l) unless --@wait > 0
+        @learn l
+        out
+      learn: (l) ->
+        k = @klassVal(l)
+        @klasses[k] = @clone() unless k in @klasses
+        @klasses[k].add l
+      classify: (l, out, best=0) ->
+        nthings = Object.keys(@klasses).length
+        for k,t of @klasses
+          out or= k
+          tmp = t.like(l,@x,@klass(),@n)
+          if tmp > best
+            [ best,out ] = [ k,tmp ]
+        out
+
 Exports:
 
-    @Xy = Xy
+    @Nb = Nb
