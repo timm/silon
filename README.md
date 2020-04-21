@@ -40,9 +40,6 @@ The art of simplicity is a puzzle of complexity.
 Simplicity is the ultimate sophistication.  
 -- Leonardo da Vinci
 
-My greatest skill has been to want little.    
--- Henry David Thoreau
-
 Simplicity is prerequisite for reliability.  
 — Edsger W. Dijkstra
 
