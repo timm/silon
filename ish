@@ -238,16 +238,10 @@ bashrc() { cat<<-'EOF'
 	coffee0() {
 	    sudo -H npm install --global coffeescript
 	}
-        publish() {
-		( cd $root
-      for i in *.md;      do etc/top $i; done
-      for i in src/*.md;  do etc/top $i; done
-      for i in test/*.md; do etc/top $i; done
-    )
+	publish() {
+		find $root -name '*.md' -exec $root/etc/top {} \;
 		put
 	}
-		
-		 
 	gfig() {
 	   git config --global credential.helper cache
 	   git config credential.helper 'cache --timeout=3600'

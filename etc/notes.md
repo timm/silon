@@ -1,17 +1,25 @@
+<a name=top></a><p>       
+&nbsp;[home](http://git.io/silon) ::
+[src](https://github.com/timm/silon/raw/master/src) ::
+[issues](http://git.io/silon) ::
+<a href="https://github.com/timm/silon/raw/master/raw/master/LICENSE.md">&copy; 2020</a>,
+Tim Menzies
+<<a href="mailto:timm@ieee.org">timm&commat;ieee.org</a>>
+<br>
+[<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
+
+
 ilon
 
 Cg: magic symbols for heathers. Introduces nums, sums, x,y,wless more
 
 Rant these very important
 
-
 Todo:
 
 Move all of o into assert and await Inyo assert
 Ok has tries and fails
 assert =ok.assert
-
-
 
 Csv: reading comments, broken Ines, magic dear line
 
@@ -45,7 +53,6 @@ Table shelf initialize
 
     for n in [1..100]
       console.log "fibonacci(#{n}) => #{fibonacci(n)}"
-
 
 CSV needs a randomizes cache
 
