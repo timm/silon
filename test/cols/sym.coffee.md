@@ -9,9 +9,19 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
-How to run tests
+Imports
 
-```
-cd lib
-coffee all.coffee.md
-```
+     src = "../../src/"
+     {Ok} = require src+"lib/ok"
+     {Sym}= require src+"cols/sym"
+  
+Tests
+
+     Ok.all.sym = {}
+     Ok.all.sym.adds = ->
+       s= new Sym("<cost")
+       Ok.if s.w == - 1
+       s.adds ['a','b','b','c','c','c','c']
+       Ok.if 1.378 < s.var() < 1.379
+
+     Ok.go "sym"

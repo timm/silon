@@ -9,9 +9,10 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
-How to run tests
-
-```
-cd lib
-coffee all.coffee.md
-```
+    src="../../src/"
+    {the}              = require src+'lib/the'
+    {Ok}               = require src+'lib/ok'
+    {Table}            = require src+'data/table'
+    {FastMap}          = require src+'apps/fastmap'
+    {id,int,any,soy,say,
+     last,zero1,Order} = require src+'lib/fun'

@@ -8,10 +8,18 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
-
-How to run tests
-
-```
-cd lib
-coffee all.coffee.md
-```
+    @the =
+      id: 0
+      data: "../../etc/data/"
+      conf: 95
+      seed: 1
+      ch:
+        num: '$'
+        sym: ':'
+        more: '>'
+        less: '<'
+        klass: '!'
+        ignore: '?'
+      ninf: -1 * (Number.MAX_SAFE_INTEGER - 1)
+      inf:  Number.MAX_SAFE_INTEGER
+      tiny: 10 ** (-32)

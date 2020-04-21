@@ -8,10 +8,6 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
+# Cols
 
-How to run tests
-
-```
-cd lib
-coffee all.coffee.md
-```
+Ways to summarize columns (or lists) of data.
