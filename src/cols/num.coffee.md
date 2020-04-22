@@ -50,9 +50,9 @@ Code:
          else (@m2 / (@n - 1))**0.5
        # ---------  --------- --------- ---------
        like: (x,prior,m) ->
-         v     = @sd
-         denom = (Math.PI*2*v)^.5
-         num   =  Math.E**(-(x-@mu)^2/(2*v+0.0001))
+         v     = @sd**2
+         denom = (Math.PI*2*v)**.5
+         num   =  Math.E**(-(x-@mu)**2/(2*v+0.0001))
          num/(denom + 10**-64)
 
 Exports:

@@ -19,6 +19,7 @@ Handles rows and columns.
     {Csv}         = require src+'data/csv'
     {Sym}         = require src+'cols/sym'
     {Some}        = require src+'cols/some'
+    {Num}        = require src+'cols/num'
 
 Code:
 
@@ -83,12 +84,13 @@ Code:
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
       like: (l,all,m=2,k=1) ->
-        like = prior = (@n + k)/(all.n + k*all.nKlasses)
-        like = Math.log2(like)
+        log   = Math.log2
+        prior = (@n + k)/(all.n + k*all.nKlasses) 
+        like  = log(prior)
         for c,x of l
           if x isnt the.ch.skip
-            inc   = col[c].like(x,prior,m)
-            like += Math.log2(inc)
+            inc   = @cols[c].like(x,prior,m)
+            like += log(inc)
         return like
 
 Exports:

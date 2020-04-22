@@ -8,10 +8,10 @@ Tim Menzies
 <br>
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
-
     src = '../../src/'
     {Ok}                             = require src+"lib/ok"
     {clone,id,last,p2,d2,Order,rand} = require src+"lib/fun"
+
 
     Ok.all.fun = {}
     Ok.all.fun.id  = ->

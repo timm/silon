@@ -12,10 +12,10 @@ Tim Menzies
 
 Storing info about symbolic  columns.
 
-    src   = '../../src/'
-    {the} = require src+'lib/the'
-    {say} = require src+'lib/fun'
-    {Col} = require src+'cols/col'
+    src   = process.env.SILON or '../../src'
+    {the} = require src+'/lib/the'
+    {say} = require src+'/lib/fun'
+    {Col} = require src+'/cols/col'
 
 Code:
 
@@ -45,7 +45,7 @@ Code:
          [ @most,@mode ] = [ n,x ] if n > @most
        # ---------  --------- --------- ---------
        like: (x,prior,m=2) ->
-         f = x in @count and @count[x] or 0
+         f = x in @counts and @counts[x] or 0
          (f + m*prior) /(@n + m)
        # ---------  --------- --------- ---------
        ent: (e=0)->

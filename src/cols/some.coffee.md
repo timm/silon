@@ -36,7 +36,7 @@ Code:
        iqr: (j,k) -> @per(.75,j,k) - @per(.25,j,k)
        toString:  -> "Some{#{@txt}:#{@mid()}}"
        big:   (n) -> (last(@all()) - @all()[0]) > n
-       like:  (n,prior,m) ->  Math.abs(0.5 - @norm1(x))/0.5
+       like:  (x,prior,m) ->  1- Math.abs(0.5 - @norm1(x))/0.5
        norm1: (x) ->
          @all()
          Order.search(@_all,x) / @_all.length

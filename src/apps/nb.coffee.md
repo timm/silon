@@ -10,33 +10,39 @@ Tim Menzies
 
 # Naive Bayes
 
-    src           = "../../src/"
-    {the}         = require src+'lib/the'
-    {Table}       = require src+'data/Table'
-    {id,say,show} = require src+'lib/fun'
+    src           = process.env.SILON or "../../src"
+    {the}         = require src+'/lib/the'
+    {Table}       = require src+'/data/Table'
+    {Abcd}        = require src+'/stats/abcd'
+    {id,say,show} = require src+'/lib/fun'
 
 Code:
 
     class Nb extends Table
       constructor: (args...) ->
         super args...
-        [ @m,@k,@wait,@klasses,@nKlasses ] = [ 2,1,10,{},0 ]
+        [ @m,@k,@wait,@nKlasses ] = [ 2,1,10,0 ]
+        [ @klasses,@report ] = [ {}, new Abcd ]
       row: (l,id) ->
         out = super.row(l,id)
-        @classify(l) unless --@wait > 0
+        if  @rows.length > @wait
+          [got] = @classify(l)
+          want= @klassVal(l)
+          say got,want
+          @report.add want, got
         @learn l
         out
       known: (k) ->
         unless k in @klasses
-          @klasses[k] = clone()
+          @klasses[k] = @clone()
           @nklasses++
         @klasses[k]
       learn: (l) ->
         @known( @klassVal(l) ).add l
       classify: (l, out, best=0) ->
         for k,t of @klasses
-          out or= k
-          tmp = t.like(l,@)
+          out ?= k
+          tmp = t.like(l,@,@m,@k)
           [ best,out ] = [ k,tmp ] if tmp > best
         [out,best]
 

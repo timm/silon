@@ -9,11 +9,13 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
-    src = "../../src/"
-    {Ok}                = require src+'lib/ok'
-    {Bins}              = require src+'cols/bins'
-    {Some}              = require src+'cols/some'
-    {d2,int,rand,Order} = require src+'lib/fun'
+    src             = process.env.SILON or "../../src"
+    {Ok}            = require src+'/lib/ok'
+    {Bins}          = require src+'/cols/bins'
+    {Some}          = require src+'/cols/some'
+    {Num}           = require src+'/cols/num'
+    {d2,int,rand,
+     say,any,Order} = require src+'/lib/fun'
 
 Test cases
 
@@ -50,5 +52,26 @@ Test cases
        b.cuts(s)
        c=  b.breaks
        Ok.if  c[0]==1 and c[2]==3 and c.length==3
+
+    Ok.all.some.like = ->
+       s= new Some
+       s.max = 10000
+       n= new Num
+       m=100
+       for i in [1..m]
+         j = rand()**2
+         s.add j
+         n.add j
+       l = s.all()
+       l05 = s.like(l[5])
+       l50 = s.like(l[50])
+       l95 = s.like(l[95])
+       Ok.if l05 < l50 and l95< l50
+
+       l05 = n.like(l[5])
+       l50 = n.like(l[50])
+       l95 = n.like(l[95])
+       Ok.if l05 < l50 and l95< l50
+
 
     Ok.go "some"

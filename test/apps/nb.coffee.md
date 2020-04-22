@@ -9,11 +9,11 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
-    src="../../src/"
-    {the}     = require src+'lib/the'
-    {Ok}      = require src+'lib/ok'
-    {Nb}      = require src+'apps/nb'
-    {id,say}  = require src+'lib/fun'
+    src       = process.env.SILON or "../../src"
+    {the}     = require src+'/lib/the'
+    {Ok}      = require src+'/lib/ok'
+    {Nb}      = require src+'/apps/nb'
+    {id,say}  = require src+'/lib/fun'
 
 Test cases
 
@@ -21,6 +21,11 @@ Test cases
     Ok.all.nb.one = (f = 'weather4.csv') ->
       nb = (u) ->
         Ok.if 2==Object.keys(u.klasses).length
+      t = (new Nb).from(the.data + f, nb)
+
+    Ok.all.nb.two = (f = 'diabetes.csv') ->
+      nb = (u) ->
+        u.report.report(show=true)
       t = (new Nb).from(the.data + f, nb)
 
     Ok.go "nb"
