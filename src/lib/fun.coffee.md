@@ -60,9 +60,20 @@ Strings
     String::last = @[ @.length - 1 ]
     String::n    = (m=40) -> Array(m+1).join(@)
 
-    say = (l...) -> process.stdout.write l.join(", ") + "\n"
-    soy = (l...) -> process.stdout.write l.join(", ")
-
+    say  = (l...) -> process.stdout.write l.join(", ") + "\n"
+    soy  = (l...) -> process.stdout.write l.join(", ")
+    sayr = (x, pre="", depth=10) ->
+      if depth > 0
+        if x is null or typeof(x) isnt 'object'
+          say pre+x
+        else
+          for k,v of x
+            if typeof(v) isnt 'object'
+              say pre+k+' : '+v
+            else
+              say pre+k
+              sayr(v, pre + '|  ', depth-1)
+  
 Lists
 
     last = (a) -> a[ a.length - 1 ]
@@ -93,4 +104,4 @@ Exports:
     @int   = int;   @any   = any;   @say   = say;  @soy   = soy;
     @last  = last;  @rand  = rand;  @same  = same; @xray  = xray;
     @zero1 = zero1; @clone = clone; @Order = Order
-    @show = show
+    @show  = show;  @sayr  = sayr;

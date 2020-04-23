@@ -10,10 +10,15 @@ Tim Menzies
 
     src = '../../src/'
     {Ok}                             = require src+"lib/ok"
-    {clone,id,last,p2,d2,Order,rand} = require src+"lib/fun"
+    {clone,sayr,id,last,p2,d2,Order,rand} = require src+"lib/fun"
 
 
     Ok.all.fun = {}
+    Ok.all.fun.sayr = ->
+      l={e:100, f:[]}
+      m=[10,l,30, {a: l,b:50}]
+      j={kk: 100, dd:m, aa: 200}
+      sayr j
     Ok.all.fun.id  = ->
        [a,b] = [{},{}]
        a1id = id(a)

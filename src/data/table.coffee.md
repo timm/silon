@@ -83,14 +83,16 @@ Code:
         for row in @rows
           t.add ( col.bin(row.cells[col.pos]) for col in @cols )
         t
-      like: (l,all,m=2,k=1) ->
+      like: (what,l,all,m=2,k=1) ->
         log   = Math.log2
-        prior = (@n + k)/(all.n + k*all.nKlasses) 
-        like  = log(prior)
+        prior = (@rows.length + k)/(all.rows.length + k*all.nKlasses)
+        say what,@rows.length, all.rows.length, prior, all.y[0].counts.yes
+        like = prior
         for c,x of l
-          if x isnt the.ch.skip
-            inc   = @cols[c].like(x,prior,m)
-            like += log(inc)
+          if c of @x
+            if x isnt the.ch.skip
+              inc   = @cols[c].like(x,prior,m)
+              like += inc
         return like
 
 Exports:

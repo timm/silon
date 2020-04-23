@@ -25,27 +25,26 @@ Code:
         [ @klasses,@report ] = [ {}, new Abcd ]
       row: (l,id) ->
         out = super.row(l,id)
-        if  @rows.length > @wait
-          [got] = @classify(l)
-          want= @klassVal(l)
-          say got,want
-          @report.add want, got
-        @learn l
+        classify(l) if  @rows.length > @wait
+        @known( @klassVal(l) ).add l
         out
+      classify: (l) ->
+        [got] = @mostLike(l)
+        want= @klassVal(l)
+        say got,want
+        @report.add want, got
       known: (k) ->
         unless k in @klasses
           @klasses[k] = @clone()
           @nklasses++
         @klasses[k]
-      learn: (l) ->
-        @known( @klassVal(l) ).add l
-      classify: (l, out, best=0) ->
+      mostLike: (l, out, best=0) ->
         for k,t of @klasses
           out ?= k
-          tmp = t.like(l,@,@m,@k)
+          tmp = t.like(k,l,@,@m,@k)
           [ best,out ] = [ k,tmp ] if tmp > best
         [out,best]
 
 Exports:
 
-    @Nb = Nb
+    @Nb= Nb

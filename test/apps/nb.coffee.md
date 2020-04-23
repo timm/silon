@@ -18,14 +18,17 @@ Tim Menzies
 Test cases
 
     Ok.all.nb = {}
+
+###
     Ok.all.nb.one = (f = 'weather4.csv') ->
       nb = (u) ->
         Ok.if 2==Object.keys(u.klasses).length
       t = (new Nb).from(the.data + f, nb)
+###
 
-    Ok.all.nb.two = (f = 'diabetes.csv') ->
+    Ok.all.nb.two = (f = 'weather4.csv') ->
       nb = (u) ->
-        u.report.report(show=true)
+        u.report#report(show=true)
       t = (new Nb).from(the.data + f, nb)
 
     Ok.go "nb"
