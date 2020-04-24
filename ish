@@ -238,6 +238,7 @@ bashrc() { cat<<-'EOF'
 	alias python="$(which python3) -B "
 	alias matrix="$(which cmatrix) -bs  -C blue"
 	alias rain="$(which rain) -d 60 "
+	alias ncdu="ncdu --color dark "
 	alias tree="$(which tree) -C "
 	alias mc="$(which mc) -x "
 	alias zap='rm -rf $root/raised/\.*.swp $root/raised/*.pyc $root/raised/__pycache__'
@@ -285,7 +286,7 @@ bashrc() { cat<<-'EOF'
 AFTER=1
 #brew install bsdgames-osx
 
-for c in gawk git tmux vim mc tree cmatrix rain npm coffee ; do
+for c in gawk git tmux vim mc tree cmatrix rain npm coffee ncdu; do
   if [ -z "$(which $c)" ]; then
     AFTER=""
     echo "#E> missing: $c"
