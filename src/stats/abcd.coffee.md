@@ -11,7 +11,7 @@ Tim Menzies
 # Log Precision, recall etc
 
     src = process.env.SILON or  "../../src" 
-    {say,xray} = require src+'/lib/fun'
+    {say,saym,sayr,p2} = require src+'/lib/fun'
 
 Code
 
@@ -44,20 +44,32 @@ Code
       report1: (k,a,b,c,d) ->
         y    = {}
         y.pd = y.pf = y.prec = y.f = y.g = y.pn = 0
+        y.class = k
+        y.a = a
+        y.b = b
+        y.c = c
+        y.d = d
+        y.prec = d / (c+d) if (c+d) > 0
         y.pd = d     / (b+d) if (b+d) > 0
         y.pf = c     / (a+c) if (a+c) > 0
         y.pn = (b+d) / (a+c) if (a+c) > 0
         y.g  = 2*(1-y.pf)*y.pd/(1-y.pf+y.pd) if (1-y.pf+y.pd)> 0
         y.f  = 2*y.prec*y.pd  /(y.prec+y.pd) if (y.prec+y.pd)> 0
-        y.prec = d / (c+d) if (c+d) > 0
         y.acc = @acc()
         y
       # --------- --------- --------- ---------
-      report: (show=false,y={}) ->
+      report: (show=false,y=[]) ->
+        all = ["a"] #["a","b","c","d","acc","pd","pf","prec","g","f"]
+        all1 = all.push  "class"
+        y.push all1
         for k,val of @all
-          y[k]  = @report1 k,@a[k],@b[k],@c[k],@d[k]
-          say k, xray(y[k])
-          #((say k,x,y) for x,y of y[k] if show)
+          tmp = @report1 k,@a[k],@b[k],@c[k],@d[k]
+          sayr tmp
+          tmp = (tmp[k] for k in all)
+          tmp.push k
+          all.push tmp
+        if show
+          saym all
         y
 
 End stuff

@@ -62,18 +62,34 @@ Strings
 
     say  = (l...) -> process.stdout.write l.join(", ") + "\n"
     soy  = (l...) -> process.stdout.write l.join(", ")
-    sayr = (x, pre="", depth=10) ->
+    sayr = (x, pre="", depth=7,top=true) ->
+      if top
+        say "" 
       if depth > 0
         if x is null or typeof(x) isnt 'object'
           say pre+x
         else
           for k,v of x
-            if typeof(v) isnt 'object'
-              say pre+k+' : '+v
-            else
-              say pre+k
-              sayr(v, pre + '|  ', depth-1)
-  
+            if k[0] isnt "_"
+              if typeof(v) isnt 'object'
+                say pre+k+': '+v
+              else
+                say pre+k+':'
+                sayr(v, pre + '|  ', depth-1,false)
+
+    saym = (m, max={}, first=true)->
+      for col,l of transpose((("#{x}".length for x in t) for t in m))
+        max[col] = Math.max(...l) 
+      for line,t of  m 
+        say (s4(x,max[col])    for col,x  of t).join(' | ')
+        if first
+          say ("-".n(max[col]) for col,x of t). join(' | ')
+        first = false
+
+ 
+    transpose = (m) ->
+        ((t[i] for t in m) for i in [0...m[0].length])
+
 Lists
 
     last = (a) -> a[ a.length - 1 ]
@@ -104,4 +120,4 @@ Exports:
     @int   = int;   @any   = any;   @say   = say;  @soy   = soy;
     @last  = last;  @rand  = rand;  @same  = same; @xray  = xray;
     @zero1 = zero1; @clone = clone; @Order = Order
-    @show  = show;  @sayr  = sayr;
+    @show  = show;  @sayr  = sayr;  @saym  = saym

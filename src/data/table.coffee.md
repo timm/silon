@@ -60,7 +60,7 @@ Code:
         @rows.push(new Row(l,id))
       # --------- --------- --------- ---------
       col: (txt,pos) ->
-        what   = if Table.isNum(txt)   then Some else Sym
+        what   = if Table.isNum(txt)   then Num else Sym
         where  = if Table.isY(txt)     then @y   else @x
         weight = if the.ch.less in txt then -1   else 1
         c      = new what(txt,pos,weight)
@@ -86,13 +86,12 @@ Code:
       like: (what,l,all,m=2,k=1) ->
         log   = Math.log2
         prior = (@rows.length + k)/(all.rows.length + k*all.nKlasses)
-        say what,@rows.length, all.rows.length, prior, all.y[0].counts.yes
-        like = prior
+        like = log(prior)
         for c,x of l
           if c of @x
             if x isnt the.ch.skip
               inc   = @cols[c].like(x,prior,m)
-              like += inc
+              like += log(inc)
         return like
 
 Exports:

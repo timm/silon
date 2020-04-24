@@ -16,7 +16,7 @@ Resevoir sampling.
     {the}                    = require src+'lib/the'
     {Bins}                   = require src+'cols/bins'
     {NumThing}               = require src+'cols/numthing'
-    {Order,last,int,rand,d2} = require src+'lib/fun'
+    {Order,last,int,rand,d2,say} = require src+'lib/fun'
 
 Code:
 
@@ -36,7 +36,9 @@ Code:
        iqr: (j,k) -> @per(.75,j,k) - @per(.25,j,k)
        toString:  -> "Some{#{@txt}:#{@mid()}}"
        big:   (n) -> (last(@all()) - @all()[0]) > n
-       like:  (x,prior,m) ->  1- Math.abs(0.5 - @norm1(x))/0.5
+       # --------- --------- --------- -----------------
+       like:  (x,prior,m) -> 
+         the.tiny + 1- Math.abs(0.5 - @norm1(x))/0.5
        norm1: (x) ->
          @all()
          Order.search(@_all,x) / @_all.length

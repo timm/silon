@@ -21,29 +21,27 @@ Code:
     class Nb extends Table
       constructor: (args...) ->
         super args...
-        [ @m,@k,@wait,@nKlasses ] = [ 2,1,10,0 ]
-        [ @klasses,@report ] = [ {}, new Abcd ]
+        [ @m,@k,@wait,@nKlasses ] = [ 2,1,5,0 ]
+        [ @klasses,@report      ] = [ {}, new Abcd ]
       row: (l,id) ->
         out = super.row(l,id)
-        classify(l) if  @rows.length > @wait
+        @classify(l) if  @rows.length > @wait
         @known( @klassVal(l) ).add l
         out
       classify: (l) ->
-        [got] = @mostLike(l)
+        [got,best] = @mostLike(l)
         want= @klassVal(l)
-        say got,want
         @report.add want, got
       known: (k) ->
-        unless k in @klasses
+        unless k of @klasses
           @klasses[k] = @clone()
           @nklasses++
         @klasses[k]
-      mostLike: (l, out, best=0) ->
+      mostLike: (l, got, best=-10**64) ->
         for k,t of @klasses
-          out ?= k
           tmp = t.like(k,l,@,@m,@k)
-          [ best,out ] = [ k,tmp ] if tmp > best
-        [out,best]
+          [ got,best ] = [ k,tmp ] if tmp > best
+        [ got,best ]
 
 Exports:
 

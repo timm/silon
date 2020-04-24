@@ -13,7 +13,7 @@ Tim Menzies
     {the}     = require src+'/lib/the'
     {Ok}      = require src+'/lib/ok'
     {Nb}      = require src+'/apps/nb'
-    {id,say}  = require src+'/lib/fun'
+    {id,say,sayr}  = require src+'/lib/fun'
 
 Test cases
 
@@ -24,11 +24,19 @@ Test cases
       nb = (u) ->
         Ok.if 2==Object.keys(u.klasses).length
       t = (new Nb).from(the.data + f, nb)
+    Ok.all.nb.diabetes = (f = 'diabetes.csv') ->
+      nb = (u) ->
+        u.report.report(true)
+      t = (new Nb).from(the.data + f, nb)
+    Ok.all.nb.soybean = (f = 'soybean.csv') ->
+      soybean = (u) ->
+        u.report.report(true)
+      t = (new Nb).from(the.data + f, soybean)
 ###
 
-    Ok.all.nb.two = (f = 'weather4.csv') ->
-      nb = (u) ->
-        u.report#report(show=true)
-      t = (new Nb).from(the.data + f, nb)
+    Ok.all.nb.weathernom = (f = 'weather-nom.csv') ->
+      weathernom = (u) ->
+        u.report.report(true)
+      t = (new Nb).from(the.data + f, weathernom)
 
     Ok.go "nb"
