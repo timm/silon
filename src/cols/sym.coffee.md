@@ -44,6 +44,12 @@ Code:
          n = ++@counts[x]
          [ @most,@mode ] = [ n,x ] if n > @most
        # ---------  --------- --------- ---------
+       sub1: (x) ->
+         @_ent = null
+         @counts[x] = 0 unless x of @counts
+         if @counts[x] > 0
+           n = --@counts[x]
+       # ---------  --------- --------- ---------
        like: (x,prior,m=2) ->
          f = x of @counts and @counts[x] or 0
          (f + m*prior) /(@n + m)
@@ -52,8 +58,9 @@ Code:
          if  not @_ent?
            @_ent = 0
            for x,y of @counts
-             p      = y/@n
-             @_ent -= p*Math.log2(p)
+             if y > 0
+               p      = y/@n
+               @_ent -= p*Math.log2(p)
          @_ent
 
 Exports:

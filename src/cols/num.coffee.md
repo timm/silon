@@ -44,6 +44,13 @@ Code:
          @m2  += delta * (x - @mu)
          @sd   = @sd0()
        # ---------  --------- --------- ---------
+       sub1: (x) ->
+         if @n > 0
+           delta = x - @mu
+           @mu  -= delta / @n
+           @m2  -= delta * (x - @mu)
+         @sd = @sd0()
+       # ---------  --------- --------- ---------
        sd0: () -> switch
          when  @n < 2  then 0
          when  @m2 < 0 then 0

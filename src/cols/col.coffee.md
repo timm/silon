@@ -29,6 +29,7 @@ Code:
        norm: (x) ->  if x is   bad then x else @norm1 x
        bin:  (x) ->  if x is   bad then x else @bin1  x
        add:  (x) -> (if x isnt bad then (@n++; @add1 x)); x
+       sub:  (x) -> (if x isnt bad then (@n--; @sub1 x)); x
        show:     -> (@w>0 and ">" or "<")+ d2(@mid())
        # ---------  --------- --------- ---------
        adds: (a,f=same) ->

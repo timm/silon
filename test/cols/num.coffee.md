@@ -11,9 +11,11 @@ Tim Menzies
 
 Imports
 
-    src = "../../src/"
-    {Ok} = require src+'lib/ok'
-    {Num}= require src+'cols/num'
+    src = "../../src"
+    {the} = require src+'/lib/the'
+    {rand,say} = require src+'/lib/fun'
+    {Ok} = require src+'/lib/ok'
+    {Num}= require src+'/cols/num'
 
 Tests 
 
@@ -37,5 +39,24 @@ Tests
                7,4,12,5,4,10,9,6,9,4], (x) -> 0.1*x)
        Ok.if 0.957 <= n.bin(1.05) <= 0.958
        Ok.if 1.09  <= n.bin(1.3)  <= 1.092
+
+    Ok.all.num.inc = ->
+      same = (a,b) -> Math.abs(a-b) < 0.0001
+      the.seed=1
+      n =new Num
+      [ l,v,mid ] = [ [],{},{} ]
+      for j in [1.. 100]
+         x = rand()
+         l.push x
+         n.add x
+         v[j] = n.var()
+         mid[j] = n.mid()
+      j = l.length 
+      while j > 5
+         j--
+         x = l[j]
+         n.sub x
+         Ok.if  same(v[j],  n.var())
+         Ok.if  same(mid[j],n.mid())
 
     Ok.go "num"

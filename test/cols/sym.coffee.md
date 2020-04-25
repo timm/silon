@@ -12,6 +12,8 @@ Tim Menzies
 Imports
 
      src = "../../src/"
+     {the} = require src+"lib/the"
+     {any,say} = require src+"lib/fun"
      {Ok} = require src+"lib/ok"
      {Sym}= require src+"cols/sym"
   
@@ -24,4 +26,25 @@ Tests
        s.adds ['a','b','b','c','c','c','c']
        Ok.if 1.378 < s.var() < 1.379
 
+     Ok.all.sym.inc = ->
+       same = (a,b) -> Math.abs(a-b) < 0.0001
+       the.seed=1
+       n =new Sym
+       l = "silontestcolsymcoffeemd".split("")
+       [ l,v,mid ] = [ [],{},{} ]
+       for j in [1.. 100]
+          x = any(l)
+          l.push x
+          n.add x
+          v[j] = n.var()
+          mid[j] = n.mid()
+          say v[j],n.var()
+       j = l.length 
+       while j > 5
+          j--
+          x = l[j]
+          n.sub x
+          #@Ok/.if  same(v[j],  n.var())
+          #@Ok.if  same(mid[j],n.mid())
+ 
      Ok.go "sym"
