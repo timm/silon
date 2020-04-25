@@ -22,18 +22,20 @@ Test cases
     Ok.all.nb.one = (f = 'weather4.csv') ->
       nb = (u) ->
         Ok.if 2==Object.keys(u.klasses).length
+        u.log.report(true)
       t = (new Nb).from(the.data + f, nb)
 
     Ok.all.nb.diabetes = (f = 'diabetes.csv') ->
       nb = (u) -> u.log.report(true)
       t = (new Nb).from(the.data + f, nb)
 
+###
     Ok.all.nb.soybean = (f = 'soybean.csv') ->
       soybean = (u) -> u.log.report(true)
       t = (new Nb).from(the.data + f, soybean)
-
     Ok.all.nb.weathernom = (f = 'weather-nom.csv') ->
       weathernom = (u) -> u.log.report(true)
       t = (new Nb).from(the.data + f, weathernom)
+###
 
     Ok.go "nb"

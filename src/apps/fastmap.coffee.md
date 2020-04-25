@@ -19,7 +19,7 @@ Includes:
     {Some}           = require src+'cols/some'
     {Table}          = require src+'data/table'
     {id,int,any,soy,say,s4,
-    last,zero1,Order} = require src+'lib/fun'
+    last,zero1,Order,sayr} = require src+'lib/fun'
 
 Code:
 

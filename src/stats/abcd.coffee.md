@@ -71,7 +71,7 @@ Code
         for k,val of @all
           tmp = @report1 k,@a[k],@b[k],@c[k],@d[k]
           m.push (tmp[x] for x in all)
-        m= m.sort(Order.fun (x) -> 1/(the.tiny+x[n-1]+x[n]))
+        m= m.sort(Order.fun (x) -> 1/(the.tiny+x[n-2]+x[n]))
         if show 
           say " "; saym m
         m

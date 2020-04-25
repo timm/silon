@@ -15,20 +15,21 @@ Root class for all columns.
 
     src = '../../src/'
     {the}  = require src+'lib/the'
-    {same,p2} = require src+'lib/fun'
+    {same,p2,d2} = require src+'lib/fun'
 
 Code:
 
+    bad = the.ch.ignore
     class Col
        constructor:(@txt="",@pos=0,@w=1) -> 
          @n = 0
          @w = -1 if the.ch.less in @txt
 
        # ---------  --------- --------- ---------
-       norm: (x) ->  if x is   the.ch.ignore then x else @norm1 x
-       bin:  (x) ->  if x is   the.ch.ignore then x else @bin1  x
-       add:  (x) -> (if x isnt the.ch.ignore then (@n++; @add1 x)); x
-       show:     -> (@w>0 and ">" or "<")+ p2(@norm(@mid()))
+       norm: (x) ->  if x is   bad then x else @norm1 x
+       bin:  (x) ->  if x is   bad then x else @bin1  x
+       add:  (x) -> (if x isnt bad then (@n++; @add1 x)); x
+       show:     -> (@w>0 and ">" or "<")+ d2(@mid())
        # ---------  --------- --------- ---------
        adds: (a,f=same) ->
           (@add f(x) for x in a)

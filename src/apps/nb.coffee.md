@@ -37,10 +37,12 @@ Code:
           @klasses[k] = @clone()
           @nklasses++
         @klasses[k]
-      mostLikely: (l, got, best=-10**64) ->
+      mostLikely: (l,   got,x,best= -Infinity) ->
         for k,t of @klasses
+          got or= k
           tmp = t.like(k,l,@,@m,@k)
           [ got,best ] = [ k,tmp ] if tmp > best
+        #say "got #{got} nest #{best}"
         [ got,best ]
 
 Exports:

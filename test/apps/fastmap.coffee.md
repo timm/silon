@@ -14,7 +14,7 @@ Tim Menzies
     {Ok}               = require src+'lib/ok'
     {Table}            = require src+'data/table'
     {FastMap}          = require src+'apps/fastmap'
-    {id,int,any,soy,say,s4,
+    {id,int,any,soy,say,s4,sayr,d2,
      last,zero1,Order} = require src+'lib/fun'
 
 Test cases
@@ -36,6 +36,9 @@ Test cases
          l = l.sort(Order.fun (x) -> x.dom)
          best = last(l)
          worst= l[0]
+         if debug
+           sayr (d2(best.mid().cells[c.pos]) for c in u.y) 
+           sayr (d2(worst.mid().cells[c.pos]) for c in u.y) 
          Ok.if best.mid().dominates(u.mid(), u.y)
          #f.leaves((t) ->  soy " ",t.rows.length); say ""
        t = (new Table).from(the.data+f,fastmap)

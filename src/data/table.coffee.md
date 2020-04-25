@@ -24,7 +24,8 @@ Handles rows and columns.
 Code:
 
     class Table
-      constructor: (@cols=[],@x=[],@y=[],@rows=[]) ->
+      constructor: (@cols=[],@x=[],@y=[],@rows=[],
+                    @nums=Num) ->
       klass:              -> @y[0]
       klassVal:       (l) -> l[ @y[0].pos ]
       from:(f,after=same) -> new Csv f,((row) => @add row), (=> after(@))
@@ -60,7 +61,7 @@ Code:
         @rows.push(new Row(l,id))
       # --------- --------- --------- ---------
       col: (txt,pos) ->
-        what   = if Table.isNum(txt)   then Num else Sym
+        what   = if Table.isNum(txt)   then @nums else Sym
         where  = if Table.isY(txt)     then @y   else @x
         weight = if the.ch.less in txt then -1   else 1
         c      = new what(txt,pos,weight)
@@ -89,9 +90,11 @@ Code:
         like  = log(prior)
         for c,x of l
           if c of @x
+            #say c,x
             if x isnt the.ch.skip
               inc   = @cols[c].like(x,prior,m)
               like += log(inc)
+        #say like
         like
 
 Exports:
