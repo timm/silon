@@ -18,7 +18,7 @@ Includes:
     {the}            = require src+'lib/the'
     {Some}           = require src+'cols/some'
     {Table}          = require src+'data/table'
-    {id,int,any,soy,say,
+    {id,int,any,soy,say,s4,
     last,zero1,Order} = require src+'lib/fun'
 
 Code:

@@ -33,7 +33,7 @@ Misc
     d2= (n,f=2) ->  n.toFixed(f)
     p2= (n,f=2) ->  Math.round(100*d2(n,f))
     s4= (n,f=4) ->
-       s = n.toString()
+       s = "#{n}"
        l = s.length
        pre = if l < f then " ".n(f - l) else ""
        pre + s
@@ -77,15 +77,13 @@ Strings
                 say pre+k+':'
                 sayr(v, pre + '|  ', depth-1,false)
 
-    saym = (m, max={}, first=true)->
+    saym = (m, max={})->
       for col,l of transpose((("#{x}".length for x in t) for t in m))
         max[col] = Math.max(...l) 
-      for line,t of  m 
-        say (s4(x,max[col])    for col,x  of t).join(' | ')
-        if first
-          say ("-".n(max[col]) for col,x of t). join(' | ')
-        first = false
-
+      for line,t of  m
+        say " "+(s4(x,max[col])    for col,x  of t).join(', ')
+        if +line == 0
+          say "#"+("-".n(max[col]) for col,x of t). join(', ')
  
     transpose = (m) ->
         ((t[i] for t in m) for i in [0...m[0].length])

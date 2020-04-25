@@ -14,17 +14,17 @@ Tim Menzies
     {Ok}               = require src+'lib/ok'
     {Table}            = require src+'data/table'
     {FastMap}          = require src+'apps/fastmap'
-    {id,int,any,soy,say,
+    {id,int,any,soy,say,s4,
      last,zero1,Order} = require src+'lib/fun'
 
 Test cases
 
     Ok.all.fmap = {}
-    Ok.all.fmap.fastmap = (f= the.data + 'auto93.csv') ->
+    Ok.all.fmap.fastmap = (f=  'auto93.csv',debug=false) ->
        the.seed= 1
        fastmap=(u) ->
          f = new FastMap(u)
-         f.debug = false
+         f.debug = debug
          f.split()
          l=[]
          f.leaves((t) -> l.push t)
@@ -38,7 +38,7 @@ Test cases
          worst= l[0]
          Ok.if best.mid().dominates(u.mid(), u.y)
          #f.leaves((t) ->  soy " ",t.rows.length); say ""
-       t = (new Table).from(f,fastmap)
+       t = (new Table).from(the.data+f,fastmap)
 
     Ok.all.fmap.xfastmap = (f= the.data + 'auto93.csv') ->
        the.seed= 1
@@ -50,7 +50,7 @@ Test cases
          #f.leaves((t) ->  soy " ",t.rows.length); say ""
        t = (new Table).from(f,fastmap)
 
-    Ok.all.fmap.dominates = (f= the.data + 'auto93-10000.csv') ->
+    Ok.all.fmap.dom1 = (f="auto93-10000.csv") ->
        dominates = (u) ->
           cache = {}
           for row1 in u.rows
@@ -64,6 +64,17 @@ Test cases
           worst  = u.rows[0]
           best   = last(u.rows)
           Ok.if best.dominates(worst, u.y)
-       t = (new Table).from(f,dominates)
+       t = (new Table).from(the.data+f,dominates)
+
+###
+    Ok.all.fmap.dom2 = ->
+      Ok.all.fmap.fastmap("ailerons.csv")
+    Ok.all.fmap.fastmap2 = ->
+      Ok.all.fmap.fastmap("nasa93.csv",true)
+###
+
+    Ok.all.fmap.fastmap3 = ->
+      say "\n\nfastmap3"
+      Ok.all.fmap.fastmap("auto93.csv",true)
 
     Ok.go "fmap"

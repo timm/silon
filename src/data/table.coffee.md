@@ -86,13 +86,13 @@ Code:
       like: (what,l,all,m=2,k=1) ->
         log   = Math.log2
         prior = (@rows.length + k)/(all.rows.length + k*all.nKlasses)
-        like = log(prior)
+        like  = log(prior)
         for c,x of l
           if c of @x
             if x isnt the.ch.skip
               inc   = @cols[c].like(x,prior,m)
               like += log(inc)
-        return like
+        like
 
 Exports:
 

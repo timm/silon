@@ -22,22 +22,22 @@ Code:
       constructor: (args...) ->
         super args...
         [ @m,@k,@wait,@nKlasses ] = [ 2,1,5,0 ]
-        [ @klasses,@report      ] = [ {}, new Abcd ]
+        [ @klasses,@log         ] = [ {}, new Abcd ]
       row: (l,id) ->
         out = super.row(l,id)
         @classify(l) if  @rows.length > @wait
         @known( @klassVal(l) ).add l
         out
       classify: (l) ->
-        [got,best] = @mostLike(l)
-        want= @klassVal(l)
-        @report.add want, got
+        [got] = @mostLikely(l)
+        want  = @klassVal(l)
+        @log.add want, got
       known: (k) ->
         unless k of @klasses
           @klasses[k] = @clone()
           @nklasses++
         @klasses[k]
-      mostLike: (l, got, best=-10**64) ->
+      mostLikely: (l, got, best=-10**64) ->
         for k,t of @klasses
           tmp = t.like(k,l,@,@m,@k)
           [ got,best ] = [ k,tmp ] if tmp > best

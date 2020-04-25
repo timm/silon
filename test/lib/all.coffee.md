@@ -17,5 +17,6 @@ Tim Menzies
     require '../cols/sym'
     require '../cols/some'
     require '../data/csv'
-    require '../apps/fastmap'
     require '../data/table'
+    require '../apps/fastmap'
+    require '../apps/nb'

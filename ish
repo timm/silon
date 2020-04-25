@@ -131,16 +131,16 @@ vimrc() { cat<<-'EOF'
 	set ruler
 	set laststatus=2
 	set statusline=
-	set statusline+=%f
+	set statusline+=\ 
+	set statusline+=%F
 	set statusline+=\ 
 	set statusline+=%m
-	set statusline+=\ 
 	set statusline+=%=
 	set statusline+=%y
 	set statusline+=\ 
-	set statusline+=%c
-	set statusline+=:
 	set statusline+=%l
+	set statusline+=:
+	set statusline+=%c
 	set statusline+=\ 
 	set lispwords+=defthing   
 	set lispwords+=doitems    

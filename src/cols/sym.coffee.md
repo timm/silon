@@ -45,7 +45,7 @@ Code:
          [ @most,@mode ] = [ n,x ] if n > @most
        # ---------  --------- --------- ---------
        like: (x,prior,m=2) ->
-         f = x in @counts and @counts[x] or 0
+         f = x of @counts and @counts[x] or 0
          (f + m*prior) /(@n + m)
        # ---------  --------- --------- ---------
        ent: (e=0)->
