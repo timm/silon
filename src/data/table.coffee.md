@@ -26,17 +26,19 @@ Code:
     class Table
       constructor: (@cols=[],@x=[],@y=[],@rows=[],
                     @nums=Num) ->
-      klass:              -> @y[0]
-      klassVal:       (l) -> l[ @y[0].pos ]
-      from:(f,after=same) -> new Csv f,((row) => @add row), (=> after(@))
-      names:              -> (col.txt for col in @cols)
-      dump:               -> say @names(); (say row.cells for row in @rows)
-      add:         (l,id) -> @cols.length and @row(l,id) or @top(l,id)
-      top:  (l, id,pos=0) -> 
+      klass:      -> @y[0]
+      klassVal:(l)-> l[ @y[0].pos ]
+      names:      -> (col.txt for col in @cols)
+      dump:       -> say @names(); (say r.cells for r in @rows)
+      add: (l,id) -> @cols.length and @row(l,id) or @top(l,id)
+      mid:        -> new Row (c.mid() for c in @cols)
+      # --------- --------- --------- --------- ---------  -----------
+      from:(f,after=same) -> 
+        new Csv f,((r) => @add r), (=> after(@))
+      # --------- --------- --------- --------- ---------  -----------
+      top: (l, id,pos=0) -> 
         @cols = (@col(txt,pos++) for txt in l) 
         l
-      # --------- --------- --------- --------- ---------  -----------
-      mid: -> new Row (c.mid() for c in @cols)
       # --------- --------- --------- --------- ---------  -----------
       clone: (rows=[]) ->
         t=new Table()

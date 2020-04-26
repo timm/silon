@@ -13,7 +13,7 @@ Imports
 
     src = "../../src"
     {the} = require src+'/lib/the'
-    {rand,say} = require src+'/lib/fun'
+    {rand,say,clone,sayr} = require src+'/lib/fun'
     {Ok} = require src+'/lib/ok'
     {Num}= require src+'/cols/num'
 

@@ -55,12 +55,13 @@ Code:
          (f + m*prior) /(@n + m)
        # ---------  --------- --------- ---------
        ent: (e=0)->
-         if  not @_ent?
-           @_ent = 0
+         unless @_ent?
            for x,y of @counts
              if y > 0
-               p      = y/@n
-               @_ent -= p*Math.log2(p)
+               p  = y/@n
+               e -= p*Math.log2(p)
+               #say "n",@n,"x",x,"y",y,"p",p,"e",e
+           @_ent = e
          @_ent
 
 Exports:

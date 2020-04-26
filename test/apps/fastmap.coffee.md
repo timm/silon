@@ -37,8 +37,8 @@ Test cases
          best = last(l)
          worst= l[0]
          if debug
-           sayr (d2(best.mid().cells[c.pos]) for c in u.y) 
-           sayr (d2(worst.mid().cells[c.pos]) for c in u.y) 
+           sayr (d2(best.mid().cells[c.pos]) for c in u.y)
+           sayr (d2(worst.mid().cells[c.pos]) for c in u.y)
          Ok.if best.mid().dominates(u.mid(), u.y)
          #f.leaves((t) ->  soy " ",t.rows.length); say ""
        t = (new Table).from(the.data+f,fastmap)
@@ -60,7 +60,7 @@ Test cases
             d=0
             for i in [1..64]
               row2 = any(u.rows)
-              if row1.dominates(row2,u.y) 
+              if row1.dominates(row2,u.y)
                 d+=1
             cache[ row1.id ] = d
           u.rows = u.rows.sort(Order.fun (x) -> cache[x.id])
@@ -69,12 +69,11 @@ Test cases
           Ok.if best.dominates(worst, u.y)
        t = (new Table).from(the.data+f,dominates)
 
-###
     Ok.all.fmap.dom2 = ->
       Ok.all.fmap.fastmap("ailerons.csv")
+
     Ok.all.fmap.fastmap2 = ->
       Ok.all.fmap.fastmap("nasa93.csv",true)
-###
 
     Ok.all.fmap.fastmap3 = ->
       say "\n\nfastmap3"

@@ -9,26 +9,27 @@ Tim Menzies
 [<img width=900 src="https://github.com/timm/silon/raw/master/etc/img/banner.jpg">](http://git.io/silon)<br>
 
 
-    src = "../../src/"
-    {the}      = require src+'lib/the'
-    {say,xray} = require src+'lib/fun'
-    {Ok}       = require src+'lib/ok'
-    {Table}    = require src+'data/table'
+    src        = process.env.SILON or "../../src"
+    {the}      = require src+'/lib/the'
+    {say,xray} = require src+'/lib/fun'
+    {Ok}       = require src+'/lib/ok'
+    {Bins2}    = require src+'/cols/bins2'
+    {Table}    = require src+'/data/table'
 
 Tests
 
     Ok.all.tab = {}
-    Ok.all.tab.tab1 = (f= the.data + 'weather2.csv',dump=false,n=0) ->
+    Ok.all.tab.tab1 = (f= 'weather2.csv',dump=false,n=0) ->
        tab1=(u) ->
          v = u.bins()
          (Ok.if "Sym"==c.constructor.name for c in v.cols)
          v.dump() if dump
-       t=(new Table).from(f,tab1)
+       t=(new Table).from(the.data + f,tab1)
 
-    Ok.all.tab.tab2 = -> Ok.all.tab.tab1 the.data + 'auto93.csv'
-    Ok.all.tab.tab3 = -> Ok.all.tab.tab1 the.data + 'auto93-10000.csv'
+    Ok.all.tab.tab2 = -> Ok.all.tab.tab1 'auto93.csv'
+    Ok.all.tab.tab3 = -> Ok.all.tab.tab1 'auto93-10000.csv'
 
-    Ok.all.tab.nearfar = (f=the.data + 'weather4.csv') ->
+    Ok.all.tab.nearfar = (f= 'weather4.csv') ->
        nearfar = (u) ->
          cols = u.x
          for row1 in u.rows
@@ -37,13 +38,26 @@ Tests
            d12   = row2.dist(row1, u.x)
            d13   = row3.dist(row1, u.x)
            Ok.if  d13 > d12
-       t = (new Table).from(f, nearfar) 
+       t = (new Table).from(the.data+f, nearfar) 
 
-    Ok.all.tab.dist1 = (f=the.data + 'weather4.csv') ->
+    Ok.all.tab.dist1 = (f= 'weather4.csv') ->
        dist1 = (u) ->
          cols = u.x 
          a = u.rows[0]
          b = u.rows[1]
-       t = (new Table).from(f, dist1)
+       t = (new Table).from(the.data+f, dist1)
+
+    Ok.all.tab.binsTwo1 = (f= 'diabetes.csv') ->
+      binsTwo1 = (u) ->
+        fx= (z) -> z.cells[x.pos]
+        fy= (z) -> u.klassVal(z.cells)
+        for x in u.x
+          if Table.isNum(x.txt)
+            b=new Bins2(u.rows, fx, fy)
+            b.debug = true
+            breaks = b.cuts()
+            say breaks
+          return 11
+      t = (new Table).from(the.data+f, binsTwo1)
 
     Ok.go "tab"
