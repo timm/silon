@@ -55,4 +55,4 @@ Less is more.
 -- Dieter Rams
 
 less, plz.    
--- Tim Menzies
+-- timm
